@@ -1,8 +1,3 @@
-// Log who's joining
-// List who's in the room on join
-// Command to see users in room
-// Allow dynamic setup of IP/port for first person who joins
-// Admin login and features (kick people)
 package main
 
 import (
@@ -13,27 +8,30 @@ import (
 	"time"
 )
 
-type client chan<- string
+type Client struct {
+  channel chan<- string
+  name string
+}
 
 const Port = "1919"
 
-var entering = make(chan client)
-var leaving = make(chan client)
+var entering = make(chan Client)
+var leaving = make(chan Client)
 
 func broadcaster(messages chan string) {
-	clients := make(map[client]bool)
+  clients := make(map[string]Client)
 	for {
 		select {
 		case msg := <-messages:
 			stamp := time.Now().Format(time.Kitchen)
-			for client := range clients {
-				client <- stamp + " " + msg
+			for _, cli := range clients {
+				cli.channel <- stamp + " " + msg
 			}
-		case client := <-entering:
-			clients[client] = true
-		case client := <-leaving:
-			delete(clients, client)
-			close(client)
+		case cli := <-entering:
+      clients[cli.name] = cli
+		case cli := <-leaving:
+			delete(clients, cli.name)
+      close(cli.channel)
 		}
 	}
 }
@@ -47,18 +45,19 @@ func handleConn(conn net.Conn, messages chan string) {
 	who := namer.Text()
 
 	// who := conn.RemoteAddr().String()
-	entering <- ch
-	log.Print("User logged in: " + who)
-	messages <- who + " has arrived!"
+  cli := Client{channel: ch, name: who}
+	entering <- cli
+	log.Print("User logged in: " + cli.name)
+	messages <- cli.name + " has arrived!"
 
 	input := bufio.NewScanner(conn)
 	for input.Scan() {
-		messages <- who + ": " + input.Text()
+		messages <- cli.name + ": " + input.Text()
 	}
 
-	log.Print("User logged out: " + who)
-	messages <- who + " has left!"
-	leaving <- ch
+	log.Print("User logged out: " + cli.name)
+	messages <- cli.name + " has left!"
+	leaving <- cli
 	conn.Close()
 }
 
