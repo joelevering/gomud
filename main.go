@@ -5,28 +5,33 @@ import (
 	"fmt"
 	"log"
 	"net"
+  "strings"
 	"time"
 )
-
-type Client struct {
-  channel chan<- string
-  name string
-}
 
 const Port = "1919"
 
 var entering = make(chan Client)
 var leaving = make(chan Client)
 var messages = make(chan string)
+var clients = make(map[string]Client)
+
+type Client struct {
+  channel chan<- string
+  name string
+}
+
+func (cli Client) sendMsg(msg string) {
+  stamp := time.Now().Format(time.Kitchen)
+  cli.channel <- stamp + " " + msg
+}
 
 func broadcaster() {
-  clients := make(map[string]Client)
 	for {
 		select {
 		case msg := <-messages:
-			stamp := time.Now().Format(time.Kitchen)
 			for _, cli := range clients {
-				cli.channel <- stamp + " " + msg
+        cli.sendMsg(msg)
 			}
 		case cli := <-entering:
       clients[cli.name] = cli
@@ -53,14 +58,28 @@ func handleConn(conn net.Conn) {
 
 	input := bufio.NewScanner(conn)
 	for input.Scan() {
-    // handleCommand(messages, cli, )
-		messages <- cli.name + ": " + input.Text()
+    handleCommand(cli, input.Text())
 	}
 
 	log.Print("User logged out: " + cli.name)
 	messages <- cli.name + " has left!"
 	leaving <- cli
 	conn.Close()
+}
+
+func handleCommand(cli Client, cmd string) {
+  words := strings.Split(cmd, " ")
+  key := words[0]
+  // args := words[1:]
+  switch key {
+  case "/list", "/ls":
+    cli.sendMsg("Logged in users:")
+    for _, otherCli := range clients {
+      cli.sendMsg(otherCli.name)
+    }
+  default:
+    messages <- cli.name + ": " + cmd
+  }
 }
 
 func clientWriter(conn net.Conn, ch <-chan string) {
