@@ -17,8 +17,9 @@ const Port = "1919"
 
 var entering = make(chan Client)
 var leaving = make(chan Client)
+var messages = make(chan string)
 
-func broadcaster(messages chan string) {
+func broadcaster() {
   clients := make(map[string]Client)
 	for {
 		select {
@@ -36,7 +37,7 @@ func broadcaster(messages chan string) {
 	}
 }
 
-func handleConn(conn net.Conn, messages chan string) {
+func handleConn(conn net.Conn) {
 	ch := make(chan string)
 	go clientWriter(conn, ch)
 	ch <- "Who are you?"
@@ -52,6 +53,7 @@ func handleConn(conn net.Conn, messages chan string) {
 
 	input := bufio.NewScanner(conn)
 	for input.Scan() {
+    // handleCommand(messages, cli, )
 		messages <- cli.name + ": " + input.Text()
 	}
 
@@ -80,8 +82,6 @@ func localIp() string {
 }
 
 func main() {
-	var messages = make(chan string)
-
 	host := localIp() + ":" + Port
 	log.Print("Hosting on: " + host)
 	listener, err := net.Listen("tcp", host)
@@ -90,7 +90,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	go broadcaster(messages)
+	go broadcaster()
 
 	for {
 		conn, err := listener.Accept()
@@ -100,6 +100,6 @@ func main() {
 			continue
 		}
 
-		go handleConn(conn, messages)
+		go handleConn(conn)
 	}
 }
