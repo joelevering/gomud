@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
-  "strings"
+	"strings"
 	"time"
 )
 
@@ -17,13 +17,13 @@ var messages = make(chan string)
 var clients = make(map[string]Client)
 
 type Client struct {
-  channel chan<- string
-  name string
+	channel chan<- string
+	name    string
 }
 
 func (cli Client) sendMsg(msg string) {
-  stamp := time.Now().Format(time.Kitchen)
-  cli.channel <- stamp + " " + msg
+	stamp := time.Now().Format(time.Kitchen)
+	cli.channel <- stamp + " " + msg
 }
 
 func broadcaster() {
@@ -31,13 +31,13 @@ func broadcaster() {
 		select {
 		case msg := <-messages:
 			for _, cli := range clients {
-        cli.sendMsg(msg)
+				cli.sendMsg(msg)
 			}
 		case cli := <-entering:
-      clients[cli.name] = cli
+			clients[cli.name] = cli
 		case cli := <-leaving:
 			delete(clients, cli.name)
-      close(cli.channel)
+			close(cli.channel)
 		}
 	}
 }
@@ -51,14 +51,15 @@ func handleConn(conn net.Conn) {
 	who := namer.Text()
 
 	// who := conn.RemoteAddr().String()
-  cli := Client{channel: ch, name: who}
+	cli := Client{channel: ch, name: who}
 	entering <- cli
 	log.Print("User logged in: " + cli.name)
+	listClients(cli)
 	messages <- cli.name + " has arrived!"
 
 	input := bufio.NewScanner(conn)
 	for input.Scan() {
-    handleCommand(cli, input.Text())
+		handleCommand(cli, input.Text())
 	}
 
 	log.Print("User logged out: " + cli.name)
@@ -68,18 +69,25 @@ func handleConn(conn net.Conn) {
 }
 
 func handleCommand(cli Client, cmd string) {
-  words := strings.Split(cmd, " ")
-  key := words[0]
-  // args := words[1:]
-  switch key {
-  case "/list", "/ls":
-    cli.sendMsg("Logged in users:")
-    for _, otherCli := range clients {
-      cli.sendMsg(otherCli.name)
-    }
-  default:
-    messages <- cli.name + ": " + cmd
-  }
+	words := strings.Split(cmd, " ")
+	key := words[0]
+	// args := words[1:]
+	switch key {
+	case "/list", "/ls":
+		listClients(cli)
+	default:
+		messages <- cli.name + ": " + cmd
+	}
+}
+
+func listClients(cli Client) {
+	var clientNames []string
+
+	for _, otherCli := range clients {
+		clientNames = append(clientNames, otherCli.name)
+	}
+
+	cli.sendMsg("Logged in users: " + strings.Join(clientNames, ", "))
 }
 
 func clientWriter(conn net.Conn, ch <-chan string) {
