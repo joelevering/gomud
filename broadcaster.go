@@ -19,14 +19,14 @@ func broadcaster() {
 
 			ListClients(cli)
 
-			sendMsg(cli.name + " has arrived!")
+			go sendMsg(cli.name + " has arrived!")
 		case cli := <-leaving:
 			log.Print("User logged out: " + cli.name)
 
 			delete(GameState.clients, cli.name)
 			close(cli.channel)
 
-			sendMsg(cli.name + " has left!")
+			go sendMsg(cli.name + " has left!")
 		}
 	}
 }
