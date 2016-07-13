@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"net"
 	"strings"
 )
@@ -11,7 +10,7 @@ import (
 var entering = make(chan Client)
 var leaving = make(chan Client)
 
-func handleConn(conn net.Conn, clients map[string]Client) {
+func handleConn(conn net.Conn) {
 	ch := make(chan string)
 	go clientWriter(conn, ch)
 	ch <- "Who are you?"
@@ -19,20 +18,14 @@ func handleConn(conn net.Conn, clients map[string]Client) {
 	namer.Scan()
 	who := namer.Text()
 
-	// who := conn.RemoteAddr().String()
 	cli := Client{channel: ch, name: who}
 	clientEnters(cli)
-	log.Print("User logged in: " + cli.name)
-	listClients(cli)
-	sendMsg(cli.name + " has arrived!")
 
 	input := bufio.NewScanner(conn)
 	for input.Scan() {
 		handleCommand(cli, input.Text())
 	}
 
-	log.Print("User logged out: " + cli.name)
-	sendMsg(cli.name + " has left!")
 	clientLeft(cli)
 	conn.Close()
 }
@@ -43,14 +36,16 @@ func clientWriter(conn net.Conn, ch <-chan string) {
 	}
 }
 
-func listClients(cli Client) {
-	var clientNames []string
+func ListClients(cli Client) {
+	clientNames := []string{"Yourself (" + cli.name + ")"}
 
-	for _, otherCli := range clients {
-		clientNames = append(clientNames, otherCli.name)
+	for _, otherCli := range GameState.clients {
+		if otherCli != cli {
+			clientNames = append(clientNames, otherCli.name)
+		}
 	}
 
-	cli.sendMsg("Logged in users: " + strings.Join(clientNames, ", "))
+	cli.sendMsg("You look around and see: " + strings.Join(clientNames, ", "))
 }
 
 func handleCommand(cli Client, cmd string) {
@@ -59,7 +54,7 @@ func handleCommand(cli Client, cmd string) {
 	// args := words[1:]
 	switch key {
 	case "/list", "/ls":
-		listClients(cli)
+		ListClients(cli)
 	default:
 		sendMsg(cli.name + ": " + cmd)
 	}

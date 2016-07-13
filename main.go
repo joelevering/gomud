@@ -8,8 +8,14 @@ import (
 
 const Port = "1919"
 
-var clients = make(map[string]Client)
 var messages = make(chan string)
+var GameState = gameState{}
+
+type gameState struct {
+	clients     map[string]Client
+	rooms       []Room
+	defaultRoom *Room
+}
 
 type Client struct {
 	channel chan<- string
@@ -19,6 +25,18 @@ type Client struct {
 func (cli Client) sendMsg(msg string) {
 	stamp := time.Now().Format(time.Kitchen)
 	cli.channel <- stamp + " " + msg
+}
+
+func initializeGameState() {
+	GameState.clients = make(map[string]Client)
+
+	var rooms, err = loadRooms()
+	if err != nil {
+		panic("Error loading rooms")
+	}
+
+	GameState.rooms = rooms
+	GameState.defaultRoom = &GameState.rooms[0]
 }
 
 func sendMsg(msg string) {
@@ -46,6 +64,8 @@ func localIp() string {
 }
 
 func main() {
+	initializeGameState()
+
 	host := localIp() + ":" + Port
 	log.Print("Hosting on: " + host)
 	listener, err := net.Listen("tcp", host)
@@ -64,6 +84,6 @@ func main() {
 			continue
 		}
 
-		go handleConn(conn, clients)
+		go handleConn(conn)
 	}
 }

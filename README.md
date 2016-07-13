@@ -1,7 +1,6 @@
 # gomud
 
 # TODO
-* TERMUI
 * Add rooms
   * Hardcode a room
   * Show room description on join
@@ -17,3 +16,5 @@
   * Add 'yell' when rooms are built out
 * Add items
 * Admin login and features (kick people)
+* Add UI
+  * TERMUI Appears unable to handle custom Writers (e.g. net.Conn)
