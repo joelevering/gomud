@@ -23,6 +23,7 @@ type gameState struct {
 type Client struct {
 	channel chan<- string
 	name    string
+	room    *Room
 }
 
 func (cli Client) sendMsg(msg string) {

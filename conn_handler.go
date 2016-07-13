@@ -52,6 +52,11 @@ func DescribeCurrentRoom(cli Client) {
 	ListClients(cli)
 }
 
+func SetCurrentRoom(cli *Client, room *Room) {
+	cli.room = room
+	room.clients = append(room.clients, cli)
+}
+
 func handleCommand(cli Client, cmd string) {
 	words := strings.Split(cmd, " ")
 	key := words[0]

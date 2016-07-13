@@ -14,6 +14,8 @@ func Broadcaster() {
 
 			GameState.clients[cli.name] = cli
 
+			SetCurrentRoom(&cli, GameState.defaultRoom)
+
 			DescribeCurrentRoom(cli)
 
 			go sendMsg(cli.name + " has arrived!")
