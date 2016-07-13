@@ -6,9 +6,12 @@ import (
 	"time"
 )
 
-const Port = "1919"
+const port = "1919"
 
-var messages = make(chan string)
+var Entering = make(chan Client)
+var Leaving = make(chan Client)
+var Messages = make(chan string)
+
 var GameState = gameState{}
 
 type gameState struct {
@@ -40,15 +43,15 @@ func initializeGameState() {
 }
 
 func sendMsg(msg string) {
-	messages <- msg
+	Messages <- msg
 }
 
-func clientEnters(cli Client) {
-	entering <- cli
+func ClientEnters(cli Client) {
+	Entering <- cli
 }
 
-func clientLeft(cli Client) {
-	leaving <- cli
+func ClientLeft(cli Client) {
+	Leaving <- cli
 }
 
 func localIp() string {
@@ -66,7 +69,7 @@ func localIp() string {
 func main() {
 	initializeGameState()
 
-	host := localIp() + ":" + Port
+	host := localIp() + ":" + port
 	log.Print("Hosting on: " + host)
 	listener, err := net.Listen("tcp", host)
 
@@ -74,7 +77,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	go broadcaster()
+	go Broadcaster()
 
 	for {
 		conn, err := listener.Accept()
@@ -84,6 +87,6 @@ func main() {
 			continue
 		}
 
-		go handleConn(conn)
+		go HandleConn(conn)
 	}
 }

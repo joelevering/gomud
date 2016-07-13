@@ -2,25 +2,22 @@ package main
 
 import "log"
 
-func broadcaster() {
+func Broadcaster() {
 	for {
 		select {
-		case msg := <-messages:
+		case msg := <-Messages:
 			for _, cli := range GameState.clients {
 				cli.sendMsg(msg)
 			}
-		case cli := <-entering:
+		case cli := <-Entering:
 			log.Print("User logged in: " + cli.name)
 
 			GameState.clients[cli.name] = cli
 
-			cli.sendMsg(GameState.defaultRoom.name)
-			cli.sendMsg(GameState.defaultRoom.desc)
-
-			ListClients(cli)
+			DescribeCurrentRoom(cli)
 
 			go sendMsg(cli.name + " has arrived!")
-		case cli := <-leaving:
+		case cli := <-Leaving:
 			log.Print("User logged out: " + cli.name)
 
 			delete(GameState.clients, cli.name)

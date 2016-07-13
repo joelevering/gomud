@@ -2,9 +2,9 @@
 
 # TODO
 * Add rooms
-  * Hardcode a room
-  * Show room description on join
-  * Add "look" command
+  * ~~Hardcode a room~~
+  * ~~Show room description on join~~
+  * ~~Add "look" command~~
 * Users reside in rooms
   * Each room has a list of users inside of it
   * Each client knows what room its in

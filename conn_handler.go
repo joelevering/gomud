@@ -7,10 +7,7 @@ import (
 	"strings"
 )
 
-var entering = make(chan Client)
-var leaving = make(chan Client)
-
-func handleConn(conn net.Conn) {
+func HandleConn(conn net.Conn) {
 	ch := make(chan string)
 	go clientWriter(conn, ch)
 	ch <- "Who are you?"
@@ -19,14 +16,14 @@ func handleConn(conn net.Conn) {
 	who := namer.Text()
 
 	cli := Client{channel: ch, name: who}
-	clientEnters(cli)
+	ClientEnters(cli)
 
 	input := bufio.NewScanner(conn)
 	for input.Scan() {
 		handleCommand(cli, input.Text())
 	}
 
-	clientLeft(cli)
+	ClientLeft(cli)
 	conn.Close()
 }
 
@@ -48,6 +45,13 @@ func ListClients(cli Client) {
 	cli.sendMsg("You look around and see: " + strings.Join(clientNames, ", "))
 }
 
+func DescribeCurrentRoom(cli Client) {
+	cli.sendMsg(GameState.defaultRoom.name)
+	cli.sendMsg(GameState.defaultRoom.desc)
+
+	ListClients(cli)
+}
+
 func handleCommand(cli Client, cmd string) {
 	words := strings.Split(cmd, " ")
 	key := words[0]
@@ -55,6 +59,8 @@ func handleCommand(cli Client, cmd string) {
 	switch key {
 	case "/list", "/ls":
 		ListClients(cli)
+	case "/look", "look":
+		DescribeCurrentRoom(cli)
 	default:
 		sendMsg(cli.name + ": " + cmd)
 	}
