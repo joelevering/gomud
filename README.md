@@ -8,8 +8,9 @@
 * Users reside in rooms
   * ~~Each room has a list of users inside of it~~
   * ~~Each client knows what room its in~~
-  * Add 'exits'
-  * Link some rooms
+  * ~~Add 'exits'~~
+  * ~~Link some rooms~~
+  * Users can move between rooms
 * Chat Improvements
   * Don't send blank messages
   * Require 'say'
