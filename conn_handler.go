@@ -7,6 +7,16 @@ import (
 	"strings"
 )
 
+var HelpMsg = `
+Available commands:
+'move <exit key>' to move to a new room
+'/look' or 'look' to see where you are
+'/list' or '/ls' to see who is currently in your room
+'/help' or 'help' to repeat this message
+
+Anything else will be broadcast as a message to the people in your room
+`
+
 func HandleConn(conn net.Conn) {
 	ch := make(chan string)
 	go clientWriter(conn, ch)
@@ -97,6 +107,8 @@ func handleCommand(cli *Client, cmd string) {
 				break
 			}
 		}
+	case "/help", "help":
+		cli.sendMsg(HelpMsg)
 	default:
 		cli.Say(cmd)
 	}
