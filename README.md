@@ -12,7 +12,9 @@
   * ~~Each client knows what room its in~~
   * ~~Add 'exits'~~
   * ~~Link some rooms~~
-  * Users can move between rooms
+  * ~~Users can move between rooms~~
+  * Message sent by users are only displayed to people in their room
+* Add a 'help' command to list basic commands
 * Chat Improvements
   * Don't send blank messages
   * Require 'say'

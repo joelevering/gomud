@@ -23,14 +23,8 @@ type Exit struct {
 	room *Room  `json:"room,omitempty"`
 }
 
-// Load rooms from CSV into map of ID -> Room
-// Load exits from CSV
-// Range through exits, hydrate, and add to appropriate room
-// Return values from original id/room map (which should be hydrated rooms)
-
 func loadRooms() ([]Room, error) {
 	var rooms []Room
-	// var rm = make(map[int]Room, 0)
 
 	f, _ := os.Open("rooms.csv")
 	r := csv.NewReader(bufio.NewReader(f))
@@ -51,7 +45,6 @@ func loadRooms() ([]Room, error) {
 		}
 
 		rooms = append(rooms, hr)
-		// rm[hr.id] = hr
 	}
 
 	loadExits(rooms)

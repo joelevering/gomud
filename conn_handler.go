@@ -16,14 +16,14 @@ func HandleConn(conn net.Conn) {
 	who := namer.Text()
 
 	cli := Client{channel: ch, name: who}
-	ClientEnters(cli)
+	ClientEnters(&cli)
 
 	input := bufio.NewScanner(conn)
 	for input.Scan() {
-		handleCommand(cli, input.Text())
+		handleCommand(&cli, input.Text())
 	}
 
-	ClientLeft(cli)
+	ClientLeft(&cli)
 	conn.Close()
 }
 
@@ -46,11 +46,11 @@ func ListClients(cli Client) {
 }
 
 func DescribeCurrentRoom(cli Client) {
-	cli.sendMsg("~~" + GameState.defaultRoom.name + "~~")
-	cli.sendMsg(GameState.defaultRoom.desc)
+	cli.sendMsg("~~" + cli.room.name + "~~")
+	cli.sendMsg(cli.room.desc)
 	cli.sendMsg("")
 	cli.sendMsg("Exits:")
-	for _, exit := range GameState.defaultRoom.exits {
+	for _, exit := range cli.room.exits {
 		cli.sendMsg("- " + exit.desc)
 	}
 
@@ -58,20 +58,40 @@ func DescribeCurrentRoom(cli Client) {
 	ListClients(cli)
 }
 
+func RemoveClientFromRoom(cli *Client) {
+	oldRoomClients := cli.room.clients
+	for i, client := range oldRoomClients {
+		if client == cli {
+			oldRoomClients[i] = oldRoomClients[len(oldRoomClients)-1]
+			oldRoomClients[len(oldRoomClients)-1] = nil
+			cli.room.clients = oldRoomClients[:len(oldRoomClients)-1]
+		}
+	}
+}
+
 func SetCurrentRoom(cli *Client, room *Room) {
 	cli.room = room
 	room.clients = append(room.clients, cli)
 }
 
-func handleCommand(cli Client, cmd string) {
+func handleCommand(cli *Client, cmd string) {
 	words := strings.Split(cmd, " ")
 	key := words[0]
-	// args := words[1:]
+
 	switch key {
 	case "/list", "/ls":
-		ListClients(cli)
+		ListClients(*cli)
 	case "/look", "look":
-		DescribeCurrentRoom(cli)
+		DescribeCurrentRoom(*cli)
+	case "move":
+		for _, exit := range cli.room.exits {
+			if strings.ToUpper(words[1]) == strings.ToUpper(exit.key) {
+				RemoveClientFromRoom(cli)
+				SetCurrentRoom(cli, exit.room)
+				DescribeCurrentRoom(*cli)
+				break
+			}
+		}
 	default:
 		sendMsg(cli.name + ": " + cmd)
 	}
