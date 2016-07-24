@@ -1,5 +1,7 @@
 # gomud
 
+# BUGS
+
 # TODO
 * Add rooms
   * ~~Hardcode a room~~

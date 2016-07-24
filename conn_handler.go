@@ -37,7 +37,7 @@ func ListClients(cli Client) {
 	clientNames := []string{"Yourself (" + cli.name + ")"}
 
 	for _, otherCli := range GameState.clients {
-		if otherCli != cli {
+		if otherCli.name != cli.name {
 			clientNames = append(clientNames, otherCli.name)
 		}
 	}
@@ -46,9 +46,15 @@ func ListClients(cli Client) {
 }
 
 func DescribeCurrentRoom(cli Client) {
-	cli.sendMsg(GameState.defaultRoom.name)
+	cli.sendMsg("~~" + GameState.defaultRoom.name + "~~")
 	cli.sendMsg(GameState.defaultRoom.desc)
+	cli.sendMsg("")
+	cli.sendMsg("Exits:")
+	for _, exit := range GameState.defaultRoom.exits {
+		cli.sendMsg("- " + exit.desc)
+	}
 
+	cli.sendMsg("")
 	ListClients(cli)
 }
 
