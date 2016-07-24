@@ -59,7 +59,8 @@ func DescribeCurrentRoom(cli Client) {
 }
 
 func RemoveClientFromRoom(cli *Client) {
-	oldRoomClients := cli.room.clients
+	oldRoom := cli.room
+	oldRoomClients := oldRoom.clients
 	for i, client := range oldRoomClients {
 		if client == cli {
 			oldRoomClients[i] = oldRoomClients[len(oldRoomClients)-1]
@@ -68,9 +69,12 @@ func RemoveClientFromRoom(cli *Client) {
 		}
 	}
 
+	oldRoom.message(cli.name + " has left the room!")
 }
 
 func SetCurrentRoom(cli *Client, room *Room) {
+	room.message(cli.name + " has entered the room!")
+
 	cli.room = room
 	room.clients = append(room.clients, cli)
 }
