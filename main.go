@@ -10,7 +10,6 @@ const port = "1919"
 
 var Entering = make(chan *Client)
 var Leaving = make(chan *Client)
-var Messages = make(chan string)
 
 var GameState = gameState{}
 
@@ -24,6 +23,10 @@ type Client struct {
 	channel chan<- string
 	name    string
 	room    *Room
+}
+
+func (cli Client) Say(msg string) {
+	cli.room.message(cli.name + ": " + msg)
 }
 
 func (cli Client) sendMsg(msg string) {
@@ -41,10 +44,6 @@ func initializeGameState() {
 
 	GameState.rooms = rooms
 	GameState.defaultRoom = &GameState.rooms[0]
-}
-
-func sendMsg(msg string) {
-	Messages <- msg
 }
 
 func ClientEnters(cli *Client) {

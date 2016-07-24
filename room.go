@@ -17,6 +17,12 @@ type Room struct {
 	clients []*Client
 }
 
+func (room Room) message(msg string) {
+	for _, client := range room.clients {
+		client.sendMsg(msg)
+	}
+}
+
 type Exit struct {
 	desc string `json:"desc"`
 	key  string `json:"key"`
@@ -58,7 +64,13 @@ func hydrateRoom(roomLine []string) Room {
 		return Room{id: 0}
 	}
 
-	return Room{id: id, name: roomLine[1], desc: roomLine[2]}
+	room := Room{
+		id:   id,
+		name: roomLine[1],
+		desc: roomLine[2],
+	}
+
+	return room
 }
 
 func loadExits(rooms []Room) {

@@ -36,7 +36,7 @@ func clientWriter(conn net.Conn, ch <-chan string) {
 func ListClients(cli Client) {
 	clientNames := []string{"Yourself (" + cli.name + ")"}
 
-	for _, otherCli := range GameState.clients {
+	for _, otherCli := range cli.room.clients {
 		if otherCli.name != cli.name {
 			clientNames = append(clientNames, otherCli.name)
 		}
@@ -67,6 +67,7 @@ func RemoveClientFromRoom(cli *Client) {
 			cli.room.clients = oldRoomClients[:len(oldRoomClients)-1]
 		}
 	}
+
 }
 
 func SetCurrentRoom(cli *Client, room *Room) {
@@ -93,6 +94,6 @@ func handleCommand(cli *Client, cmd string) {
 			}
 		}
 	default:
-		sendMsg(cli.name + ": " + cmd)
+		cli.Say(cmd)
 	}
 }
