@@ -43,7 +43,7 @@ func initializeGameState() {
 	}
 
 	GameState.rooms = rooms
-	GameState.defaultRoom = &GameState.rooms[0]
+	GameState.defaultRoom = &GameState.rooms[8]
 }
 
 func ClientEnters(cli *Client) {

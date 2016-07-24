@@ -1,2 +1,16 @@
 1,(O)ut to the Grand Stairs,o,2
+1,(I)nto the King's Chambers,i,6
 2,(I)n to the Throne Room,i,1
+6,(O)ut to the Throne Room,o,1
+2,(E)xplore the Courtyard,e,3
+3,(U)p the Grand Stairs,u,2
+3,(T)oward the Castle Gate,t,5
+3,A crack in the wall contains hints of green,crawl,4
+4,(C)rawl back through the wall,c,3
+5,(I)nto the Courtyard,i,3
+1,Towards the (K)itchen,k,7
+1,Over to the (G)uest Quarters,g,8
+1,Through a shimme(r)ing portal,r,9
+7,(O)ut to the Throne Room,o,1
+8,(O)ut to the Throne Room,o,1
+9,Through a portal to a (f)antasy realm,f,1
