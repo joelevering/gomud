@@ -17,7 +17,7 @@ Anything else will be broadcast as a message to the people in your room
 # BUGS
 
 # TODO
-* Add "can't find" message to npc look and move commands
+* Move commands from conn_handler to a new file
 * Add NPCs/bots
   * ~~NPCs have stats and live in rooms~~
   * ~~Load NPCs~~

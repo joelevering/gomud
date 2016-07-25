@@ -104,14 +104,20 @@ func handleCommand(cli *Client, cmd string) {
 	case "/look", "look":
 		if len(words) == 1 {
 			DescribeCurrentRoom(*cli)
-		} else if len(words) == 2 {
+		} else if len(words) > 1 {
 			npcName := words[1]
+			found := false
 
 			for _, npc := range cli.room.npcs {
 				if strings.Contains(strings.ToUpper(npc.name), strings.ToUpper(npcName)) {
 					cli.sendMsg("You look at " + npc.name + " and see:")
 					cli.sendMsg(npc.desc)
+					found = true
 				}
+			}
+
+			if found == false {
+				cli.sendMsg("Who are you looking at??")
 			}
 		}
 	case "move":
@@ -120,9 +126,11 @@ func handleCommand(cli *Client, cmd string) {
 				RemoveClientFromRoom(cli)
 				SetCurrentRoom(cli, exit.room)
 				DescribeCurrentRoom(*cli)
-				break
+				return
 			}
 		}
+
+		cli.sendMsg("Where are you trying to go??")
 	case "/help", "help":
 		cli.sendMsg(HelpMsg)
 	default:
