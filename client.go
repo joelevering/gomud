@@ -78,15 +78,19 @@ func (cli Client) Help() {
 }
 
 func (cli Client) Say(msg string) {
-	cli.room.message(cli.name + " says " + msg)
+	if msg != "" {
+		cli.room.message(cli.name + " says " + msg)
+	}
 }
 
 func (cli Client) Yell(msg string) {
-	fullMsg := cli.name + " yells " + msg + "!"
-	cli.room.message(fullMsg)
+	if msg != "" {
+		fullMsg := cli.name + " yells " + msg + "!"
+		cli.room.message(fullMsg)
 
-	for _, exit := range cli.room.exits {
-		exit.room.message(fullMsg)
+		for _, exit := range cli.room.exits {
+			exit.room.message(fullMsg)
+		}
 	}
 }
 

@@ -85,7 +85,11 @@ func handleCommand(cli *Client, cmd string) {
 			cli.LookNPC(words[1])
 		}
 	case "m", "move":
-		cli.Move(words[1])
+		if len(words) > 1 {
+			cli.Move(words[1])
+		} else {
+			cli.sendMsg("Where are you trying to go??")
+		}
 	case "h", "help":
 		cli.Help()
 	case "s", "say":
