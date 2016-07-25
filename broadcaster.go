@@ -16,6 +16,8 @@ func Broadcaster() {
 
 			go broadcast(cli.name + " has logged in!")
 		case cli := <-Leaving:
+			RemoveClientFromRoom(cli)
+
 			log.Print("User logged out: " + cli.name)
 
 			delete(GameState.clients, cli.name)
