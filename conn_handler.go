@@ -44,35 +44,6 @@ func clientWriter(conn net.Conn, ch <-chan string) {
 	}
 }
 
-func List(cli Client) {
-	names := []string{"Yourself (" + cli.name + ")"}
-
-	for _, otherCli := range cli.room.clients {
-		if otherCli.name != cli.name {
-			names = append(names, otherCli.name)
-		}
-	}
-
-	for _, npc := range cli.room.npcs {
-		names = append(names, npc.name+" (NPC)")
-	}
-
-	cli.sendMsg("You look around and see: " + strings.Join(names, ", "))
-}
-
-func DescribeCurrentRoom(cli Client) {
-	cli.sendMsg("~~" + cli.room.name + "~~")
-	cli.sendMsg(cli.room.desc)
-	cli.sendMsg("")
-	cli.sendMsg("Exits:")
-	for _, exit := range cli.room.exits {
-		cli.sendMsg("- " + exit.desc)
-	}
-
-	cli.sendMsg("")
-	List(cli)
-}
-
 func RemoveClientFromRoom(cli *Client) {
 	oldRoom := cli.room
 	oldRoomClients := oldRoom.clients
@@ -100,39 +71,17 @@ func handleCommand(cli *Client, cmd string) {
 
 	switch key {
 	case "/list", "/ls":
-		List(*cli)
+		cli.List()
 	case "/look", "look":
 		if len(words) == 1 {
-			DescribeCurrentRoom(*cli)
+			cli.Look()
 		} else if len(words) > 1 {
-			npcName := words[1]
-			found := false
-
-			for _, npc := range cli.room.npcs {
-				if strings.Contains(strings.ToUpper(npc.name), strings.ToUpper(npcName)) {
-					cli.sendMsg("You look at " + npc.name + " and see:")
-					cli.sendMsg(npc.desc)
-					found = true
-				}
-			}
-
-			if found == false {
-				cli.sendMsg("Who are you looking at??")
-			}
+			cli.LookNPC(words[1])
 		}
 	case "move":
-		for _, exit := range cli.room.exits {
-			if strings.ToUpper(words[1]) == strings.ToUpper(exit.key) {
-				RemoveClientFromRoom(cli)
-				SetCurrentRoom(cli, exit.room)
-				DescribeCurrentRoom(*cli)
-				return
-			}
-		}
-
-		cli.sendMsg("Where are you trying to go??")
+		cli.Move(words[1])
 	case "/help", "help":
-		cli.sendMsg(HelpMsg)
+		cli.Help()
 	default:
 		cli.Say(cmd)
 	}

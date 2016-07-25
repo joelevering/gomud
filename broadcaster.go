@@ -12,7 +12,7 @@ func Broadcaster() {
 
 			SetCurrentRoom(cli, GameState.defaultRoom)
 
-			DescribeCurrentRoom(*cli)
+			cli.Look()
 
 			go broadcast(cli.name + " has logged in!")
 		case cli := <-Leaving:

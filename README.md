@@ -17,7 +17,8 @@ Anything else will be broadcast as a message to the people in your room
 # BUGS
 
 # TODO
-* Move commands from conn_handler to a new file
+* Write a boat load of tests
+  * All commands
 * Add NPCs/bots
   * ~~NPCs have stats and live in rooms~~
   * ~~Load NPCs~~
