@@ -6,11 +6,12 @@ A golang-based MUD client.
 * `telnet <ip> <port>`
 
 Available commands:
+'say <message>' to communicate with people in your room
 'move <exit key>' to move to a new room
-'/look' or 'look' to see where you are
-'/look <npc name>' or 'look <npc name>' to see more details about an NPC
-'/list' or '/ls' to see who is currently in your room
-'/help' or 'help' to repeat this message
+'look' to see where you are
+'look <npc name>' to see more details about an NPC
+'list' to see who is currently in your room
+'help' to repeat this message
 
 Anything else will be broadcast as a message to the people in your room
 
@@ -27,8 +28,8 @@ Anything else will be broadcast as a message to the people in your room
   * Let NPCs follow scripts (so they can talk and move)
 * Add combat
 * Chat Improvements
-  * Don't send blank messages
-  * Require 'say'
+  * ~~Don't send blank messages~~
+  * ~~Require 'say'~~
   * Add 'yell'
 * Admin login and features (kick people)
 * Add stats

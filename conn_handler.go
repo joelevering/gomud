@@ -9,11 +9,12 @@ import (
 
 var HelpMsg = `
 Available commands:
+'say <message>' to communicate with people in your room
 'move <exit key>' to move to a new room
-'/look' or 'look' to see where you are
-'/look <npc name>' or 'look <npc name>' to see more details about an NPC
-'/list' or '/ls' to see who is currently in your room
-'/help' or 'help' to repeat this message
+'look' to see where you are
+'look <npc name>' to see more details about an NPC
+'list' to see who is currently in your room
+'help' to repeat this message
 
 Anything else will be broadcast as a message to the people in your room
 `
@@ -74,19 +75,22 @@ func handleCommand(cli *Client, cmd string) {
 	key := words[0]
 
 	switch key {
-	case "/list", "/ls":
+	case "":
+	case "ls", "list":
 		cli.List()
-	case "/look", "look":
+	case "l", "look":
 		if len(words) == 1 {
 			cli.Look()
 		} else if len(words) > 1 {
 			cli.LookNPC(words[1])
 		}
-	case "move":
+	case "m", "move":
 		cli.Move(words[1])
-	case "/help", "help":
+	case "h", "help":
 		cli.Help()
+	case "s", "say":
+		cli.Say(strings.Join(words[1:], " "))
 	default:
-		cli.Say(cmd)
+		cli.sendMsg("I'm not sure what you mean. Type '/help' for assistance.")
 	}
 }
