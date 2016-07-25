@@ -30,7 +30,7 @@ Anything else will be broadcast as a message to the people in your room
 * Chat Improvements
   * ~~Don't send blank messages~~
   * ~~Require 'say'~~
-  * Add 'yell'
+  * ~~Add 'yell'~~
 * Admin login and features (kick people)
 * Add stats
 * Add classes

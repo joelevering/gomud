@@ -90,6 +90,8 @@ func handleCommand(cli *Client, cmd string) {
 		cli.Help()
 	case "s", "say":
 		cli.Say(strings.Join(words[1:], " "))
+	case "y", "yell":
+		cli.Yell(strings.Join(words[1:], " "))
 	default:
 		cli.sendMsg("I'm not sure what you mean. Type '/help' for assistance.")
 	}
