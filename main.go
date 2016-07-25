@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"net"
-	"time"
 )
 
 const port = "1919"
@@ -17,25 +16,6 @@ type gameState struct {
 	clients     map[string]*Client
 	rooms       []Room
 	defaultRoom *Room
-}
-
-type Client struct {
-	channel   chan<- string
-	name      string
-	room      *Room
-	maxHealth int
-	health    int
-	str       int
-	end       int
-}
-
-func (cli Client) Say(msg string) {
-	cli.room.message(cli.name + ": " + msg)
-}
-
-func (cli Client) sendMsg(msg string) {
-	stamp := time.Now().Format(time.Kitchen)
-	cli.channel <- stamp + " " + msg
 }
 
 func initializeGameState() {

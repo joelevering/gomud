@@ -1,6 +1,19 @@
 package main
 
-import "strings"
+import (
+	"strings"
+	"time"
+)
+
+type Client struct {
+	channel   chan<- string
+	name      string
+	room      *Room
+	maxHealth int
+	health    int
+	str       int
+	end       int
+}
 
 func (cli Client) List() {
 	names := []string{"Yourself (" + cli.name + ")"}
@@ -50,7 +63,7 @@ func (cli Client) LookNPC(npcName string) {
 func (cli *Client) Move(exitKey string) {
 	for _, exit := range cli.room.exits {
 		if strings.ToUpper(exitKey) == strings.ToUpper(exit.key) {
-			RemoveClientFromRoom(cli)
+			RemoveClientFromRoom(cli, cli.name+" heads to "+exit.room.name+"!")
 			SetCurrentRoom(cli, exit.room)
 			cli.Look()
 			return
@@ -62,4 +75,13 @@ func (cli *Client) Move(exitKey string) {
 
 func (cli Client) Help() {
 	cli.sendMsg(HelpMsg)
+}
+
+func (cli Client) Say(msg string) {
+	cli.room.message(cli.name + ": " + msg)
+}
+
+func (cli Client) sendMsg(msg string) {
+	stamp := time.Now().Format(time.Kitchen)
+	cli.channel <- stamp + " " + msg
 }

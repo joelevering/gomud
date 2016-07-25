@@ -44,7 +44,7 @@ func clientWriter(conn net.Conn, ch <-chan string) {
 	}
 }
 
-func RemoveClientFromRoom(cli *Client) {
+func RemoveClientFromRoom(cli *Client, msg string) {
 	oldRoom := cli.room
 	oldRoomClients := oldRoom.clients
 	for i, client := range oldRoomClients {
@@ -55,7 +55,11 @@ func RemoveClientFromRoom(cli *Client) {
 		}
 	}
 
-	oldRoom.message(cli.name + " has left the room!")
+	if msg == "" {
+		oldRoom.message(cli.name + " has left the room!")
+	} else {
+		oldRoom.message(msg)
+	}
 }
 
 func SetCurrentRoom(cli *Client, room *Room) {
