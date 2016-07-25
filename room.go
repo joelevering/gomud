@@ -15,6 +15,7 @@ type Room struct {
 	desc    string
 	exits   []Exit
 	clients []*Client
+	npcs    []NPC
 }
 
 func (room Room) message(msg string) {
@@ -53,7 +54,15 @@ func loadRooms() ([]Room, error) {
 		rooms = append(rooms, hr)
 	}
 
-	loadExits(rooms)
+	// Room ID to index in rooms slice
+	var roomMap = make(map[int]int, 0)
+
+	for i, rm := range rooms {
+		roomMap[rm.id] = i
+	}
+
+	loadExits(rooms, roomMap)
+	loadNPCs(rooms, roomMap)
 
 	return rooms, nil
 }
@@ -73,14 +82,7 @@ func hydrateRoom(roomLine []string) Room {
 	return room
 }
 
-func loadExits(rooms []Room) {
-	// Room ID to index in rooms slice
-	var roomMap = make(map[int]int, 0)
-
-	for i, rm := range rooms {
-		roomMap[rm.id] = i
-	}
-
+func loadExits(rooms []Room, roomMap map[int]int) {
 	f, _ := os.Open("exits.csv")
 	r := csv.NewReader(bufio.NewReader(f))
 

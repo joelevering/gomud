@@ -1,29 +1,36 @@
 # gomud
 
+A golang-based MUD client.
+* `go build`
+* `./gomud`
+* `telnet <ip> <port>`
+
+Available commands:
+'move <exit key>' to move to a new room
+'/look' or 'look' to see where you are
+'/look <npc name>' or 'look <npc name>' to see more details about an NPC
+'/list' or '/ls' to see who is currently in your room
+'/help' or 'help' to repeat this message
+
+Anything else will be broadcast as a message to the people in your room
+
 # BUGS
 
 # TODO
-* Add rooms
-  * ~~Hardcode a room~~
-  * ~~Show room description on join~~
-  * ~~Add "look" command~~
-* Users reside in rooms
-  * ~~Each room has a list of users inside of it~~
-  * ~~Each client knows what room its in~~
-  * ~~Add 'exits'~~
-  * ~~Link some rooms~~
-  * ~~Users can move between rooms~~
-  * ~~Message sent by users are only displayed to people in their room~~
-  * ~~Enter/leave message when a user enters/leaves a room~~
-* ~~Add a 'help' command to list basic commands~~
+* Add "can't find" message to npc look and move commands
+* Add NPCs/bots
+  * ~~NPCs have stats and live in rooms~~
+  * ~~Load NPCs~~
+  * ~~Show NPCs in the room~~
+  * ~~Make the /look command give details on NPCs~~
+  * Let NPCs follow scripts (so they can talk and move)
+* Add combat
 * Chat Improvements
   * Don't send blank messages
   * Require 'say'
-  * Add 'yell' when rooms are built out
+  * Add 'yell'
 * Admin login and features (kick people)
-* Add NPCs/bots
 * Add stats
-* Add combat
 * Add classes
 * Add skills
 * Add progression

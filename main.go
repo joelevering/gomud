@@ -20,9 +20,13 @@ type gameState struct {
 }
 
 type Client struct {
-	channel chan<- string
-	name    string
-	room    *Room
+	channel   chan<- string
+	name      string
+	room      *Room
+	maxHealth int
+	health    int
+	str       int
+	end       int
 }
 
 func (cli Client) Say(msg string) {
