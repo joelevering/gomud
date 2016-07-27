@@ -22,12 +22,24 @@ Most commands have their first letter as a shortcut
 func HandleConn(conn net.Conn) {
 	ch := make(chan string)
 	go clientWriter(conn, ch)
-	ch <- "Who are you?"
-	namer := bufio.NewScanner(conn)
-	namer.Scan()
-	who := namer.Text()
+	cli := Client{channel: ch}
 
-	cli := Client{channel: ch, name: who}
+	var confirmed string
+	var who string
+
+	for strings.ToUpper(confirmed) != "Y" {
+		cli.sendMsg("Who are you?")
+		input := bufio.NewScanner(conn)
+		input.Scan()
+		who = input.Text()
+
+		cli.sendMsg(fmt.Sprintf("Are you sure you want to be called \"%s\"? (Y to confirm)", who))
+		input.Scan()
+		confirmed = input.Text()
+	}
+
+	cli.name = who
+
 	ClientEnters(&cli)
 
 	input := bufio.NewScanner(conn)
@@ -74,7 +86,7 @@ func handleCommand(cli *Client, cmd string) {
 	words := strings.Split(cmd, " ")
 	key := words[0]
 
-	switch key {
+	switch strings.ToLower(key) {
 	case "":
 	case "ls", "list":
 		cli.List()
