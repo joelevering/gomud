@@ -16,7 +16,7 @@ Available commands:
 'list' to see who is currently in your room
 'help' to repeat this message
 
-Anything else will be broadcast as a message to the people in your room
+Most commands have their first letter as a shortcut
 `
 
 func HandleConn(conn net.Conn) {
@@ -97,6 +97,6 @@ func handleCommand(cli *Client, cmd string) {
 	case "y", "yell":
 		cli.Yell(strings.Join(words[1:], " "))
 	default:
-		cli.sendMsg("I'm not sure what you mean. Type '/help' for assistance.")
+		cli.sendMsg("I'm not sure what you mean. Type 'help' for assistance.")
 	}
 }

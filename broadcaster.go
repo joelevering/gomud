@@ -1,12 +1,15 @@
 package main
 
-import "log"
+import (
+	"fmt"
+	"log"
+)
 
 func Broadcaster() {
 	for {
 		select {
 		case cli := <-Entering:
-			log.Print("User logged in: " + cli.name)
+			log.Printf("User logged in: %s", cli.name)
 
 			GameState.clients[cli.name] = cli
 
@@ -14,7 +17,7 @@ func Broadcaster() {
 
 			cli.Look()
 
-			go broadcast(cli.name + " has logged in!")
+			go broadcast(fmt.Sprintf("%s has logged in!", cli.name))
 		case cli := <-Leaving:
 			RemoveClientFromRoom(cli, "")
 
@@ -23,7 +26,7 @@ func Broadcaster() {
 			delete(GameState.clients, cli.name)
 			close(cli.channel)
 
-			go broadcast(cli.name + " has logged out!")
+			go broadcast(fmt.Sprintf("%s has logged out!", cli.name))
 		}
 	}
 }

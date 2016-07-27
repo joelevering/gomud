@@ -20,7 +20,6 @@ Anything else will be broadcast as a message to the people in your room
 
 # TODO
 * Confirm name on entry during sign in (some people don't realize they're entering a name)
-* Quote Say and Yell command messages so it's clearer when they start/stop
 * Write a boat load of tests
   * All commands
 * Add NPCs/bots
