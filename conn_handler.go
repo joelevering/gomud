@@ -21,33 +21,34 @@ Most commands have their first letter as a shortcut
 
 func HandleConn(conn net.Conn) {
 	ch := make(chan string)
+
 	go clientWriter(conn, ch)
-	cli := Client{channel: ch}
+	cli := NewClient(ch)
 
 	var confirmed string
 	var who string
 
 	for strings.ToUpper(confirmed) != "Y" {
-		cli.sendMsg("Who are you?")
+		cli.SendMsg("Who are you?")
 		input := bufio.NewScanner(conn)
 		input.Scan()
 		who = input.Text()
 
-		cli.sendMsg(fmt.Sprintf("Are you sure you want to be called \"%s\"? (Y to confirm)", who))
+		cli.SendMsg(fmt.Sprintf("Are you sure you want to be called \"%s\"? (Y to confirm)", who))
 		input.Scan()
 		confirmed = input.Text()
 	}
 
-	cli.name = who
+	cli.Name = who
 
-	ClientEnters(&cli)
+	ClientEnters(cli)
 
 	input := bufio.NewScanner(conn)
 	for input.Scan() {
-		handleCommand(&cli, input.Text())
+		handleCommand(cli, input.Text())
 	}
 
-	ClientLeft(&cli)
+	ClientLeft(cli)
 	conn.Close()
 }
 
@@ -58,28 +59,28 @@ func clientWriter(conn net.Conn, ch <-chan string) {
 }
 
 func RemoveClientFromRoom(cli *Client, msg string) {
-	oldRoom := cli.room
-	oldRoomClients := oldRoom.clients
+	oldRoom := cli.Room
+	oldRoomClients := oldRoom.Clients
 	for i, client := range oldRoomClients {
 		if client == cli {
 			oldRoomClients[i] = oldRoomClients[len(oldRoomClients)-1]
 			oldRoomClients[len(oldRoomClients)-1] = nil
-			cli.room.clients = oldRoomClients[:len(oldRoomClients)-1]
+			cli.Room.Clients = oldRoomClients[:len(oldRoomClients)-1]
 		}
 	}
 
 	if msg == "" {
-		oldRoom.message(cli.name + " has left the room!")
+		oldRoom.Message(cli.Name + " has left the room!")
 	} else {
-		oldRoom.message(msg)
+		oldRoom.Message(msg)
 	}
 }
 
 func SetCurrentRoom(cli *Client, room *Room) {
-	room.message(cli.name + " has entered the room!")
+	room.Message(cli.Name + " has entered the room!")
 
-	cli.room = room
-	room.clients = append(room.clients, cli)
+	cli.Room = room
+	room.Clients = append(room.Clients, cli)
 }
 
 func handleCommand(cli *Client, cmd string) {
@@ -100,7 +101,7 @@ func handleCommand(cli *Client, cmd string) {
 		if len(words) > 1 {
 			cli.Move(words[1])
 		} else {
-			cli.sendMsg("Where are you trying to go??")
+			cli.SendMsg("Where are you trying to go??")
 		}
 	case "h", "help":
 		cli.Help()
@@ -109,6 +110,6 @@ func handleCommand(cli *Client, cmd string) {
 	case "y", "yell":
 		cli.Yell(strings.Join(words[1:], " "))
 	default:
-		cli.sendMsg("I'm not sure what you mean. Type 'help' for assistance.")
+		cli.SendMsg("I'm not sure what you mean. Type 'help' for assistance.")
 	}
 }

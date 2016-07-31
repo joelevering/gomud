@@ -9,30 +9,30 @@ func Broadcaster() {
 	for {
 		select {
 		case cli := <-Entering:
-			log.Printf("User logged in: %s", cli.name)
+			log.Printf("User logged in: %s", cli.Name)
 
-			GameState.clients[cli.name] = cli
+			GameState.Clients[cli.Name] = cli
 
-			SetCurrentRoom(cli, GameState.defaultRoom)
+			SetCurrentRoom(cli, GameState.DefaultRoom)
 
 			cli.Look()
 
-			go broadcast(fmt.Sprintf("%s has logged in!", cli.name))
+			go broadcast(fmt.Sprintf("%s has logged in!", cli.Name))
 		case cli := <-Leaving:
 			RemoveClientFromRoom(cli, "")
 
-			log.Print("User logged out: " + cli.name)
+			log.Print("User logged out: " + cli.Name)
 
-			delete(GameState.clients, cli.name)
-			close(cli.channel)
+			delete(GameState.Clients, cli.Name)
+			close(cli.Channel)
 
-			go broadcast(fmt.Sprintf("%s has logged out!", cli.name))
+			go broadcast(fmt.Sprintf("%s has logged out!", cli.Name))
 		}
 	}
 }
 
 func broadcast(msg string) {
-	for _, cli := range GameState.clients {
-		cli.sendMsg(msg)
+	for _, cli := range GameState.Clients {
+		cli.SendMsg(msg)
 	}
 }

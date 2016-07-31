@@ -7,95 +7,105 @@ import (
 )
 
 type Client struct {
-	channel   chan<- string
-	name      string
-	room      *Room
-	maxHealth int
-	health    int
-	str       int
-	end       int
+	Channel   chan<- string
+	Name      string
+	Room      *Room
+	MaxHealth int
+	Health    int
+	Str       int
+	End       int
+}
+
+func NewClient(ch chan<- string) *Client {
+	return &Client{
+		Channel:   ch,
+		MaxHealth: 20,
+		Health:    20,
+		Str:       5,
+		End:       5,
+	}
 }
 
 func (cli Client) List() {
-	names := []string{fmt.Sprintf("Yourself (%s)", cli.name)}
+	names := []string{fmt.Sprintf("Yourself (%s)", cli.Name)}
 
-	for _, otherCli := range cli.room.clients {
-		if otherCli.name != cli.name {
-			names = append(names, otherCli.name)
+	for _, otherCli := range cli.Room.Clients {
+		if otherCli.Name != cli.Name {
+			names = append(names, otherCli.Name)
 		}
 	}
 
-	for _, npc := range cli.room.npcs {
-		names = append(names, npc.name+" (NPC)")
+	for _, npc := range cli.Room.Npcs {
+		names = append(names, fmt.Sprintf("%s (NPC)", npc.Name))
 	}
 
-	cli.sendMsg(fmt.Sprintf("You look around and see: %s", strings.Join(names, ", ")))
+	cli.SendMsg(fmt.Sprintf("You look around and see: %s", strings.Join(names, ", ")))
 }
 
 func (cli Client) Look() {
-	cli.sendMsg(fmt.Sprintf("~~%s~~", cli.room.name))
-	cli.sendMsg(cli.room.desc)
-	cli.sendMsg("")
-	cli.sendMsg("Exits:")
-	for _, exit := range cli.room.exits {
-		cli.sendMsg(fmt.Sprintf("- %s", exit.desc))
+	cli.SendMsg(fmt.Sprintf("~~%s~~", cli.Room.Name))
+	cli.SendMsg(cli.Room.Desc)
+	cli.SendMsg("")
+	cli.SendMsg("Exits:")
+	for _, exit := range cli.Room.Exits {
+		cli.SendMsg(fmt.Sprintf("- %s", exit.Desc))
 	}
 
-	cli.sendMsg("")
+	cli.SendMsg("")
 	cli.List()
 }
 
 func (cli Client) LookNPC(npcName string) {
 	found := false
 
-	for _, npc := range cli.room.npcs {
-		if strings.Contains(strings.ToUpper(npc.name), strings.ToUpper(npcName)) {
-			cli.sendMsg(fmt.Sprintf("You look at %s and see:", npc.name))
-			cli.sendMsg(npc.desc)
+	for _, npc := range cli.Room.Npcs {
+		if strings.Contains(strings.ToUpper(npc.Name), strings.ToUpper(npcName)) {
+			cli.SendMsg(fmt.Sprintf("You look at %s and see:", npc.Name))
+			cli.SendMsg(npc.Desc)
 			found = true
 		}
 	}
 
 	if found == false {
-		cli.sendMsg("Who are you looking at??")
+		cli.SendMsg("Who are you looking at??")
 	}
 }
 
 func (cli *Client) Move(exitKey string) {
-	for _, exit := range cli.room.exits {
-		if strings.ToUpper(exitKey) == strings.ToUpper(exit.key) {
-			RemoveClientFromRoom(cli, fmt.Sprintf("%s heads to %s!", cli.name, exit.room.name))
-			SetCurrentRoom(cli, exit.room)
+	for _, exit := range cli.Room.Exits {
+		if strings.ToUpper(exitKey) == strings.ToUpper(exit.Key) {
+			RemoveClientFromRoom(cli, fmt.Sprintf("%s heads to %s!", cli.Name, exit.Room.Name))
+			SetCurrentRoom(cli, exit.Room)
 			cli.Look()
 			return
 		}
 	}
 
-	cli.sendMsg("Where are you trying to go??")
+	cli.SendMsg("Where are you trying to go??")
 }
 
 func (cli Client) Help() {
-	cli.sendMsg(HelpMsg)
+	cli.SendMsg(HelpMsg)
 }
 
 func (cli Client) Say(msg string) {
 	if msg != "" {
-		cli.room.message(fmt.Sprintf("%s says \"%s\"", cli.name, msg))
+		cli.Room.Message(fmt.Sprintf("%s says \"%s\"", cli.Name, msg))
 	}
 }
 
 func (cli Client) Yell(msg string) {
 	if msg != "" {
-		fullMsg := fmt.Sprintf("%s yells \"%s\"", cli.name, msg)
-		cli.room.message(fullMsg)
+		fullMsg := fmt.Sprintf("%s yells \"%s\"", cli.Name, msg)
+		cli.Room.Message(fullMsg)
 
-		for _, exit := range cli.room.exits {
-			exit.room.message(fullMsg)
+		for _, exit := range cli.Room.Exits {
+			exit.Room.Message(fullMsg)
 		}
 	}
 }
 
-func (cli Client) sendMsg(msg string) {
+func (cli Client) SendMsg(msg string) {
 	stamp := time.Now().Format(time.Kitchen)
-	cli.channel <- fmt.Sprintf("%s %s", stamp, msg)
+	cli.Channel <- fmt.Sprintf("%s %s", stamp, msg)
 }

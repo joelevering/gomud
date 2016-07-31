@@ -10,27 +10,27 @@ import (
 )
 
 type Room struct {
-	id      int
-	name    string
-	desc    string
-	exits   []Exit
-	clients []*Client
-	npcs    []NPC
+	Id      int
+	Name    string
+	Desc    string
+	Exits   []Exit
+	Clients []*Client
+	Npcs    []NPC
 }
 
-func (room Room) message(msg string) {
-	for _, client := range room.clients {
-		client.sendMsg(msg)
+func (room Room) Message(msg string) {
+	for _, client := range room.Clients {
+		client.SendMsg(msg)
 	}
 }
 
 type Exit struct {
-	desc string `json:"desc"`
-	key  string `json:"key"`
-	room *Room  `json:"room,omitempty"`
+	Desc string `json:"desc"`
+	Key  string `json:"key"`
+	Room *Room  `json:"room,omitempty"`
 }
 
-func loadRooms() ([]Room, error) {
+func LoadRooms() ([]Room, error) {
 	var rooms []Room
 
 	f, _ := os.Open("rooms.csv")
@@ -47,7 +47,7 @@ func loadRooms() ([]Room, error) {
 
 		var hr = hydrateRoom(roomLine)
 
-		if hr.id == 0 {
+		if hr.Id == 0 {
 			log.Fatal(roomLine)
 		}
 
@@ -58,11 +58,11 @@ func loadRooms() ([]Room, error) {
 	var roomMap = make(map[int]int, 0)
 
 	for i, rm := range rooms {
-		roomMap[rm.id] = i
+		roomMap[rm.Id] = i
 	}
 
 	loadExits(rooms, roomMap)
-	loadNPCs(rooms, roomMap)
+	LoadNPCs(rooms, roomMap)
 
 	return rooms, nil
 }
@@ -70,13 +70,13 @@ func loadRooms() ([]Room, error) {
 func hydrateRoom(roomLine []string) Room {
 	id, err := strconv.Atoi(roomLine[0])
 	if err != nil {
-		return Room{id: 0}
+		return Room{Id: 0}
 	}
 
 	room := Room{
-		id:   id,
-		name: roomLine[1],
-		desc: roomLine[2],
+		Id:   id,
+		Name: roomLine[1],
+		Desc: roomLine[2],
 	}
 
 	return room
@@ -109,10 +109,10 @@ func loadExits(rooms []Room, roomMap map[int]int) {
 
 		eri := roomMap[erid] // Connecting room ID
 
-		exit := Exit{desc: exitLine[1], key: exitLine[2], room: &rooms[eri]}
+		exit := Exit{Desc: exitLine[1], Key: exitLine[2], Room: &rooms[eri]}
 
 		room := &rooms[roomMap[rid]]
 
-		room.exits = append(room.exits, exit)
+		room.Exits = append(room.Exits, exit)
 	}
 }

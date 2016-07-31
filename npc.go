@@ -10,16 +10,16 @@ import (
 )
 
 type NPC struct {
-	id        int
-	name      string
-	desc      string
-	maxHealth int
-	health    int
-	str       int
-	end       int
+	Id        int
+	Name      string
+	Desc      string
+	MaxHealth int
+	Health    int
+	Str       int
+	End       int
 }
 
-func loadNPCs(rooms []Room, roomMap map[int]int) {
+func LoadNPCs(rooms []Room, roomMap map[int]int) {
 	f, _ := os.Open("npcs.csv")
 	r := csv.NewReader(bufio.NewReader(f))
 
@@ -39,16 +39,16 @@ func loadNPCs(rooms []Room, roomMap map[int]int) {
 		end, err := strconv.Atoi(npcLine[7])
 
 		npc := NPC{
-			id:        id,
-			name:      npcLine[2],
-			desc:      npcLine[3],
-			maxHealth: maxHealth,
-			health:    health,
-			str:       str,
-			end:       end,
+			Id:        id,
+			Name:      npcLine[2],
+			Desc:      npcLine[3],
+			MaxHealth: maxHealth,
+			Health:    health,
+			Str:       str,
+			End:       end,
 		}
 
-		if npc.id == 0 {
+		if npc.Id == 0 {
 			log.Fatal(npcLine)
 		}
 
@@ -56,6 +56,6 @@ func loadNPCs(rooms []Room, roomMap map[int]int) {
 
 		room := &rooms[roomMap[rid]]
 
-		room.npcs = append(room.npcs, npc)
+		room.Npcs = append(room.Npcs, npc)
 	}
 }

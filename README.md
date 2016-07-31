@@ -13,25 +13,17 @@ Available commands:
 'list' to see who is currently in your room
 'help' to repeat this message
 
-Anything else will be broadcast as a message to the people in your room
+Most commands have their first letter as a shortcut
 
 # BUGS
-* Help method says to do /help but that doesn't work anymore
 
 # TODO
+* Add combat
 * Write a boat load of tests
   * All commands
-* Add NPCs/bots
-  * ~~NPCs have stats and live in rooms~~
-  * ~~Load NPCs~~
-  * ~~Show NPCs in the room~~
-  * ~~Make the /look command give details on NPCs~~
-  * Let NPCs follow scripts (so they can talk and move)
-* Add combat
+* Let NPCs follow scripts (so they can talk and move)
 * Chat Improvements
-  * ~~Don't send blank messages~~
-  * ~~Require 'say'~~
-  * ~~Add 'yell'~~
+  * Add ability for people to toggle on/off defaulting to 'say'-ing unrecognized commands
 * Admin login and features (kick people)
 * Add stats
 * Add classes

@@ -13,21 +13,21 @@ var Leaving = make(chan *Client)
 var GameState = gameState{}
 
 type gameState struct {
-	clients     map[string]*Client
-	rooms       []Room
-	defaultRoom *Room
+	Clients     map[string]*Client
+	Rooms       []Room
+	DefaultRoom *Room
 }
 
 func initializeGameState() {
-	GameState.clients = make(map[string]*Client)
+	GameState.Clients = make(map[string]*Client)
 
-	var rooms, err = loadRooms()
+	var rooms, err = LoadRooms()
 	if err != nil {
 		panic("Error loading rooms")
 	}
 
-	GameState.rooms = rooms
-	GameState.defaultRoom = &GameState.rooms[8]
+	GameState.Rooms = rooms
+	GameState.DefaultRoom = &GameState.Rooms[8]
 }
 
 func ClientEnters(cli *Client) {
