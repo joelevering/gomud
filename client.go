@@ -56,18 +56,35 @@ func (cli Client) Look() {
 }
 
 func (cli Client) LookNPC(npcName string) {
+	look := func(cli *Client, npc *NPC) {
+		cli.SendMsg(fmt.Sprintf("You look at %s and see:", npc.Name))
+		cli.SendMsg(npc.Desc)
+	}
+	cli.findNpcAndExecute(npcName, "Who are you looking at??", look)
+}
+
+func (cli Client) AttackNPC(npcName string) {
+	attack := func(cli *Client, npc *NPC) {
+		cli.SendMsg(fmt.Sprintf("You attack %s!", npc.Name))
+		ci := CombatInstance{cli: cli, npc: npc}
+		go ci.Start()
+	}
+
+	cli.findNpcAndExecute(npcName, "Who are you attacking??", attack)
+}
+
+func (cli *Client) findNpcAndExecute(npcName, notFound string, function func(*Client, *NPC)) {
 	found := false
 
 	for _, npc := range cli.Room.Npcs {
 		if strings.Contains(strings.ToUpper(npc.Name), strings.ToUpper(npcName)) {
-			cli.SendMsg(fmt.Sprintf("You look at %s and see:", npc.Name))
-			cli.SendMsg(npc.Desc)
+			function(cli, &npc)
 			found = true
 		}
 	}
 
 	if found == false {
-		cli.SendMsg("Who are you looking at??")
+		cli.SendMsg(notFound)
 	}
 }
 
