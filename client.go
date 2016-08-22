@@ -19,10 +19,10 @@ type Client struct {
 func NewClient(ch chan<- string) *Client {
 	return &Client{
 		Channel:   ch,
-		MaxHealth: 20,
-		Health:    20,
-		Str:       5,
-		End:       5,
+		MaxHealth: 200,
+		Health:    200,
+		Str:       20,
+		End:       50,
 	}
 }
 
