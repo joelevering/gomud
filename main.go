@@ -7,8 +7,8 @@ import (
 
 const port = "1919"
 
-var Entering = make(chan *Client)
-var Leaving = make(chan *Client)
+var entering = make(chan *Client)
+var leaving = make(chan *Client)
 
 var GameState = gameState{}
 
@@ -18,7 +18,32 @@ type gameState struct {
 	DefaultRoom *Room
 }
 
-func initializeGameState() {
+func main() {
+	initGameState()
+
+	host := localIp() + ":" + port
+	log.Print("Hosting on: " + host)
+	listener, err := net.Listen("tcp", host)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+  go Gatekeeper(entering, leaving)
+
+	for {
+		conn, err := listener.Accept()
+
+		if err != nil {
+			log.Print(err)
+			continue
+		}
+
+		go HandleConn(conn)
+	}
+}
+
+func initGameState() {
 	GameState.Clients = make(map[string]*Client)
 
 	var rooms, err = LoadRooms()
@@ -28,14 +53,6 @@ func initializeGameState() {
 
 	GameState.Rooms = rooms
 	GameState.DefaultRoom = &GameState.Rooms[8]
-}
-
-func ClientEnters(cli *Client) {
-	Entering <- cli
-}
-
-func ClientLeft(cli *Client) {
-	Leaving <- cli
 }
 
 func localIp() string {
@@ -50,27 +67,10 @@ func localIp() string {
 	return ""
 }
 
-func main() {
-	initializeGameState()
+func ClientEnters(cli *Client) {
+	entering <- cli
+}
 
-	host := localIp() + ":" + port
-	log.Print("Hosting on: " + host)
-	listener, err := net.Listen("tcp", host)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	go Broadcaster()
-
-	for {
-		conn, err := listener.Accept()
-
-		if err != nil {
-			log.Print(err)
-			continue
-		}
-
-		go HandleConn(conn)
-	}
+func ClientLeft(cli *Client) {
+	leaving <- cli
 }

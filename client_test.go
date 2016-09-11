@@ -1,10 +1,40 @@
 package main
 
-//
-// import (
-// 	"strings"
-// 	"testing"
-// )
+import "testing"
+
+func Test_EnterRoom(t *testing.T) {
+	cli := Client{}
+	oldRoom := Room{Id: 99, Clients: []*Client{&cli}}
+	cli.Room = &oldRoom
+	room := Room{Id: 101}
+
+	cli.EnterRoom(&room)
+
+	if cli.Room.Id != 101 {
+		t.Errorf("Expected client room to be set as %d but it was set as %d", room.Id, cli.Room.Id)
+	}
+
+	if room.Clients[0] != &cli {
+		t.Errorf("Expected client to be the first of the room's clients")
+	}
+
+	if len(room.Clients) != 1 {
+		t.Errorf("Expected room to only have one client, but it has %d", len(room.Clients))
+	}
+}
+
+func Test_LeaveRoom(t *testing.T) {
+	cli := Client{}
+	oldRoom := Room{Clients: []*Client{&cli}}
+	cli.Room = &oldRoom
+
+	cli.LeaveRoom("")
+
+	if len(oldRoom.Clients) != 0 {
+		t.Errorf("Expected oldRoom to have no clients, but it has %d", len(oldRoom.Clients))
+	}
+}
+
 //
 // func Test_SendMsg(t *testing.T) {
 // 	ch := make(chan string)

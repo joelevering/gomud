@@ -2,12 +2,14 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net"
 	"strings"
 	"time"
 )
 
 type Client struct {
-	Channel   chan<- string
+	Channel   chan string
 	Name      string
 	Room      *Room
 	MaxHealth int
@@ -16,13 +18,20 @@ type Client struct {
 	End       int
 }
 
-func NewClient(ch chan<- string) *Client {
+func NewClient(ch chan string) *Client {
 	return &Client{
 		Channel:   ch,
 		MaxHealth: 200,
 		Health:    200,
 		Str:       20,
 		End:       50,
+	}
+}
+
+func (cli Client) StartWriter(conn net.Conn) {
+	log.Print("Starting Writer")
+	for msg := range cli.Channel {
+		fmt.Fprintln(conn, msg)
 	}
 }
 
@@ -91,18 +100,14 @@ func (cli *Client) findNpcAndExecute(npcName, notFound string, function func(*Cl
 func (cli *Client) Move(exitKey string) {
 	for _, exit := range cli.Room.Exits {
 		if strings.ToUpper(exitKey) == strings.ToUpper(exit.Key) {
-			RemoveClientFromRoom(cli, fmt.Sprintf("%s heads to %s!", cli.Name, exit.Room.Name))
-			SetCurrentRoom(cli, exit.Room)
+			cli.LeaveRoom(fmt.Sprintf("%s heads to %s!", cli.Name, exit.Room.Name))
+			cli.EnterRoom(exit.Room)
 			cli.Look()
 			return
 		}
 	}
 
 	cli.SendMsg("Where are you trying to go??")
-}
-
-func (cli Client) Help() {
-	cli.SendMsg(HelpMsg)
 }
 
 func (cli Client) Say(msg string) {
@@ -125,4 +130,17 @@ func (cli Client) Yell(msg string) {
 func (cli Client) SendMsg(msg string) {
 	stamp := time.Now().Format(time.Kitchen)
 	cli.Channel <- fmt.Sprintf("%s %s", stamp, msg)
+}
+
+func (cli *Client) LeaveRoom(msg string) {
+	if msg == "" {
+		msg = fmt.Sprintf("%s has left the room!", cli.Name)
+	}
+
+	cli.Room.RemoveCli(cli, msg)
+}
+
+func (cli *Client) EnterRoom(room *Room) {
+	room.AddCli(cli)
+	cli.Room = room
 }

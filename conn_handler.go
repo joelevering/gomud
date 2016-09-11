@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-var HelpMsg = `
+const helpMsg = `
 Available commands:
 'say <message>' to communicate with people in your room
 'move <exit key>' to move to a new room
@@ -20,13 +20,26 @@ Most commands have their first letter as a shortcut
 `
 
 func HandleConn(conn net.Conn) {
+	defer conn.Close()
+
 	ch := make(chan string)
-
-	go clientWriter(conn, ch)
 	cli := NewClient(ch)
+	go cli.StartWriter(conn)
 
-	var confirmed string
-	var who string
+	cli.Name = confirmName(cli, conn)
+
+	ClientEnters(cli)
+
+	input := bufio.NewScanner(conn)
+	for input.Scan() {
+		handleCommand(cli, input.Text())
+	}
+
+	ClientLeft(cli)
+}
+
+func confirmName(cli *Client, conn net.Conn) string {
+	var confirmed, who string
 
 	for strings.ToUpper(confirmed) != "Y" {
 		cli.SendMsg("Who are you?")
@@ -39,48 +52,7 @@ func HandleConn(conn net.Conn) {
 		confirmed = input.Text()
 	}
 
-	cli.Name = who
-
-	ClientEnters(cli)
-
-	input := bufio.NewScanner(conn)
-	for input.Scan() {
-		handleCommand(cli, input.Text())
-	}
-
-	ClientLeft(cli)
-	conn.Close()
-}
-
-func clientWriter(conn net.Conn, ch <-chan string) {
-	for msg := range ch {
-		fmt.Fprintln(conn, msg)
-	}
-}
-
-func RemoveClientFromRoom(cli *Client, msg string) {
-	oldRoom := cli.Room
-	oldRoomClients := oldRoom.Clients
-	for i, client := range oldRoomClients {
-		if client == cli {
-			oldRoomClients[i] = oldRoomClients[len(oldRoomClients)-1]
-			oldRoomClients[len(oldRoomClients)-1] = nil
-			cli.Room.Clients = oldRoomClients[:len(oldRoomClients)-1]
-		}
-	}
-
-	if msg == "" {
-		oldRoom.Message(cli.Name + " has left the room!")
-	} else {
-		oldRoom.Message(msg)
-	}
-}
-
-func SetCurrentRoom(cli *Client, room *Room) {
-	room.Message(cli.Name + " has entered the room!")
-
-	cli.Room = room
-	room.Clients = append(room.Clients, cli)
+	return who
 }
 
 func handleCommand(cli *Client, cmd string) {
@@ -104,7 +76,7 @@ func handleCommand(cli *Client, cmd string) {
 			cli.SendMsg("Where are you trying to go??")
 		}
 	case "h", "help":
-		cli.Help()
+		cli.SendMsg(helpMsg)
 	case "s", "say":
 		cli.Say(strings.Join(words[1:], " "))
 	case "y", "yell":

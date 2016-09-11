@@ -24,6 +24,23 @@ func (room Room) Message(msg string) {
 	}
 }
 
+func (room *Room) RemoveCli(cli *Client, msg string) {
+	for i, client := range room.Clients {
+		if client == cli {
+			room.Clients[i] = room.Clients[len(room.Clients)-1]
+			room.Clients[len(room.Clients)-1] = nil
+			room.Clients = room.Clients[:len(room.Clients)-1]
+		}
+	}
+
+	room.Message(msg)
+}
+
+func (room *Room) AddCli(cli *Client) {
+	room.Message(cli.Name + " has entered the room!")
+	room.Clients = append(room.Clients, cli)
+}
+
 type Exit struct {
 	Desc string `json:"desc"`
 	Key  string `json:"key"`
