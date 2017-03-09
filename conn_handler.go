@@ -19,7 +19,12 @@ Available commands:
 Most commands have their first letter as a shortcut
 `
 
-func HandleConn(conn net.Conn) {
+type ConnHandler struct {
+	entering chan *Client
+	leaving  chan *Client
+}
+
+func (handler *ConnHandler) Handle(conn net.Conn) {
 	defer conn.Close()
 
 	ch := make(chan string)
@@ -28,14 +33,14 @@ func HandleConn(conn net.Conn) {
 
 	cli.Name = confirmName(cli, conn)
 
-	ClientEnters(cli)
+	handler.entering <- cli
 
 	input := bufio.NewScanner(conn)
 	for input.Scan() {
 		handleCommand(cli, input.Text())
 	}
 
-	ClientLeft(cli)
+	handler.leaving <- cli
 }
 
 func confirmName(cli *Client, conn net.Conn) string {

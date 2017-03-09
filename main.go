@@ -7,9 +7,6 @@ import (
 
 const port = "1919"
 
-var entering = make(chan *Client)
-var leaving = make(chan *Client)
-
 var GameState = gameState{}
 
 type gameState struct {
@@ -29,7 +26,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-  go Gatekeeper(entering, leaving)
+	var entering = make(chan *Client)
+	var leaving = make(chan *Client)
+
+	connHandler := ConnHandler{
+		entering: entering,
+		leaving:  leaving,
+	}
+
+	go Gatekeeper(entering, leaving)
 
 	for {
 		conn, err := listener.Accept()
@@ -39,7 +44,7 @@ func main() {
 			continue
 		}
 
-		go HandleConn(conn)
+		go connHandler.Handle(conn)
 	}
 }
 
@@ -65,12 +70,4 @@ func localIp() string {
 	}
 
 	return ""
-}
-
-func ClientEnters(cli *Client) {
-	entering <- cli
-}
-
-func ClientLeft(cli *Client) {
-	leaving <- cli
 }

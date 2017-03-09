@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func Test_EnterRoom(t *testing.T) {
 	cli := Client{}
@@ -35,19 +38,19 @@ func Test_LeaveRoom(t *testing.T) {
 	}
 }
 
-//
-// func Test_SendMsg(t *testing.T) {
-// 	ch := make(chan string)
-// 	cli := NewClient(ch)
-//
-// 	go cli.SendMsg("testing SendMsg")
-//
-// 	res := <-ch
-//
-// 	if !strings.Contains(res, "testing SendMsg") {
-// 		t.Error("Expected SendMsg to send 'testing SendMsg' to channel, but it didn't")
-// 	}
-// }
+func Test_SendMsg(t *testing.T) {
+	ch := make(chan string)
+	cli := NewClient(ch)
+
+	go cli.SendMsg("testing SendMsg")
+
+	res := <-ch
+
+	if !strings.Contains(res, "testing SendMsg") {
+		t.Error("Expected SendMsg to send 'testing SendMsg' to channel, but it didn't")
+	}
+}
+
 //
 // // This test is broken because the Client does not have a Room
 // // I want to mock Room but this would require that Client take
