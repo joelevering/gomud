@@ -5,42 +5,48 @@ import (
 	"log"
 )
 
-func Gatekeeper(entering, leaving <-chan *Client) {
+type Gatekeeper struct {
+  entering <-chan *Client
+  leaving <-chan *Client
+  state *GameState
+}
+
+func (gk *Gatekeeper) KeepTheGate() {
 	for {
 		select {
-		case cli := <-entering:
-			logIn(cli)
-		case cli := <-leaving:
-			logOut(cli)
+		case cli := <-gk.entering:
+			gk.logIn(cli)
+		case cli := <-gk.leaving:
+			gk.logOut(cli)
 		}
 	}
 }
 
-func broadcast(msg string) {
-	for _, cli := range GameState.Clients {
+func (gk *Gatekeeper) broadcast(msg string) {
+	for _, cli := range gk.state.Clients {
 		cli.SendMsg(msg)
 	}
 }
 
-func logIn(cli *Client) {
+func (gk *Gatekeeper) logIn(cli *Client) {
 	log.Printf("User logged in: %s", cli.Name)
 
-	GameState.Clients[cli.Name] = cli
+	gk.state.Clients[cli.Name] = cli
 
-	cli.EnterRoom(GameState.DefaultRoom)
+	cli.EnterRoom(gk.state.DefaultRoom)
 
 	cli.Look()
 
-	go broadcast(fmt.Sprintf("%s has logged in!", cli.Name))
+	go gk.broadcast(fmt.Sprintf("%s has logged in!", cli.Name))
 }
 
-func logOut(cli *Client) {
+func (gk *Gatekeeper) logOut(cli *Client) {
 	cli.LeaveRoom("")
 
 	log.Printf("User logged out: %s", cli.Name)
 
-	delete(GameState.Clients, cli.Name)
+	delete(gk.state.Clients, cli.Name)
 	close(cli.Channel)
 
-	go broadcast(fmt.Sprintf("%s has logged out!", cli.Name))
+	go gk.broadcast(fmt.Sprintf("%s has logged out!", cli.Name))
 }

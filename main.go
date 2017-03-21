@@ -7,16 +7,14 @@ import (
 
 const port = "1919"
 
-var GameState = gameState{}
-
-type gameState struct {
+type GameState struct {
 	Clients     map[string]*Client
 	Rooms       []Room
 	DefaultRoom *Room
 }
 
 func main() {
-	initGameState()
+	gameState := initGameState()
 
 	host := localIp() + ":" + port
 	log.Print("Hosting on: " + host)
@@ -34,7 +32,13 @@ func main() {
 		leaving:  leaving,
 	}
 
-	go Gatekeeper(entering, leaving)
+  gateKeeper := Gatekeeper{
+    entering: entering,
+    leaving: leaving,
+    state: gameState,
+  }
+
+	go gateKeeper.KeepTheGate()
 
 	for {
 		conn, err := listener.Accept()
@@ -48,16 +52,20 @@ func main() {
 	}
 }
 
-func initGameState() {
-	GameState.Clients = make(map[string]*Client)
+func initGameState() *GameState {
+  var state = GameState{}
+
+	state.Clients = make(map[string]*Client)
 
 	var rooms, err = LoadRooms()
 	if err != nil {
 		panic("Error loading rooms")
 	}
 
-	GameState.Rooms = rooms
-	GameState.DefaultRoom = &GameState.Rooms[8]
+	state.Rooms = rooms
+	state.DefaultRoom = &state.Rooms[8]
+
+  return &state
 }
 
 func localIp() string {
