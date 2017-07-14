@@ -3,12 +3,14 @@ package main
 import (
 	"fmt"
 	"log"
+
+	"github.com/joelevering/gomud/client"
 )
 
 type Gatekeeper struct {
-  entering <-chan *Client
-  leaving <-chan *Client
-  state *GameState
+	entering <-chan *client.Client
+	leaving  <-chan *client.Client
+	state    *GameState
 }
 
 func (gk *Gatekeeper) KeepTheGate() {
@@ -28,7 +30,7 @@ func (gk *Gatekeeper) broadcast(msg string) {
 	}
 }
 
-func (gk *Gatekeeper) logIn(cli *Client) {
+func (gk *Gatekeeper) logIn(cli *client.Client) {
 	log.Printf("User logged in: %s", cli.Name)
 
 	gk.state.Clients[cli.Name] = cli
@@ -40,7 +42,7 @@ func (gk *Gatekeeper) logIn(cli *Client) {
 	go gk.broadcast(fmt.Sprintf("%s has logged in!", cli.Name))
 }
 
-func (gk *Gatekeeper) logOut(cli *Client) {
+func (gk *Gatekeeper) logOut(cli *client.Client) {
 	cli.LeaveRoom("")
 
 	log.Printf("User logged out: %s", cli.Name)

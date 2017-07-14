@@ -1,9 +1,9 @@
-package main
+package client
 
 import "testing"
 
 func Test_LoadingRooms(t *testing.T) {
-	var rooms, err = LoadRooms()
+	var rooms, err = LoadRooms("rooms.json")
 	if err != nil {
 		t.Errorf("Error loading rooms: %s", err)
 	}

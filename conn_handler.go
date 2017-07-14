@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net"
 	"strings"
+
+	"github.com/joelevering/gomud/client"
 )
 
 const helpMsg = `
@@ -20,15 +22,15 @@ Most commands have their first letter as a shortcut
 `
 
 type ConnHandler struct {
-	entering chan *Client
-	leaving  chan *Client
+	entering chan *client.Client
+	leaving  chan *client.Client
 }
 
 func (handler *ConnHandler) Handle(conn net.Conn) {
 	defer conn.Close()
 
 	ch := make(chan string)
-	cli := NewClient(ch)
+	cli := client.NewClient(ch)
 	go cli.StartWriter(conn)
 
 	cli.Name = confirmName(cli, conn)
@@ -43,7 +45,7 @@ func (handler *ConnHandler) Handle(conn net.Conn) {
 	handler.leaving <- cli
 }
 
-func confirmName(cli *Client, conn net.Conn) string {
+func confirmName(cli *client.Client, conn net.Conn) string {
 	var confirmed, who string
 
 	for strings.ToUpper(confirmed) != "Y" {
@@ -60,7 +62,7 @@ func confirmName(cli *Client, conn net.Conn) string {
 	return who
 }
 
-func handleCommand(cli *Client, cmd string) {
+func handleCommand(cli *client.Client, cmd string) {
 	words := strings.Split(cmd, " ")
 	key := words[0]
 

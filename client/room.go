@@ -1,8 +1,9 @@
-package main
+package client
 
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 )
 
 // use pointers for slices
@@ -55,11 +56,13 @@ func (r *RoomFinder) Find(roomID int) *Room {
 	return r.Rooms[index]
 }
 
-func LoadRooms() ([]*Room, error) {
+func LoadRooms(path string) ([]*Room, error) {
 	var rooms []*Room
 
-	f, _ := ioutil.ReadFile("rooms.json")
+	f, _ := ioutil.ReadFile(path)
 	json.Unmarshal(f, &rooms)
+
+	log.Printf("rooms: %v", rooms)
 
 	attachRoomsToExits(rooms)
 

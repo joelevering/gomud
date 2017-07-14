@@ -1,4 +1,4 @@
-package main
+package client
 
 import (
 	"fmt"
@@ -53,11 +53,11 @@ func (cli Client) List() {
 
 func (cli Client) Look() {
 	cli.SendMsg(
-    fmt.Sprintf("~~%s~~", cli.Room.Name),
-    cli.Room.Desc,
-    "",
-    "Exits:",
-  )
+		fmt.Sprintf("~~%s~~", cli.Room.Name),
+		cli.Room.Desc,
+		"",
+		"Exits:",
+	)
 
 	for _, exit := range cli.Room.Exits {
 		cli.SendMsg(fmt.Sprintf("- %s", exit.Desc))
@@ -70,9 +70,9 @@ func (cli Client) Look() {
 func (cli Client) LookNPC(npcName string) {
 	look := func(cli *Client, npc *NPC) {
 		cli.SendMsg(
-      fmt.Sprintf("You look at %s and see:", npc.Name),
-      npc.Desc,
-    )
+			fmt.Sprintf("You look at %s and see:", npc.Name),
+			npc.Desc,
+		)
 	}
 	cli.findNpcAndExecute(npcName, "Who are you looking at??", look)
 }
@@ -133,10 +133,10 @@ func (cli Client) Yell(msg string) {
 }
 
 func (cli Client) SendMsg(msgs ...string) {
-  for _, msg := range msgs {
-    stamp := time.Now().Format(time.Kitchen)
-    cli.Channel <- fmt.Sprintf("%s %s", stamp, msg)
-  }
+	for _, msg := range msgs {
+		stamp := time.Now().Format(time.Kitchen)
+		cli.Channel <- fmt.Sprintf("%s %s", stamp, msg)
+	}
 }
 
 func (cli *Client) LeaveRoom(msg string) {
