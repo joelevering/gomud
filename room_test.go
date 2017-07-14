@@ -36,8 +36,12 @@ func Test_LoadingRooms(t *testing.T) {
 		t.Errorf("Exit key expected to be 'o' but got %v", exit.Key)
 	}
 
+	if exit.RoomID != rooms[1].Id {
+		t.Errorf("Exit room ID expected to be room %v but got %v", rooms[1].Id, exit.Room.Id)
+	}
+
 	if exit.Room.Id != rooms[1].Id {
-		t.Errorf("Exit room expected to be room with ID %v but got ID %v", rooms[1].Id, exit.Room.Id)
+		t.Errorf("Exit room ID expected to be room %v but got %v", rooms[1].Id, exit.Room.Id)
 	}
 
 	var npc = room.Npcs[0]

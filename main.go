@@ -9,7 +9,7 @@ const port = "1919"
 
 type GameState struct {
 	Clients     map[string]*Client
-	Rooms       []Room
+	Rooms       []*Room
 	DefaultRoom *Room
 }
 
@@ -32,11 +32,11 @@ func main() {
 		leaving:  leaving,
 	}
 
-  gateKeeper := Gatekeeper{
-    entering: entering,
-    leaving: leaving,
-    state: gameState,
-  }
+	gateKeeper := Gatekeeper{
+		entering: entering,
+		leaving:  leaving,
+		state:    gameState,
+	}
 
 	go gateKeeper.KeepTheGate()
 
@@ -53,7 +53,7 @@ func main() {
 }
 
 func initGameState() *GameState {
-  var state = GameState{}
+	var state = GameState{}
 
 	state.Clients = make(map[string]*Client)
 
@@ -63,9 +63,9 @@ func initGameState() *GameState {
 	}
 
 	state.Rooms = rooms
-	state.DefaultRoom = &state.Rooms[8]
+	state.DefaultRoom = state.Rooms[8]
 
-  return &state
+	return &state
 }
 
 func localIp() string {

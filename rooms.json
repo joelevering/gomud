@@ -1,0 +1,206 @@
+[
+  {
+    "id": 1,
+    "name": "The Throne Room",
+    "description": "A large hall with a green throne in the center",
+    "exits": [
+      {
+        "room_id": 2,
+        "key": "o",
+        "description": "(O)ut to the Grand Stairs"
+      },
+      {
+        "room_id": 6,
+        "key": "i",
+        "description": "(I)nto the King's Chambers"
+      },
+      {
+        "room_id": 7,
+        "key": "k",
+        "description": "Towards the (K)itchen"
+      },
+      {
+        "room_id": 8,
+        "key": "g",
+        "description": "Over to the (G)uest Quarters"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 1,
+        "name": "King Slime",
+        "description": "A massive pile of gelatinous goo adorned with two huge eyes",
+        "max_health": 999999,
+        "health": 999999,
+        "strength": 9999,
+        "endurance": 9999
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "The Grand Stairs",
+    "description": "The grandest of stairs",
+    "exits": [
+      {
+        "room_id": 1,
+        "key": "i",
+        "description": "(I)n to the Throne Room"
+      },
+      {
+        "room_id": 3,
+        "key": "e",
+        "description": "(E)xplore the Courtyard"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "The Courtyard",
+    "description": "A desolate courtyard littered with dead trees",
+    "exits": [
+      {
+        "room_id": 2,
+        "key": "u",
+        "description": "(U)p the Grand Stairs"
+      },
+      {
+        "room_id": 5,
+        "key": "t",
+        "description": "(T)oward the Castle Gate"
+      },
+      {
+        "room_id": 4,
+        "key": "crawl",
+        "description": "A crack in the wall contains hints of green"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Hidden grove",
+    "description": "A cluster of greenery",
+    "exits": [
+      {
+        "room_id": 3,
+        "key": "c",
+        "description": "(C)rawl back through the wall"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 5,
+        "name": "Tornado",
+        "description": "A playful Dalmatian",
+        "max_health": 999999,
+        "health": 999999,
+        "strength": 9999,
+        "endurance": 9999
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "The Castle Gate",
+    "description": "A gate of fair size - closed",
+    "exits": [
+      {
+        "room_id": 3,
+        "key": "i",
+        "description": "(I)nto the Courtyard"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 3,
+        "name": "Guard Slime",
+        "description": "Looks kinda intimidating with that oversized helmet",
+        "max_health": 777777,
+        "health": 777777,
+        "strength": 7777,
+        "endurance": 7777
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "The King's Chambers",
+    "description": "Looks like a big ol' king lives here",
+    "exits": [
+      {
+        "room_id": 1,
+        "key": "o",
+        "description": "(O)ut to the Throne Room"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "The Kitchen",
+    "description": "A number of pots and pans are strewn about -- aparently unused in years",
+    "exits": [
+      {
+        "room_id": 1,
+        "key": "o",
+        "description": "(O)ut to the Throne Room"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 2,
+        "name": "Chef Slime",
+        "description": "Chef slime best slime",
+        "max_health": 888888,
+        "health": 888888,
+        "strength": 8888,
+        "endurance": 8888
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "name": "Guest Quarters",
+    "description": "A stone room replete with several piles of hay",
+    "exits": [
+      {
+        "room_id": 1,
+        "key": "o",
+        "description": "(O)ut to the Throne Room"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 4,
+        "name": "Baby Slime",
+        "description": "Fast asleep amidst a haypile",
+        "max_health": 666666,
+        "health": 666666,
+        "strength": 6666,
+        "endurance": 6666
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "name": "Cave",
+    "description": "A dark and unfamiliar cave",
+    "exits": [
+      {
+        "room_id": 1,
+        "key": "p",
+        "description": "Through a faint (p)ortal in the back of the cave"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 6,
+        "name": "Crab",
+        "description": "This crab looks like it's prepared for battle",
+        "max_health": 50,
+        "health": 50,
+        "strength": 10,
+        "endurance": 30
+      }
+    ]
+  }
+]
