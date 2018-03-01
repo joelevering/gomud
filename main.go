@@ -5,14 +5,16 @@ import (
 	"net"
 
 	"github.com/joelevering/gomud/client"
+	"github.com/joelevering/gomud/interfaces"
+	"github.com/joelevering/gomud/room"
 )
 
 const port = "1919"
 
 type GameState struct {
 	Clients     map[string]*client.Client
-	Rooms       []*client.Room
-	DefaultRoom *client.Room
+	Rooms       []interfaces.RoomI
+	DefaultRoom interfaces.RoomI
 }
 
 func main() {
@@ -59,7 +61,7 @@ func initGameState() *GameState {
 
 	state.Clients = make(map[string]*client.Client)
 
-	var rooms, err = client.LoadRooms("client/rooms.json")
+	var rooms, err = room.LoadRooms("room/rooms.json")
 	if err != nil {
 		panic("Error loading rooms")
 	}

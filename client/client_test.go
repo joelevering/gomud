@@ -3,18 +3,21 @@ package client
 import (
 	"strings"
 	"testing"
+
+	"github.com/joelevering/gomud/interfaces"
+	"github.com/joelevering/gomud/room"
 )
 
 func Test_EnterRoom(t *testing.T) {
 	cli := Client{}
-	oldRoom := Room{Id: 99, Clients: []*Client{&cli}}
+	oldRoom := room.Room{Id: 99, Clients: []interfaces.CliI{&cli}}
 	cli.Room = &oldRoom
-	room := Room{Id: 101}
+	room := room.Room{Id: 101}
 
 	cli.EnterRoom(&room)
 
-	if cli.Room.Id != 101 {
-		t.Errorf("Expected client room to be set as %d but it was set as %d", room.Id, cli.Room.Id)
+	if cli.GetRoom().GetID() != 101 {
+		t.Errorf("Expected client room to be set as %d but it was set as %d", room.GetID(), cli.GetRoom().GetID())
 	}
 
 	if room.Clients[0] != &cli {
@@ -28,7 +31,7 @@ func Test_EnterRoom(t *testing.T) {
 
 func Test_LeaveRoom(t *testing.T) {
 	cli := Client{}
-	oldRoom := Room{Clients: []*Client{&cli}}
+	oldRoom := room.Room{Clients: []interfaces.CliI{&cli}}
 	cli.Room = &oldRoom
 
 	cli.LeaveRoom("")

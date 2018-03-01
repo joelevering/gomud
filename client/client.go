@@ -6,12 +6,14 @@ import (
 	"net"
 	"strings"
 	"time"
+
+	"github.com/joelevering/gomud/interfaces"
 )
 
 type Client struct {
 	Channel   chan string
 	Name      string
-	Room      *Room
+	Room      interfaces.RoomI
 	MaxHealth int
 	Health    int
 	Str       int
@@ -38,14 +40,14 @@ func (cli Client) StartWriter(conn net.Conn) {
 func (cli Client) List() {
 	names := []string{fmt.Sprintf("Yourself (%s)", cli.Name)}
 
-	for _, otherCli := range cli.Room.Clients {
-		if otherCli.Name != cli.Name {
-			names = append(names, otherCli.Name)
+	for _, otherCli := range cli.Room.GetClients() {
+		if otherCli.GetName() != cli.Name {
+			names = append(names, otherCli.GetName())
 		}
 	}
 
-	for _, npc := range cli.Room.Npcs {
-		names = append(names, fmt.Sprintf("%s (NPC)", npc.Name))
+	for _, npc := range cli.Room.GetNpcs() {
+		names = append(names, fmt.Sprintf("%s (NPC)", npc.GetName()))
 	}
 
 	cli.SendMsg(fmt.Sprintf("You look around and see: %s", strings.Join(names, ", ")))
@@ -53,14 +55,14 @@ func (cli Client) List() {
 
 func (cli Client) Look() {
 	cli.SendMsg(
-		fmt.Sprintf("~~%s~~", cli.Room.Name),
-		cli.Room.Desc,
+		fmt.Sprintf("~~%s~~", cli.Room.GetName()),
+		cli.Room.GetDesc(),
 		"",
 		"Exits:",
 	)
 
-	for _, exit := range cli.Room.Exits {
-		cli.SendMsg(fmt.Sprintf("- %s", exit.Desc))
+	for _, exit := range cli.Room.GetExits() {
+		cli.SendMsg(fmt.Sprintf("- %s", exit.GetDesc()))
 	}
 
 	cli.SendMsg("")
@@ -68,18 +70,18 @@ func (cli Client) Look() {
 }
 
 func (cli Client) LookNPC(npcName string) {
-	look := func(cli *Client, npc *NPC) {
+	look := func(cli *Client, npc interfaces.NPCI) {
 		cli.SendMsg(
-			fmt.Sprintf("You look at %s and see:", npc.Name),
-			npc.Desc,
+			fmt.Sprintf("You look at %s and see:", npc.GetName()),
+			npc.GetDesc(),
 		)
 	}
 	cli.findNpcAndExecute(npcName, "Who are you looking at??", look)
 }
 
 func (cli Client) AttackNPC(npcName string) {
-	attack := func(cli *Client, npc *NPC) {
-		cli.SendMsg(fmt.Sprintf("You attack %s!", npc.Name))
+	attack := func(cli *Client, npc interfaces.NPCI) {
+		cli.SendMsg(fmt.Sprintf("You attack %s!", npc.GetName()))
 		ci := CombatInstance{cli: cli, npc: npc}
 		go ci.Start()
 	}
@@ -87,12 +89,12 @@ func (cli Client) AttackNPC(npcName string) {
 	cli.findNpcAndExecute(npcName, "Who are you attacking??", attack)
 }
 
-func (cli *Client) findNpcAndExecute(npcName, notFound string, function func(*Client, *NPC)) {
+func (cli *Client) findNpcAndExecute(npcName, notFound string, function func(*Client, interfaces.NPCI)) {
 	found := false
 
-	for _, npc := range cli.Room.Npcs {
-		if strings.Contains(strings.ToUpper(npc.Name), strings.ToUpper(npcName)) {
-			function(cli, &npc)
+	for _, npc := range cli.Room.GetNpcs() {
+		if strings.Contains(strings.ToUpper(npc.GetName()), strings.ToUpper(npcName)) {
+			function(cli, npc)
 			found = true
 		}
 	}
@@ -103,10 +105,10 @@ func (cli *Client) findNpcAndExecute(npcName, notFound string, function func(*Cl
 }
 
 func (cli *Client) Move(exitKey string) {
-	for _, exit := range cli.Room.Exits {
-		if strings.ToUpper(exitKey) == strings.ToUpper(exit.Key) {
-			cli.LeaveRoom(fmt.Sprintf("%s heads to %s!", cli.Name, exit.Room.Name))
-			cli.EnterRoom(exit.Room)
+	for _, exit := range cli.Room.GetExits() {
+		if strings.ToUpper(exitKey) == strings.ToUpper(exit.GetKey()) {
+			cli.LeaveRoom(fmt.Sprintf("%s heads to %s!", cli.Name, exit.GetRoom().GetName()))
+			cli.EnterRoom(exit.GetRoom())
 			cli.Look()
 			return
 		}
@@ -126,8 +128,8 @@ func (cli Client) Yell(msg string) {
 		fullMsg := fmt.Sprintf("%s yells \"%s\"", cli.Name, msg)
 		cli.Room.Message(fullMsg)
 
-		for _, exit := range cli.Room.Exits {
-			exit.Room.Message(fullMsg)
+		for _, exit := range cli.Room.GetExits() {
+			exit.GetRoom().Message(fullMsg)
 		}
 	}
 }
@@ -147,7 +149,15 @@ func (cli *Client) LeaveRoom(msg string) {
 	cli.Room.RemoveCli(cli, msg)
 }
 
-func (cli *Client) EnterRoom(room *Room) {
+func (cli *Client) EnterRoom(room interfaces.RoomI) {
 	room.AddCli(cli)
 	cli.Room = room
+}
+
+func (cli *Client) GetName() string {
+	return cli.Name
+}
+
+func (cli *Client) GetRoom() interfaces.RoomI {
+	return cli.Room
 }
