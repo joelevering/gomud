@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/joelevering/gomud/interfaces"
+	"github.com/joelevering/gomud/mocks"
 	"github.com/joelevering/gomud/room"
 )
 
@@ -54,23 +55,23 @@ func Test_SendMsg(t *testing.T) {
 	}
 }
 
-//
-// // This test is broken because the Client does not have a Room
-// // I want to mock Room but this would require that Client take
-// // An interface instead of a room, which would in turn necessitate
-// // Getters for all exposed Room attributes and (if making a separate
-// // mocks package) somehow getting the Mocks package to recognize
-// // structs defined in main (e.g. Exits and other return values required
-// // for the mock Room to adhere to the new interface)
-// func TestSay(t *testing.T) {
-// 	ch := make(chan string)
-// 	cli := NewClient(ch)
-//
-// 	go cli.Say("testing Say")
-//
-// 	res := <-ch
-//
-// 	if !strings.Contains(res, "testing Say") {
-// 		t.Error("Expected Say to send 'testing Say' to the room, but it didn't")
-// 	}
-// }
+// This test is broken because the Client does not have a Room
+// I want to mock Room but this would require that Client take
+// An interface instead of a room, which would in turn necessitate
+// Getters for all exposed Room attributes and (if making a separate
+// mocks package) somehow getting the Mocks package to recognize
+// structs defined in main (e.g. Exits and other return values required
+// for the mock Room to adhere to the new interface)
+func TestSay(t *testing.T) {
+	ch := make(chan string)
+	defer close(ch)
+	cli := NewClient(ch)
+	room := &mocks.MockRoom{}
+	cli.Room = room
+
+	cli.Say("testing Say")
+
+	if !strings.Contains(room.Messages[0], "testing Say") {
+		t.Error("Expected Say to send 'testing Say' to the room, but it didn't")
+	}
+}

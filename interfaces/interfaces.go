@@ -4,8 +4,8 @@ import "net"
 
 type RoomI interface {
 	Message(string)
-	RemoveCli(CliI, string)
 	AddCli(CliI)
+	RemoveCli(CliI, string)
 	GetExits() []ExitI
 	GetNpcs() []NPCI
 	GetClients() []CliI
