@@ -3,14 +3,18 @@ package main
 import (
 	"log"
 	"net"
+
+	"github.com/joelevering/gomud/client"
+	"github.com/joelevering/gomud/interfaces"
+	"github.com/joelevering/gomud/room"
 )
 
 const port = "1919"
 
 type GameState struct {
-	Clients     map[string]*Client
-	Rooms       []*Room
-	DefaultRoom *Room
+	Clients     map[string]*client.Client
+	Rooms       []interfaces.RoomI
+	DefaultRoom interfaces.RoomI
 }
 
 func main() {
@@ -24,8 +28,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	var entering = make(chan *Client)
-	var leaving = make(chan *Client)
+	var entering = make(chan *client.Client)
+	var leaving = make(chan *client.Client)
 
 	connHandler := ConnHandler{
 		entering: entering,
@@ -55,9 +59,9 @@ func main() {
 func initGameState() *GameState {
 	var state = GameState{}
 
-	state.Clients = make(map[string]*Client)
+	state.Clients = make(map[string]*client.Client)
 
-	var rooms, err = LoadRooms()
+	var rooms, err = room.LoadRooms("room/rooms.json")
 	if err != nil {
 		panic("Error loading rooms")
 	}
