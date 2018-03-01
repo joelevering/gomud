@@ -18,6 +18,8 @@ Most commands have their first letter as a shortcut
 # BUGS
 
 # TODO
+Immediate priority: test Client methods now that interfaces are used and mocks can be built out
+
 * Add combat
   * ~~Allow players to initiate combat~~
   * ~~Basic combat algorithm~~
