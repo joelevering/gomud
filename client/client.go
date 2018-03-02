@@ -90,18 +90,14 @@ func (cli Client) AttackNPC(npcName string) {
 }
 
 func (cli *Client) findNpcAndExecute(npcName, notFound string, function func(*Client, interfaces.NPCI)) {
-	found := false
-
 	for _, npc := range cli.Room.GetNpcs() {
 		if strings.Contains(strings.ToUpper(npc.GetName()), strings.ToUpper(npcName)) {
 			function(cli, npc)
-			found = true
+			return
 		}
 	}
 
-	if found == false {
-		cli.SendMsg(notFound)
-	}
+	cli.SendMsg(notFound)
 }
 
 func (cli *Client) Move(exitKey string) {

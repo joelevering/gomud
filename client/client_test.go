@@ -249,6 +249,7 @@ func Test_MoveWithAccurateExitKey(t *testing.T) {
 		t.Errorf("Expected room name 'Name' but got %s", res)
 	}
 
+	// If the above test passes, assume it's 'Look'-ing and clear the channel before closing
 	for i := 0; i < 5; i++ {
 		res = <-ch
 	}
