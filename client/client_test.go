@@ -55,14 +55,133 @@ func Test_SendMsg(t *testing.T) {
 	}
 }
 
-// This test is broken because the Client does not have a Room
-// I want to mock Room but this would require that Client take
-// An interface instead of a room, which would in turn necessitate
-// Getters for all exposed Room attributes and (if making a separate
-// mocks package) somehow getting the Mocks package to recognize
-// structs defined in main (e.g. Exits and other return values required
-// for the mock Room to adhere to the new interface)
-func TestSay(t *testing.T) {
+func Test_List(t *testing.T) {
+	ch := make(chan string)
+	defer close(ch)
+	cli := NewClient(ch)
+	room := &mocks.MockRoom{
+		Clients: []interfaces.CliI{
+			&Client{
+				Name: "Heide",
+			},
+		},
+	}
+	cli.Room = room
+
+	go cli.List()
+
+	res := <-ch
+
+	// Sends preface
+	if !strings.Contains(res, "You look around and see") {
+		t.Errorf("Expected List to send 'You look around and see' to the room, but it sent %s", res)
+	}
+
+	// Lists client
+	if !strings.Contains(res, "Yourself") {
+		t.Errorf("Expected List to send 'Yourself' to the room, but it sent %s", res)
+	}
+
+	// Lists NPCs
+	if !strings.Contains(res, "Harold (NPC)") {
+		t.Errorf("Expected List to send 'Harold (NPC)' to the room, but it sent %s", res)
+	}
+
+	// Lists other clients
+	if !strings.Contains(res, "Heide") {
+		t.Errorf("Expected List to send 'Heide' to the room, but it sent %s", res)
+	}
+}
+
+func Test_Look(t *testing.T) {
+	ch := make(chan string)
+	defer close(ch)
+	cli := NewClient(ch)
+	room := &mocks.MockRoom{
+		Name: "Name",
+		Exits: []interfaces.ExitI{
+			&room.Exit{
+				Desc: "You can go with this",
+			},
+			&room.Exit{
+				Desc: "You can go with that",
+			},
+		},
+	}
+	cli.Room = room
+
+	go cli.Look()
+
+	res := <-ch
+	if !strings.Contains(res, "~~Name~~") {
+		t.Errorf("Expected room name 'Name' but got %s", res)
+	}
+
+	res = <-ch
+	if !strings.Contains(res, "Desc") {
+		t.Errorf("Expected room desc 'Desc' but got %s", res)
+	}
+
+	res = <-ch // Should be just time stamp (e.g. blank line sent)
+
+	res = <-ch
+	if !strings.Contains(res, "Exits:") {
+		t.Errorf("Expected Look to send 'Exits:', but got %s", res)
+	}
+
+	res = <-ch
+	if !strings.Contains(res, "You can go with this") {
+		t.Errorf("Expected Look to send 'You can go with this', but got %s", res)
+	}
+
+	res = <-ch
+	if !strings.Contains(res, "You can go with that") {
+		t.Errorf("Expected Look to send 'You can go with that', but got %s", res)
+	}
+
+	res = <-ch // Should be just time stamp (e.g. blank line sent)
+
+	res = <-ch
+	if !strings.Contains(res, "You look around and see") {
+		t.Errorf("Expected Look to send list, but got %s", res)
+	}
+}
+
+func Test_LookNPCWithNPCName(t *testing.T) {
+	ch := make(chan string)
+	defer close(ch)
+	cli := NewClient(ch)
+	room := &mocks.MockRoom{}
+	cli.Room = room
+
+	go cli.LookNPC("harold")
+
+	res := <-ch
+	if !strings.Contains(res, "You look at Harold and see:") {
+		t.Errorf("Expected 'You look at Harold and see:' but got unexpected LookNPC result '%s'", res)
+	}
+	res = <-ch
+	if !strings.Contains(res, "Holding a purple crayon") {
+		t.Errorf("Expected 'Holding a purple crayon' but got unexpected LookNPC result '%s'", res)
+	}
+}
+
+func Test_LookNPCWithNoNPC(t *testing.T) {
+	ch := make(chan string)
+	defer close(ch)
+	cli := NewClient(ch)
+	room := &mocks.MockRoom{}
+	cli.Room = room
+
+	go cli.LookNPC("missingno")
+
+	res := <-ch
+	if !strings.Contains(res, "Who are you looking at??") {
+		t.Errorf("Expected 'Who are you looking at??' with unknown NPC, but got '%s'", res)
+	}
+}
+
+func Test_Say(t *testing.T) {
 	ch := make(chan string)
 	defer close(ch)
 	cli := NewClient(ch)
@@ -73,5 +192,80 @@ func TestSay(t *testing.T) {
 
 	if !strings.Contains(room.Messages[0], "testing Say") {
 		t.Error("Expected Say to send 'testing Say' to the room, but it didn't")
+	}
+}
+
+func Test_Yell(t *testing.T) {
+	ch := make(chan string)
+	defer close(ch)
+	cli := NewClient(ch)
+	adjacentRoom := &mocks.MockRoom{}
+	room := &mocks.MockRoom{
+		Exits: []interfaces.ExitI{
+			&room.Exit{
+				Room: adjacentRoom,
+			},
+		},
+	}
+	cli.Room = room
+
+	cli.Yell("TESTING YELL")
+
+	if !strings.Contains(adjacentRoom.Messages[0], "TESTING YELL") {
+		t.Error("Expected Yell to send 'TESTING YELL' to adjacent rooms, but it didn't")
+	}
+}
+
+func Test_MoveWithAccurateExitKey(t *testing.T) {
+	ch := make(chan string)
+	defer close(ch)
+	cli := NewClient(ch)
+	adjacentRoom := &mocks.MockRoom{
+		Name: "Adjacent Room",
+	}
+	room := &mocks.MockRoom{
+		Exits: []interfaces.ExitI{
+			&room.Exit{
+				Room: adjacentRoom,
+				Key:  "o",
+			},
+		},
+	}
+	cli.Room = room
+
+	go cli.Move("o")
+
+	res := <-ch
+
+	if room.RemovedCli != cli {
+		t.Error("Expected client to be removed from initial room, but it was not")
+	}
+
+	if adjacentRoom.AddedCli != cli {
+		t.Error("Expected client to be added to adjacent room, but it was not")
+	}
+
+	if !strings.Contains(res, "~~Adjacent Room~~") {
+		t.Errorf("Expected room name 'Name' but got %s", res)
+	}
+
+	for i := 0; i < 5; i++ {
+		res = <-ch
+	}
+}
+
+func Test_MoveWithInaccurateExitKey(t *testing.T) {
+	ch := make(chan string)
+	defer close(ch)
+	cli := NewClient(ch)
+	room := &mocks.MockRoom{}
+	cli.Room = room
+
+	go cli.Move("o")
+
+	res := <-ch
+
+	if !strings.Contains(res, "Where are you trying to go??") {
+		t.Errorf("Expected 'Where are you trying to go??' with unknown move key, but got '%s'", res)
 	}
 }

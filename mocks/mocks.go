@@ -1,10 +1,17 @@
 package mocks
 
-import "github.com/joelevering/gomud/interfaces"
+import (
+	"github.com/joelevering/gomud/interfaces"
+	"github.com/joelevering/gomud/room"
+)
 
 type MockRoom struct {
-	Messages []string
-	Clients  []interfaces.CliI
+	Messages   []string
+	Clients    []interfaces.CliI
+	Exits      []interfaces.ExitI
+	AddedCli   interfaces.CliI
+	RemovedCli interfaces.CliI
+	Name       string
 }
 
 func (m *MockRoom) Message(msg string) {
@@ -12,25 +19,37 @@ func (m *MockRoom) Message(msg string) {
 }
 
 func (m *MockRoom) AddCli(cli interfaces.CliI) {
+	m.AddedCli = cli
 }
 
 func (m *MockRoom) RemoveCli(cli interfaces.CliI, msg string) {
+	m.RemovedCli = cli
 }
 
 func (m *MockRoom) GetExits() []interfaces.ExitI {
-	return []interfaces.ExitI{}
+	return m.Exits
 }
 
 func (m *MockRoom) GetNpcs() []interfaces.NPCI {
-	return []interfaces.NPCI{}
+	return []interfaces.NPCI{
+		&room.NPC{
+			Id:        1,
+			Name:      "Harold",
+			Desc:      "Holding a purple crayon",
+			MaxHealth: 100,
+			Health:    99,
+			Str:       98,
+			End:       97,
+		},
+	}
 }
 
 func (m *MockRoom) GetClients() []interfaces.CliI {
-	return []interfaces.CliI{}
+	return m.Clients
 }
 
 func (m *MockRoom) GetName() string {
-	return "Name"
+	return m.Name
 }
 
 func (m *MockRoom) GetDesc() string {
