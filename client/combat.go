@@ -10,11 +10,12 @@ import (
 type CombatInstance struct {
 	cli  *Client
 	npc  interfaces.NPCI
-	tick int // seconds
+	npc  *NPC
+	tick time.Duration
 }
 
 func (ci CombatInstance) Start() {
-	ci.tick = 1
+	ci.tick = time.Duration(1000) * time.Millisecond
 
 	for ci.noOneIsDead() {
 		npcDmg := ci.calculateDamage(ci.cli.Str, ci.npc.GetEnd())
@@ -32,10 +33,8 @@ func (ci CombatInstance) Start() {
 			ci.cli.Health = ci.cli.Health - pcDmg
 		}
 
-		ci.cli.SendMsg(fmt.Sprintf("%s took %d damage!", ci.npc.GetName(), npcDmg))
-		ci.cli.SendMsg(fmt.Sprintf("You took %d damage!", pcDmg))
-		ci.cli.SendMsg(fmt.Sprintf("You have %d/%d health left. %s has %d/%d", ci.cli.Health, ci.cli.MaxHealth, ci.npc.GetName(), ci.npc.GetHealth(), ci.npc.GetMaxHealth()))
-		time.Sleep(ci.tickDuration())
+    ci.report(npcDmg, pcDmg)
+		time.Sleep(ci.tick)
 	}
 }
 
@@ -54,6 +53,22 @@ func (ci CombatInstance) calculateDamage(atkStr, defEnd int) int {
 	return int(dmg)
 }
 
-func (ci CombatInstance) tickDuration() time.Duration {
-	return time.Duration(ci.tick) * time.Second
+func (ci CombatInstance) report(npcDmg, pcDmg int) {
+  ci.cli.SendMsg(fmt.Sprintf("%s took %d damage!", ci.npc.GetName(), npcDmg))
+  ci.cli.SendMsg(fmt.Sprintf("You took %d damage!", pcDmg))
+
+  if ci.cli.Health <= 0 {
+    ci.cli.SendMsg("You've been defeated.")
+    return
+  }
+
+  var npcMsg string
+
+  if ci.npc.GetHealth() <= 0 {
+    npcMsg = fmt.Sprintf("%s is deafeated!", ci.npc.GetName())
+  } else {
+    npcMsg = fmt.Sprintf("%s has %d/%d", ci.npc.GetName(), ci.npc.GetHealth(), ci.npc.GetMaxHealth())
+  }
+
+  ci.cli.SendMsg(fmt.Sprintf("You have %d/%d health left. %s", ci.cli.Health, ci.cli.MaxHealth, npcMsg))
 }
