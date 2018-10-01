@@ -17,24 +17,32 @@ func (ci CombatInstance) Start() {
 	ci.tick = time.Duration(1000) * time.Millisecond
 
 	for ci.noOneIsDead() {
-		npcDmg := ci.calculateDamage(ci.cli.Str, ci.npc.GetEnd())
-		pcDmg := ci.calculateDamage(ci.npc.GetStr(), ci.cli.End)
-
-		if ci.npc.GetHealth()-npcDmg < 0 {
-			ci.npc.SetHealth(0)
-		} else {
-			ci.npc.SetHealth(ci.npc.GetHealth() - npcDmg)
-		}
-
-		if ci.cli.Health-pcDmg < 0 {
-			ci.cli.Health = 0
-		} else {
-			ci.cli.Health = ci.cli.Health - pcDmg
-		}
-
+    npcDmg, pcDmg := ci.calculateDamages()
+    ci.applyDamage(npcDmg, pcDmg)
     ci.report(npcDmg, pcDmg)
 		time.Sleep(ci.tick)
 	}
+}
+
+func (ci CombatInstance) calculateDamages() (npcDmg, pcDmg int) {
+  npcDmg = ci.calculateDamage(ci.cli.Str, ci.npc.GetEnd())
+  pcDmg = ci.calculateDamage(ci.npc.GetStr(), ci.cli.End)
+
+  return npcDmg, pcDmg
+}
+
+func (ci CombatInstance) applyDamage(npcDmg, pcDmg int) {
+  if ci.npc.GetHealth()-npcDmg < 0 {
+    ci.npc.SetHealth(0)
+  } else {
+    ci.npc.SetHealth(ci.npc.GetHealth() - npcDmg)
+  }
+
+  if ci.cli.Health-pcDmg < 0 {
+    ci.cli.Health = 0
+  } else {
+    ci.cli.Health = ci.cli.Health - pcDmg
+  }
 }
 
 func (ci CombatInstance) noOneIsDead() bool {
