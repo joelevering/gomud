@@ -63,6 +63,6 @@ func Test_LoadingRooms(t *testing.T) {
 	}
 
 	if room.GetNpcs()[0].GetName() != npc.GetName() {
-		t.Error("Expected %v to be in %v", npc.GetName(), room.GetName())
+		t.Errorf("Expected %v to be in %v", npc.GetName(), room.GetName())
 	}
 }

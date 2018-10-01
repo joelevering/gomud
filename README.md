@@ -22,10 +22,10 @@ Most commands have their first letter as a shortcut
 * Add combat
   * ~~Allow players to initiate combat~~
   * ~~Basic combat algorithm~~
+  * ~~Test existing combat~~
+    * ~~Move away from inline code in the combat loop, make it a testable method~~
+    * Could potentially test `report` method by having it return strings and having `Start` send them to the client
   * Switch to smaller stat values + floats and rounding
-  * Test combat
-    * Move away from inline code in the combat loop, make it a testable method
-    * Make CombatInstance take an interface instead of actual Client (move it out of client package?)
   * Implement NPC death
   * Implement Player death
   * Implement NPC spawning
