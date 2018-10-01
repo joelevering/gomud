@@ -10,7 +10,6 @@ import (
 type CombatInstance struct {
 	cli  *Client
 	npc  interfaces.NPCI
-	npc  *NPC
 	tick time.Duration
 }
 
@@ -65,7 +64,7 @@ func (ci CombatInstance) report(npcDmg, pcDmg int) {
   var npcMsg string
 
   if ci.npc.GetHealth() <= 0 {
-    npcMsg = fmt.Sprintf("%s is deafeated!", ci.npc.GetName())
+    npcMsg = fmt.Sprintf("%s is defeated!", ci.npc.GetName())
   } else {
     npcMsg = fmt.Sprintf("%s has %d/%d", ci.npc.GetName(), ci.npc.GetHealth(), ci.npc.GetMaxHealth())
   }
