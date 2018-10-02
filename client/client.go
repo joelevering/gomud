@@ -2,7 +2,6 @@ package client
 
 import (
 	"fmt"
-	"log"
 	"net"
 	"strings"
 	"time"
@@ -18,6 +17,7 @@ type Client struct {
 	Health    int
 	Str       int
 	End       int
+  Spawn     interfaces.RoomI
 }
 
 func NewClient(ch chan string) *Client {
@@ -31,7 +31,6 @@ func NewClient(ch chan string) *Client {
 }
 
 func (cli Client) StartWriter(conn net.Conn) {
-	log.Print("Starting Writer")
 	for msg := range cli.Channel {
 		fmt.Fprintln(conn, msg)
 	}
@@ -148,6 +147,20 @@ func (cli *Client) LeaveRoom(msg string) {
 func (cli *Client) EnterRoom(room interfaces.RoomI) {
 	room.AddCli(cli)
 	cli.Room = room
+}
+
+func (cli *Client) Die(npc interfaces.NPCI) {
+  deathNotice := fmt.Sprintf("%s was defeated by %s. Their body dissipates.", cli.Name, npc.GetName())
+  cli.LeaveRoom(deathNotice)
+
+  cli.SendMsg(fmt.Sprintf("You were defeated by %s.", npc.GetName()))
+  time.Sleep(1500 * time.Millisecond)
+  cli.EnterRoom(cli.Spawn)
+  cli.Health = cli.MaxHealth
+  cli.SendMsg(fmt.Sprintf("You find yourself back in a familiar place: %s", cli.Spawn.GetName()))
+  time.Sleep(1500 * time.Millisecond)
+  cli.SendMsg("")
+  cli.Look()
 }
 
 func (cli *Client) GetName() string {

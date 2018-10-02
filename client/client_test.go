@@ -3,6 +3,7 @@ package client
 import (
 	"strings"
 	"testing"
+  "time"
 
 	"github.com/joelevering/gomud/interfaces"
 	"github.com/joelevering/gomud/mocks"
@@ -74,22 +75,22 @@ func Test_List(t *testing.T) {
 
 	// Sends preface
 	if !strings.Contains(res, "You look around and see") {
-		t.Errorf("Expected List to send 'You look around and see' to the room, but it sent %s", res)
+		t.Errorf("Expected List to send 'You look around and see' to the client, but it sent %s", res)
 	}
 
 	// Lists client
 	if !strings.Contains(res, "Yourself") {
-		t.Errorf("Expected List to send 'Yourself' to the room, but it sent %s", res)
+		t.Errorf("Expected List to send 'Yourself' to the client, but it sent %s", res)
 	}
 
 	// Lists NPCs
 	if !strings.Contains(res, "Harold (NPC)") {
-		t.Errorf("Expected List to send 'Harold (NPC)' to the room, but it sent %s", res)
+		t.Errorf("Expected List to send 'Harold (NPC)' to the client, but it sent %s", res)
 	}
 
 	// Lists other clients
 	if !strings.Contains(res, "Heide") {
-		t.Errorf("Expected List to send 'Heide' to the room, but it sent %s", res)
+		t.Errorf("Expected List to send 'Heide' to the client, but it sent %s", res)
 	}
 }
 
@@ -269,4 +270,40 @@ func Test_MoveWithInaccurateExitKey(t *testing.T) {
 	if !strings.Contains(res, "Where are you trying to go??") {
 		t.Errorf("Expected 'Where are you trying to go??' with unknown move key, but got '%s'", res)
 	}
+}
+
+func Test_Die(t *testing.T) {
+	ch := make(chan string)
+	cli := NewClient(ch)
+
+  origRoom := &mocks.MockRoom{ Name: "origin" }
+  spawn := &mocks.MockRoom{ Name: "spawn" }
+  cli.Room = origRoom
+	cli.Spawn = spawn
+  cli.Health = 0
+
+	go func (ch chan string) {
+    defer close(ch)
+    cli.Die(cli.Room.GetNpcs()[0])
+  }(ch)
+
+	res := <-ch
+
+  time.Sleep(3 * time.Second) // matches sleep in code
+
+	if !strings.Contains(res, "You were defeated by Harold") {
+		t.Errorf("Expected 'You were defeated by Harold' on death, but got '%s'", res)
+	}
+
+  if strings.Contains(res, "was defeated by Harold") {
+    t.Error("Expected client to not receive death notice to room, but it did")
+  }
+
+  if cli.Room != spawn {
+    t.Errorf("Expected to be moved to spawn on death but moved to '%s' instead", cli.Room.GetName())
+  }
+
+  if cli.Health != cli.MaxHealth {
+    t.Errorf("Expected health to be refilled on death but it's set to %d/%d", cli.Health, cli.MaxHealth)
+  }
 }
