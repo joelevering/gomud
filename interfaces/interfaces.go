@@ -30,6 +30,7 @@ type NPCI interface {
 	GetEnd() int
 	GetStr() int
 	SetHealth(int)
+  Die()
 }
 
 type CliI interface {
