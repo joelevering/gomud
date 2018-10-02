@@ -92,7 +92,7 @@ func (room Room) Message(msg string) {
 
 func (room *Room) RemoveCli(cli interfaces.CliI, msg string) {
 	for i, client := range room.Clients {
-		if client == cli {
+		if client.GetName() == cli.GetName() {
 			room.Clients[i] = room.Clients[len(room.Clients)-1]
 			room.Clients[len(room.Clients)-1] = nil
 			room.Clients = room.Clients[:len(room.Clients)-1]
