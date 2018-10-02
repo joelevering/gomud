@@ -27,9 +27,9 @@ Most commands have their first letter as a shortcut
     * Could potentially test `report` method by having it return strings and having `Start` send them to the client
   * Switch to smaller stat values + floats and rounding
   * Implement NPC death
-  * Implement Player death
+  * ~~Implement PC death~~
   * Implement NPC spawning
-  * Implement PC death
+    * NPCs don't know about rooms, so this would be way easier with an actual DB (for instance, to make multiple spawns per enemy)
   * Implement Skills/Abilities
     * Move CombatInstance to live on Client (it needs to be able to take commands while active)
 * Add progression
