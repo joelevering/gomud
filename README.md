@@ -40,7 +40,8 @@ Most commands have their first letter as a shortcut
     * How can NPC behavior (in combat and out of combat) be stored? A list of methods to call in combat?
   * Handle leaving the room during combat (e.g. fleeing)
 * Add progression
-  * PC can gain experience
+  * ~~PC has an exp stat~~
+  * ~~PC can gain experience~~
   * PC can level up
   * PC gains stats on level up
   * Level up exp required scales

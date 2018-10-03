@@ -175,6 +175,11 @@ func (cli *Client) Die(npc interfaces.NPCI) {
   cli.Look()
 }
 
+func (cli *Client) Defeat(npc interfaces.NPCI) {
+  cli.Exp += npc.GetExp()
+  cli.SendMsg(fmt.Sprintf("You gained %d experience! You need some more experience to level up.", npc.GetExp()))
+}
+
 func (cli *Client) GetName() string {
 	return cli.Name
 }

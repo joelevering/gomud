@@ -14,6 +14,7 @@ type NPC struct {
 	Health    int    `json:"health"`
 	Str       int    `json:"strength"`
 	End       int    `json:"endurance"`
+  Exp       int    `json:"experience"`
   Dead      bool
   Spawn     interfaces.RoomI
 }
@@ -40,6 +41,10 @@ func (n *NPC) GetEnd() int {
 
 func (n *NPC) GetStr() int {
 	return n.Str
+}
+
+func (n *NPC) GetExp() int {
+	return n.Exp
 }
 
 func (n *NPC) SetHealth(newHealth int) {

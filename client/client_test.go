@@ -289,7 +289,7 @@ func Test_Die(t *testing.T) {
 
 	res := <-ch
 
-  time.Sleep(1501 * time.Millisecond) // matches sleep in code
+  time.Sleep(1600 * time.Millisecond) // matches sleep in code
 
 	if !strings.Contains(res, "You were defeated by Harold") {
 		t.Errorf("Expected 'You were defeated by Harold' on death, but got '%s'", res)
@@ -305,5 +305,26 @@ func Test_Die(t *testing.T) {
 
   if cli.Health != cli.MaxHealth {
     t.Errorf("Expected health to be refilled on death but it's set to %d/%d", cli.Health, cli.MaxHealth)
+  }
+}
+
+func Test_DefeatGivesExp(t *testing.T) {
+	ch := make(chan string)
+  defer close(ch)
+	cli := NewClient(ch)
+  room := &mocks.MockRoom{}
+  cli.Room = room
+
+	go func (ch chan string) {
+    cli.Defeat(cli.Room.GetNpcs()[0])
+  }(ch)
+
+	res := <-ch
+
+	if !strings.Contains(res, "You gained 10 experience!") {
+		t.Errorf("Expected 'You gained 10 experience' on defeating, but got '%s'", res)
+	}
+  if cli.Exp != 10 {
+    t.Errorf("Expected exp to be 10 but got %d", cli.Exp)
   }
 }

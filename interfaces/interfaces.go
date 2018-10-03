@@ -29,6 +29,7 @@ type NPCI interface {
 	GetMaxHealth() int
 	GetEnd() int
 	GetStr() int
+  GetExp() int
 	SetHealth(int)
   SetSpawn(RoomI)
   Die()

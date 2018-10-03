@@ -40,6 +40,7 @@ func (m *MockRoom) GetNpcs() []interfaces.NPCI {
 			Health:    99,
 			Str:       98,
 			End:       97,
+      Exp:       10,
 		},
 	}
 }
