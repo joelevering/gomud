@@ -321,10 +321,50 @@ func Test_DefeatGivesExp(t *testing.T) {
 
 	res := <-ch
 
-	if !strings.Contains(res, "You gained 10 experience!") {
-		t.Errorf("Expected 'You gained 10 experience' on defeating, but got '%s'", res)
+	if !strings.Contains(res, "You gained 2 experience!") {
+		t.Errorf("Expected 'You gained 2 experience' on defeating, but got '%s'", res)
 	}
-  if cli.Exp != 10 {
-    t.Errorf("Expected exp to be 10 but got %d", cli.Exp)
+  if cli.Exp != 2 {
+    t.Errorf("Expected exp to be 2 but got %d", cli.Exp)
+  }
+	if !strings.Contains(res, "You need 8 more experience to level up.") {
+    t.Errorf("Expected 'You need 8 more experience to level up' on defeating, but got '%s'", res)
+	}
+  if cli.Level != 1 {
+    t.Errorf("Expected to not level up from one fight but hit level %d", cli.Level)
+  }
+}
+
+func Test_DefeatLevelsUpPC(t *testing.T) {
+	ch := make(chan string)
+	cli := NewClient(ch)
+  rm := &mocks.MockRoom{}
+	rm.NPCs = []interfaces.NPCI{
+		&room.NPC{
+      Exp:       10,
+		},
+	}
+  cli.Room = rm
+  cli.Health -= 1
+
+	go func (ch chan string) {
+    defer close(ch)
+    cli.Defeat(cli.Room.GetNpcs()[0])
+  }(ch)
+
+	res := <-ch // Exp gain
+  if !strings.Contains(res, "leveled up!") {
+    t.Errorf("Expected 'leveled up!'' on defeating, but got '%s'", res)
+	}
+
+	res = <-ch // Level up
+  if !strings.Contains(res, "You're now level 2!") {
+    t.Errorf("Expected 'You're now level 2!'' on defeating, but got '%s'", res)
+	}
+  if cli.Level != 2 {
+    t.Errorf("Expected to level up to 2 from defeating but PC is at level %d", cli.Level)
+  }
+  if cli.Health != cli.MaxHealth {
+    t.Errorf("Expected to heal fully on level up but health is %d/%d", cli.Health, cli.MaxHealth)
   }
 }

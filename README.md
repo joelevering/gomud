@@ -42,7 +42,8 @@ Most commands have their first letter as a shortcut
 * Add progression
   * ~~PC has an exp stat~~
   * ~~PC can gain experience~~
-  * PC can level up
+  * ~~PC can level up~~
+  * ~~PC heals on level up~~
   * PC gains stats on level up
   * Level up exp required scales
 * Add a command to see your stats

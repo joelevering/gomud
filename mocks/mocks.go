@@ -11,6 +11,7 @@ type MockRoom struct {
 	Exits      []interfaces.ExitI
 	AddedCli   interfaces.CliI
 	RemovedCli interfaces.CliI
+  NPCs       []interfaces.NPCI
 	Name       string
 }
 
@@ -31,6 +32,10 @@ func (m *MockRoom) GetExits() []interfaces.ExitI {
 }
 
 func (m *MockRoom) GetNpcs() []interfaces.NPCI {
+  if (len(m.NPCs) != 0) {
+    return m.NPCs
+  }
+
 	return []interfaces.NPCI{
 		&room.NPC{
 			Id:        1,
@@ -40,7 +45,7 @@ func (m *MockRoom) GetNpcs() []interfaces.NPCI {
 			Health:    99,
 			Str:       98,
 			End:       97,
-      Exp:       10,
+      Exp:       2,
 		},
 	}
 }
