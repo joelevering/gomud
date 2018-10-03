@@ -40,6 +40,7 @@ type CliI interface {
 	List()
 	Look()
 	LookNPC(string)
+  Status()
 	AttackNPC(string)
 	Move(string)
 	Say(string)

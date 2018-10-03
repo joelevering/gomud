@@ -17,6 +17,7 @@ type Client struct {
 	Health    int
 	Str       int
 	End       int
+  Exp       int
   Spawn     interfaces.RoomI
 }
 
@@ -78,6 +79,15 @@ func (cli Client) LookNPC(npcName string) {
 		)
 	}
 	cli.findNpcAndExecute(npcName, "Who are you looking at??", look)
+}
+
+func (cli *Client) Status() {
+  cli.SendMsg(fmt.Sprintf("~~~~~~~~~~*%s*~~~~~~~~~~", cli.Name))
+  cli.SendMsg(fmt.Sprintf("Health: %d/%d", cli.Health, cli.MaxHealth))
+  cli.SendMsg(fmt.Sprintf("Strength: %d", cli.Str))
+  cli.SendMsg(fmt.Sprintf("Endurance: %d", cli.End))
+  cli.SendMsg("")
+  cli.SendMsg(fmt.Sprintf("Experience: %d/1000", cli.Exp))
 }
 
 func (cli *Client) AttackNPC(npcName string) {

@@ -289,7 +289,7 @@ func Test_Die(t *testing.T) {
 
 	res := <-ch
 
-  time.Sleep(1500 * time.Millisecond) // matches sleep in code
+  time.Sleep(1501 * time.Millisecond) // matches sleep in code
 
 	if !strings.Contains(res, "You were defeated by Harold") {
 		t.Errorf("Expected 'You were defeated by Harold' on death, but got '%s'", res)

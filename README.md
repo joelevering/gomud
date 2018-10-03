@@ -17,6 +17,9 @@ Most commands have their first letter as a shortcut
 
 # BUGS
 
+* Ask for more information when receiving single arg for multi arg commands
+  * 's' as a command returns nothing
+
 # TODO
 
 * Combat
@@ -28,7 +31,7 @@ Most commands have their first letter as a shortcut
   * Switch to smaller stat values + floats and rounding
   * ~~Implement NPC death~~
   * ~~Implement PC death~~
-  * Implement NPC respawn
+  * ~~Implement NPC respawn~~
     * ~~NPCs spawn after rooms are generated~~
     * ~~NPCs can leave/join rooms~~
   * Implement Skills/Abilities
@@ -37,6 +40,10 @@ Most commands have their first letter as a shortcut
     * How can NPC behavior (in combat and out of combat) be stored? A list of methods to call in combat?
   * Handle leaving the room during combat (e.g. fleeing)
 * Add progression
+  * PC can gain experience
+  * PC can level up
+  * PC gains stats on level up
+  * Level up exp required scales
 * Add a command to see your stats
 * Write tests
   * All commands
@@ -48,7 +55,6 @@ Most commands have their first letter as a shortcut
 * Chat Improvements
   * Add ability for people to toggle on/off defaulting to 'say'-ing unrecognized commands
 * Admin login and features (kick people)
-* Add stats
 * Add classes
 * Add items
 * Add UI

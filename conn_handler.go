@@ -90,6 +90,8 @@ func handleCommand(cli *client.Client, cmd string) {
 		cli.Yell(strings.Join(words[1:], " "))
 	case "a", "attack":
 		cli.AttackNPC(words[1])
+	case "st", "status":
+		cli.Status()
 	default:
 		cli.SendMsg("I'm not sure what you mean. Type 'help' for assistance.")
 	}
