@@ -1,5 +1,11 @@
 package room
 
+import (
+  "time"
+
+	"github.com/joelevering/gomud/interfaces"
+)
+
 type NPC struct {
 	Id        int    `json:"id"`
 	Name      string `json:"name"`
@@ -8,6 +14,7 @@ type NPC struct {
 	Health    int    `json:"health"`
 	Str       int    `json:"strength"`
 	End       int    `json:"endurance"`
+  Dead      bool
   Spawn     interfaces.RoomI
 }
 
@@ -39,7 +46,20 @@ func (n *NPC) SetHealth(newHealth int) {
 	n.Health = newHealth
 }
 
+func (n *NPC) SetSpawn(room interfaces.RoomI) {
+  n.Spawn = room
+}
+
 func (n *NPC) Die() {
-  // Leave room
-  // go func to respawn
+  n.Dead = true
+
+  go func() {
+    time.Sleep(10 * time.Second)
+    n.SetHealth(n.GetMaxHealth())
+    n.Dead = false
+  }()
+}
+
+func (n *NPC) IsAlive() bool {
+  return !n.Dead
 }
