@@ -54,7 +54,10 @@ func LoadRooms(path string) ([]interfaces.RoomI, error) {
 	f, _ := ioutil.ReadFile(path)
 	json.Unmarshal(f, &rooms)
 
-	attachRoomsToExits(rooms)
+  setNPCSpawns(rooms)
+
+	roomFinder := newRoomFinder(rooms)
+	attachRoomsToExits(rooms, roomFinder)
 
 	roomIs := []interfaces.RoomI{}
 	for _, room := range rooms {
@@ -64,12 +67,18 @@ func LoadRooms(path string) ([]interfaces.RoomI, error) {
 	return roomIs, nil
 }
 
-func attachRoomsToExits(rooms []*Room) {
-	roomFinder := newRoomFinder(rooms)
-
+func attachRoomsToExits(rooms []*Room, roomFinder *RoomFinder) {
 	for _, room := range rooms {
 		for _, exit := range room.GetExits() {
 			exit.SetRoom(roomFinder.Find(exit.GetRoomID()))
+		}
+	}
+}
+
+func setNPCSpawns(rooms []*Room) {
+	for _, room := range rooms {
+		for _, npc := range room.GetNpcs() {
+			npc.SetSpawn(room)
 		}
 	}
 }

@@ -30,7 +30,9 @@ type NPCI interface {
 	GetEnd() int
 	GetStr() int
 	SetHealth(int)
+  SetSpawn(RoomI)
   Die()
+  IsAlive() bool
 }
 
 type CliI interface {
@@ -45,6 +47,7 @@ type CliI interface {
 	SendMsg(...string)
 	LeaveRoom(string)
 	EnterRoom(RoomI)
+  Die(NPCI)
 	GetName() string
 	GetRoom() RoomI
 }

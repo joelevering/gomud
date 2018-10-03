@@ -46,7 +46,9 @@ func (cli Client) List() {
 	}
 
 	for _, npc := range cli.Room.GetNpcs() {
-		names = append(names, fmt.Sprintf("%s (NPC)", npc.GetName()))
+    if npc.IsAlive() {
+		  names = append(names, fmt.Sprintf("%s (NPC)", npc.GetName()))
+    }
 	}
 
 	cli.SendMsg(fmt.Sprintf("You look around and see: %s", strings.Join(names, ", ")))
@@ -78,7 +80,7 @@ func (cli Client) LookNPC(npcName string) {
 	cli.findNpcAndExecute(npcName, "Who are you looking at??", look)
 }
 
-func (cli Client) AttackNPC(npcName string) {
+func (cli *Client) AttackNPC(npcName string) {
 	attack := func(cli *Client, npc interfaces.NPCI) {
 		cli.SendMsg(fmt.Sprintf("You attack %s!", npc.GetName()))
 		ci := CombatInstance{cli: cli, npc: npc}
@@ -90,7 +92,7 @@ func (cli Client) AttackNPC(npcName string) {
 
 func (cli *Client) findNpcAndExecute(npcName, notFound string, function func(*Client, interfaces.NPCI)) {
 	for _, npc := range cli.Room.GetNpcs() {
-		if strings.Contains(strings.ToUpper(npc.GetName()), strings.ToUpper(npcName)) {
+    if npc.IsAlive() && strings.Contains(strings.ToUpper(npc.GetName()), strings.ToUpper(npcName)) {
 			function(cli, npc)
 			return
 		}
