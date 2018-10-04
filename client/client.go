@@ -202,6 +202,11 @@ func (cli *Client) GetRoom() interfaces.RoomI {
 }
 
 func (cli *Client) levelUp() {
+  // Increase stats
+  cli.MaxHealth += 25
+  cli.Str += 2
+  cli.End += 3
+
   // Level up and carryover EXP
   cli.Level += 1
   cli.Exp = cli.Exp - cli.ExpToLvl

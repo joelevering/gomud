@@ -39,14 +39,14 @@ Most commands have their first letter as a shortcut
   * Implement scripted NPC combat behavior
     * How can NPC behavior (in combat and out of combat) be stored? A list of methods to call in combat?
   * Handle leaving the room during combat (e.g. fleeing)
-* Add progression
+* ~~Add progression~~
   * ~~PC has an exp stat~~
   * ~~PC can gain experience~~
   * ~~PC can level up~~
   * ~~PC heals on level up~~
-  * PC gains stats on level up
-  * Level up exp required scales
-* Add a command to see your stats
+  * ~~PC gains stats on level up~~
+  * ~~Level up exp required scales~~
+* ~~Add a command to see your stats~~
 * Write tests
   * All commands
 * Refactor Cli/NPC code to share an interface

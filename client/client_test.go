@@ -346,6 +346,9 @@ func Test_DefeatLevelsUpPC(t *testing.T) {
 	}
   cli.Room = rm
   cli.Health -= 1
+  origMaxHealth := cli.MaxHealth
+  origEnd := cli.End
+  origStr := cli.Str
 
 	go func (ch chan string) {
     defer close(ch)
@@ -361,6 +364,12 @@ func Test_DefeatLevelsUpPC(t *testing.T) {
   if !strings.Contains(res, "You're now level 2!") {
     t.Errorf("Expected 'You're now level 2!'' on defeating, but got '%s'", res)
 	}
+  if !(cli.MaxHealth > origMaxHealth) {
+    t.Error("Expected max health to increase on defeating but it didn't")
+  }
+  if !(cli.End > origEnd) || !(cli.Str > origStr) {
+    t.Error("Expected END and STR to increase on defeating but they didn't")
+  }
   if cli.Level != 2 {
     t.Errorf("Expected to level up to 2 from defeating but PC is at level %d", cli.Level)
   }
