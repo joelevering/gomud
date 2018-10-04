@@ -1,6 +1,8 @@
 package room
 
-import "testing"
+import (
+  "testing"
+)
 
 func Test_LoadingRooms(t *testing.T) {
 	var rooms, err = LoadRooms("rooms.json")
