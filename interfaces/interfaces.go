@@ -22,6 +22,13 @@ type ExitI interface {
 	GetDesc() string
 }
 
+type CharI interface {
+  GetName() string
+	Move(string) bool
+	Say(string)
+	Yell(string)
+}
+
 type NPCI interface {
 	GetName() string
 	GetDesc() string
@@ -43,13 +50,12 @@ type CliI interface {
 	LookNPC(string)
   Status()
 	AttackNPC(string)
-	Move(string)
-	Say(string)
-	Yell(string)
 	SendMsg(...string)
 	LeaveRoom(string)
 	EnterRoom(RoomI)
   Die(NPCI)
 	GetName() string
 	GetRoom() RoomI
+  SetName(string)
+  SetSpawn(RoomI)
 }

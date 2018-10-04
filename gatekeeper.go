@@ -35,8 +35,8 @@ func (gk *Gatekeeper) logIn(cli *client.Client) {
 
 	gk.state.Clients[cli.Name] = cli
 
-  cli.Spawn = gk.state.DefaultRoom
-	cli.EnterRoom(cli.Spawn)
+  cli.SetSpawn(gk.state.DefaultRoom)
+  cli.Spawn()
 
 	cli.Look()
 

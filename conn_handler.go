@@ -33,7 +33,7 @@ func (handler *ConnHandler) Handle(conn net.Conn) {
 	cli := client.NewClient(ch)
 	go cli.StartWriter(conn)
 
-	cli.Name = confirmName(cli, conn)
+	cli.SetName(confirmName(cli, conn))
 
 	handler.entering <- cli
 

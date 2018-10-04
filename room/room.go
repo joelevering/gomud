@@ -6,6 +6,7 @@ import (
 
 	"github.com/joelevering/gomud/interfaces"
 )
+// TODO check all places where using clients and use characters
 
 type Room struct {
 	Id      int     `json:"id"`
@@ -16,6 +17,7 @@ type Room struct {
 	Npcs    []*NPC `json:"npcs"`
 	NpcIs   []interfaces.NPCI
 	Clients []interfaces.CliI
+  Characters []interfaces.CharI
 }
 
 type Exit struct {
@@ -89,12 +91,12 @@ func (room Room) Message(msg string) {
 	}
 }
 
-func (room *Room) RemoveCli(cli interfaces.CliI, msg string) {
-	for i, client := range room.Clients {
-		if client.GetName() == cli.GetName() {
-			room.Clients[i] = room.Clients[len(room.Clients)-1]
-			room.Clients[len(room.Clients)-1] = nil
-			room.Clients = room.Clients[:len(room.Clients)-1]
+func (room *Room) RemoveChar(c interfaces.CharI, msg string) {
+	for i, char := range room.Characters {
+		if char.GetName() == c.GetName() {
+			room.Characters[i] = room.Characters[len(room.Characters)-1]
+			room.Characters[len(room.Characters)-1] = nil
+			room.Characters = room.Characters[:len(room.Characters)-1]
       break
 		}
 	}
@@ -102,9 +104,9 @@ func (room *Room) RemoveCli(cli interfaces.CliI, msg string) {
 	room.Message(msg)
 }
 
-func (room *Room) AddCli(cli interfaces.CliI) {
-	room.Message(cli.GetName() + " has entered the room!")
-	room.Clients = append(room.Clients, cli)
+func (room *Room) AddChar(c interfaces.CharI) {
+	room.Message(c.GetName() + " has entered the room!")
+	room.Characters = append(room.Characters, c)
 }
 
 func (room *Room) GetExits() []interfaces.ExitI {

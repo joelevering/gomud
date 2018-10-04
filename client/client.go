@@ -23,18 +23,34 @@ type Client struct {
 	Str       int
 	End       int
   Spawn     interfaces.RoomI
+  Character *Character
 }
 
 func NewClient(ch chan string) *Client {
 	return &Client{
 		Channel:   ch,
-    Level:     1,
-    ExpToLvl:  10,
-		MaxHealth: 200,
-		Health:    200,
-		Str:       20,
-		End:       50,
+    Character: &{
+      Level:     1,
+      ExpToLvl:  10,
+      MaxHealth: 200,
+      Health:    200,
+      Str:       20,
+      End:       50,
+    }
 	}
+}
+
+func (cli *Client) SetName(name string) {
+  cli.Name = name
+  cli.Character.Name = name
+}
+
+func (cli *Client) SetSpawn(room interfaces.RoomI) {
+  cli.char.SetSpawn(room)
+}
+
+func (cli *Client) Spawn() {
+	cli.char.Spawn()
 }
 
 func (cli Client) StartWriter(conn net.Conn) {
@@ -121,33 +137,12 @@ func (cli *Client) findNpcAndExecute(npcName, notFound string, function func(*Cl
 }
 
 func (cli *Client) Move(exitKey string) {
-	for _, exit := range cli.Room.GetExits() {
-		if strings.ToUpper(exitKey) == strings.ToUpper(exit.GetKey()) {
-			cli.LeaveRoom(fmt.Sprintf("%s heads to %s!", cli.Name, exit.GetRoom().GetName()))
-			cli.EnterRoom(exit.GetRoom())
-			cli.Look()
-			return
-		}
-	}
-
-	cli.SendMsg("Where are you trying to go??")
-}
-
-func (cli Client) Say(msg string) {
-	if msg != "" {
-		cli.Room.Message(fmt.Sprintf("%s says \"%s\"", cli.Name, msg))
-	}
-}
-
-func (cli Client) Yell(msg string) {
-	if msg != "" {
-		fullMsg := fmt.Sprintf("%s yells \"%s\"", cli.Name, msg)
-		cli.Room.Message(fullMsg)
-
-		for _, exit := range cli.Room.GetExits() {
-			exit.GetRoom().Message(fullMsg)
-		}
-	}
+  if cli.char.Move(exitKey) {
+    // check if can be moved into char
+		cli.Look()
+  } else {
+	  cli.SendMsg("Where are you trying to go??")
+  }
 }
 
 func (cli Client) SendMsg(msgs ...string) {
@@ -163,25 +158,6 @@ func (cli *Client) LeaveRoom(msg string) {
 	}
 
 	cli.Room.RemoveCli(cli, msg)
-}
-
-func (cli *Client) EnterRoom(room interfaces.RoomI) {
-	room.AddCli(cli)
-	cli.Room = room
-}
-
-func (cli *Client) Die(npc interfaces.NPCI) {
-  deathNotice := fmt.Sprintf("%s was defeated by %s. Their body dissipates.", cli.Name, npc.GetName())
-  cli.LeaveRoom(deathNotice)
-
-  cli.SendMsg(fmt.Sprintf("You were defeated by %s.", npc.GetName()))
-  time.Sleep(1500 * time.Millisecond)
-  cli.EnterRoom(cli.Spawn)
-  cli.Health = cli.MaxHealth
-  cli.SendMsg(fmt.Sprintf("You find yourself back in a familiar place: %s", cli.Spawn.GetName()))
-  time.Sleep(1500 * time.Millisecond)
-  cli.SendMsg("")
-  cli.Look()
 }
 
 func (cli *Client) Defeat(npc interfaces.NPCI) {
