@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+  "math"
 	"net"
 	"strings"
 	"time"
@@ -13,6 +14,9 @@ type Client struct {
 	Channel   chan string
 	Name      string
 	Room      interfaces.RoomI
+  Level     int
+  Exp       int
+  ExpToLvl  int
 	MaxHealth int
 	Health    int
 	Str       int
@@ -23,6 +27,8 @@ type Client struct {
 func NewClient(ch chan string) *Client {
 	return &Client{
 		Channel:   ch,
+    Level:     1,
+    ExpToLvl:  10,
 		MaxHealth: 200,
 		Health:    200,
 		Str:       20,
@@ -78,6 +84,16 @@ func (cli Client) LookNPC(npcName string) {
 		)
 	}
 	cli.findNpcAndExecute(npcName, "Who are you looking at??", look)
+}
+
+func (cli *Client) Status() {
+  cli.SendMsg(fmt.Sprintf("~~~~~~~~~~*%s*~~~~~~~~~~", cli.Name))
+  cli.SendMsg(fmt.Sprintf("Level: %d", cli.Level))
+  cli.SendMsg(fmt.Sprintf("Experience: %d/%d", cli.Exp, cli.ExpToLvl))
+  cli.SendMsg("")
+  cli.SendMsg(fmt.Sprintf("Health: %d/%d", cli.Health, cli.MaxHealth))
+  cli.SendMsg(fmt.Sprintf("Strength: %d", cli.Str))
+  cli.SendMsg(fmt.Sprintf("Endurance: %d", cli.End))
 }
 
 func (cli *Client) AttackNPC(npcName string) {
@@ -165,10 +181,41 @@ func (cli *Client) Die(npc interfaces.NPCI) {
   cli.Look()
 }
 
+func (cli *Client) Defeat(npc interfaces.NPCI) {
+  cli.Exp += npc.GetExp()
+
+  if cli.Exp >= cli.ExpToLvl {
+    cli.SendMsg(fmt.Sprintf("You gained %d experience and leveled up!", npc.GetExp()))
+    cli.levelUp()
+  } else {
+    toLvl := cli.ExpToLvl - cli.Exp
+    cli.SendMsg(fmt.Sprintf("You gained %d experience! You need %d more experience to level up.", npc.GetExp(), toLvl))
+  }
+}
+
 func (cli *Client) GetName() string {
 	return cli.Name
 }
 
 func (cli *Client) GetRoom() interfaces.RoomI {
 	return cli.Room
+}
+
+func (cli *Client) levelUp() {
+  // Increase stats
+  cli.MaxHealth += 25
+  cli.Str += 2
+  cli.End += 3
+
+  // Level up and carryover EXP
+  cli.Level += 1
+  cli.Exp = cli.Exp - cli.ExpToLvl
+
+  // Set new EXP to level
+  newExpToLvl := float64(cli.ExpToLvl) * 1.25
+  cli.ExpToLvl = int(math.Round(newExpToLvl))
+
+  cli.Health = cli.MaxHealth // Heal
+
+  cli.SendMsg(fmt.Sprintf("You're now level %d!", cli.Level))
 }

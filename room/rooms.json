@@ -33,7 +33,8 @@
         "max_health": 999999,
         "health": 999999,
         "strength": 9999,
-        "endurance": 9999
+        "endurance": 9999,
+        "experience": 999999
       }
     ]
   },
@@ -95,7 +96,8 @@
         "max_health": 999999,
         "health": 999999,
         "strength": 9999,
-        "endurance": 9999
+        "endurance": 9999,
+        "experience": 999999
       }
     ]
   },
@@ -118,7 +120,8 @@
         "max_health": 777777,
         "health": 777777,
         "strength": 7777,
-        "endurance": 7777
+        "endurance": 7777,
+        "experience": 777777
       }
     ]
   },
@@ -153,7 +156,8 @@
         "max_health": 888888,
         "health": 888888,
         "strength": 8888,
-        "endurance": 8888
+        "endurance": 8888,
+        "experience": 888888
       }
     ]
   },
@@ -176,7 +180,8 @@
         "max_health": 666666,
         "health": 666666,
         "strength": 6666,
-        "endurance": 6666
+        "endurance": 6666,
+        "experience": 666666
       }
     ]
   },
@@ -199,7 +204,8 @@
         "max_health": 50,
         "health": 50,
         "strength": 10,
-        "endurance": 30
+        "endurance": 30,
+        "experience": 10
       }
     ]
   }

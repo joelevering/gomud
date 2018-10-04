@@ -29,6 +29,7 @@ type NPCI interface {
 	GetMaxHealth() int
 	GetEnd() int
 	GetStr() int
+  GetExp() int
 	SetHealth(int)
   SetSpawn(RoomI)
   Die()
@@ -40,6 +41,7 @@ type CliI interface {
 	List()
 	Look()
 	LookNPC(string)
+  Status()
 	AttackNPC(string)
 	Move(string)
 	Say(string)

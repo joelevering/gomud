@@ -28,6 +28,7 @@ func (ci CombatInstance) Start() {
 
     if ci.npcIsDead() {
       ci.npc.Die()
+      ci.cli.Defeat(ci.npc)
       break
     }
 
