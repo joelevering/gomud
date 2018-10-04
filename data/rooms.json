@@ -205,7 +205,19 @@
         "health": 50,
         "strength": 10,
         "endurance": 30,
-        "experience": 10
+        "experience": 10,
+        "ooc_behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [["emote", "snips its claws in the air."]],
+            "chance": 1
+          },
+          {
+            "trigger": "pc-leaves",
+            "actions": [["say", "Phew"]],
+            "chance": 1
+          }
+        ]
       }
     ]
   }

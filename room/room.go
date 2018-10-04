@@ -1,10 +1,8 @@
 package room
 
 import (
-	"encoding/json"
-	"io/ioutil"
-
 	"github.com/joelevering/gomud/interfaces"
+	"github.com/joelevering/gomud/npc"
 )
 
 type Room struct {
@@ -13,7 +11,7 @@ type Room struct {
 	Desc    string  `json:"description"`
 	Exits   []*Exit `json:"exits"`
 	ExitIs  []interfaces.ExitI
-	Npcs    []*NPC `json:"npcs"`
+	Npcs    []*npc.NPC `json:"npcs"`
 	NpcIs   []interfaces.NPCI
 	Clients []interfaces.CliI
 }
@@ -23,64 +21,6 @@ type Exit struct {
 	Key    string `json:"key"`
 	RoomID int    `json:"room_id"`
 	Room   interfaces.RoomI
-}
-
-type RoomFinder struct {
-	roomMap map[int]int // Room ID to index in []Room
-	Rooms   []*Room
-}
-
-func newRoomFinder(rooms []*Room) *RoomFinder {
-	var roomMap = make(map[int]int, 0)
-
-	for i, rm := range rooms {
-		roomMap[rm.GetID()] = i
-	}
-
-	return &RoomFinder{
-		Rooms:   rooms,
-		roomMap: roomMap,
-	}
-}
-
-func (r *RoomFinder) Find(roomID int) interfaces.RoomI {
-	index := r.roomMap[roomID]
-	return r.Rooms[index]
-}
-
-func LoadRooms(path string) ([]interfaces.RoomI, error) {
-	var rooms []*Room
-
-	f, _ := ioutil.ReadFile(path)
-	json.Unmarshal(f, &rooms)
-
-  setNPCSpawns(rooms)
-
-	roomFinder := newRoomFinder(rooms)
-	attachRoomsToExits(rooms, roomFinder)
-
-	roomIs := []interfaces.RoomI{}
-	for _, room := range rooms {
-		roomIs = append(roomIs, interfaces.RoomI(room))
-	}
-
-	return roomIs, nil
-}
-
-func attachRoomsToExits(rooms []*Room, roomFinder *RoomFinder) {
-	for _, room := range rooms {
-		for _, exit := range room.GetExits() {
-			exit.SetRoom(roomFinder.Find(exit.GetRoomID()))
-		}
-	}
-}
-
-func setNPCSpawns(rooms []*Room) {
-	for _, room := range rooms {
-		for _, npc := range room.GetNpcs() {
-			npc.SetSpawn(room)
-		}
-	}
 }
 
 func (room Room) Message(msg string) {

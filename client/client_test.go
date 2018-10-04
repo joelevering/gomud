@@ -7,6 +7,7 @@ import (
 
 	"github.com/joelevering/gomud/interfaces"
 	"github.com/joelevering/gomud/mocks"
+	"github.com/joelevering/gomud/npc"
 	"github.com/joelevering/gomud/room"
 )
 
@@ -340,7 +341,7 @@ func Test_DefeatLevelsUpPC(t *testing.T) {
 	cli := NewClient(ch)
   rm := &mocks.MockRoom{}
 	rm.NPCs = []interfaces.NPCI{
-		&room.NPC{
+		&npc.NPC{
       Exp:       10,
 		},
 	}
