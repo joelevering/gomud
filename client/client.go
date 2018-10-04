@@ -6,6 +6,7 @@ import (
 	"net"
 	"strings"
 	"time"
+  "unicode/utf8"
 
 	"github.com/joelevering/gomud/interfaces"
 )
@@ -87,13 +88,15 @@ func (cli Client) LookNPC(npcName string) {
 }
 
 func (cli *Client) Status() {
-  cli.SendMsg(fmt.Sprintf("~~~~~~~~~~*%s*~~~~~~~~~~", cli.Name))
+  header := fmt.Sprintf("~~~~~~~~~~*%s*~~~~~~~~~~", cli.Name)
+  cli.SendMsg(header)
   cli.SendMsg(fmt.Sprintf("Level: %d", cli.Level))
   cli.SendMsg(fmt.Sprintf("Experience: %d/%d", cli.Exp, cli.ExpToLvl))
   cli.SendMsg("")
   cli.SendMsg(fmt.Sprintf("Health: %d/%d", cli.Health, cli.MaxHealth))
   cli.SendMsg(fmt.Sprintf("Strength: %d", cli.Str))
   cli.SendMsg(fmt.Sprintf("Endurance: %d", cli.End))
+  cli.SendMsg(strings.Repeat("~", utf8.RuneCountInString(header)))
 }
 
 func (cli *Client) AttackNPC(npcName string) {
