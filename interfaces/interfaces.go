@@ -53,3 +53,9 @@ type CliI interface {
 	GetName() string
 	GetRoom() RoomI
 }
+
+type CharI interface {
+  GetName() string
+  SendMsg(string)
+  IsHidden() bool // sub for IsAlive on NPC -- could be used for PC admins
+}
