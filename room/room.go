@@ -95,6 +95,7 @@ func (room *Room) RemoveCli(cli interfaces.CliI, msg string) {
 			room.Clients[i] = room.Clients[len(room.Clients)-1]
 			room.Clients[len(room.Clients)-1] = nil
 			room.Clients = room.Clients[:len(room.Clients)-1]
+      break
 		}
 	}
 
