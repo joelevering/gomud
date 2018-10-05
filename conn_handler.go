@@ -24,13 +24,14 @@ Most commands have their first letter as a shortcut
 type ConnHandler struct {
 	entering chan *client.Client
 	leaving  chan *client.Client
+  state    *GameState
 }
 
 func (handler *ConnHandler) Handle(conn net.Conn) {
 	defer conn.Close()
 
 	ch := make(chan string)
-	cli := client.NewClient(ch)
+	cli := client.NewClient(ch, handler.state.Queue)
 	go cli.StartWriter(conn)
 
 	cli.Name = confirmName(cli, conn)

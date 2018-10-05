@@ -1,17 +1,20 @@
-package room
+package main
 
 import (
   "testing"
+
+  "github.com/joelevering/gomud/pubsub"
 )
 
 func Test_LoadingRooms(t *testing.T) {
-	var rooms, err = LoadRooms("rooms.json")
+	var rooms, err = LoadRooms("data/rooms.json")
 	if err != nil {
 		t.Errorf("Error loading rooms: %s", err)
 	}
 
 	if len(rooms) == 0 {
 		t.Errorf("No rooms loaded")
+    return
 	}
 
 	var room = rooms[0]
@@ -45,8 +48,18 @@ func Test_LoadingRooms(t *testing.T) {
 	if exit.GetRoom().GetID() != rooms[1].GetID() {
 		t.Errorf("Exit room ID expected to be room %v but got %v", rooms[1].GetID(), exit.GetRoom().GetID())
 	}
+}
 
-	var npc = room.GetNpcs()[0]
+func Test_InitializingNPCs(t *testing.T) {
+  rooms, err := LoadRooms("data/rooms.json")
+  queue := pubsub.NewQueue()
+  err = InitNPCs(rooms, queue)
+	if err != nil {
+		t.Errorf("Error initializing NPCs: %s", err)
+	}
+
+  room := rooms[0]
+  npc := room.GetNpcs()[0]
 
 	if npc.GetName() != "King Slime" {
 		t.Errorf("Expected NPC to have name 'King Slime' but got %v", npc.GetName())
@@ -67,4 +80,10 @@ func Test_LoadingRooms(t *testing.T) {
 	if room.GetNpcs()[0].GetName() != npc.GetName() {
 		t.Errorf("Expected %v to be in %v", npc.GetName(), room.GetName())
 	}
+  if len(queue.Chans["pc-enters-1"]) != 1 {
+    t.Error("Expected King Slime to sub to pc-enters-1, but it didn't")
+  }
+  if len(queue.Chans["pc-leaves-1"]) != 1 {
+    t.Error("Expected King Slime to sub to pc-leaves-1, but it didn't")
+  }
 }

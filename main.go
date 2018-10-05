@@ -6,7 +6,7 @@ import (
 
 	"github.com/joelevering/gomud/client"
 	"github.com/joelevering/gomud/interfaces"
-	"github.com/joelevering/gomud/room"
+	"github.com/joelevering/gomud/pubsub"
 )
 
 const port = "1919"
@@ -15,6 +15,7 @@ type GameState struct {
 	Clients     map[string]*client.Client
 	Rooms       []interfaces.RoomI
 	DefaultRoom interfaces.RoomI
+  Queue       interfaces.QueueI
 }
 
 func main() {
@@ -34,6 +35,7 @@ func main() {
 	connHandler := ConnHandler{
 		entering: entering,
 		leaving:  leaving,
+    state:    gameState,
 	}
 
 	gateKeeper := Gatekeeper{
@@ -57,13 +59,19 @@ func main() {
 }
 
 func initGameState() *GameState {
-	var state = GameState{}
+	var state = GameState{
+    Queue: pubsub.NewQueue(),
+  }
 
 	state.Clients = make(map[string]*client.Client)
 
-	var rooms, err = room.LoadRooms("room/rooms.json")
+  rooms, err := LoadRooms("data/rooms.json")
 	if err != nil {
 		panic("Error loading rooms")
+	}
+  err = InitNPCs(rooms, state.Queue)
+	if err != nil {
+    panic("Error loading npcs")
 	}
 
 	state.Rooms = rooms

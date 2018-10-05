@@ -32,8 +32,12 @@ type NPCI interface {
   GetExp() int
 	SetHealth(int)
   SetSpawn(RoomI)
+  Spawn()
+  Say(string)
+  Emote(string)
   Die()
   IsAlive() bool
+  SetBehavior(QueueI)
 }
 
 type CliI interface {
@@ -52,4 +56,10 @@ type CliI interface {
   Die(NPCI)
 	GetName() string
 	GetRoom() RoomI
+}
+
+type QueueI interface {
+  Sub(string) chan bool
+  Unsub(string, chan bool)
+  Pub(string)
 }

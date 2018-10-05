@@ -13,6 +13,7 @@ import (
 
 type Client struct {
 	Channel   chan string
+  Queue     interfaces.QueueI
 	Name      string
 	Room      interfaces.RoomI
   Level     int
@@ -25,9 +26,10 @@ type Client struct {
   Spawn     interfaces.RoomI
 }
 
-func NewClient(ch chan string) *Client {
+func NewClient(ch chan string, q interfaces.QueueI) *Client {
 	return &Client{
 		Channel:   ch,
+    Queue:     q,
     Level:     1,
     ExpToLvl:  10,
 		MaxHealth: 200,
@@ -163,11 +165,13 @@ func (cli *Client) LeaveRoom(msg string) {
 	}
 
 	cli.Room.RemoveCli(cli, msg)
+  cli.Queue.Pub(fmt.Sprintf("pc-leaves-%d", cli.Room.GetID()))
 }
 
 func (cli *Client) EnterRoom(room interfaces.RoomI) {
 	room.AddCli(cli)
 	cli.Room = room
+  cli.Queue.Pub(fmt.Sprintf("pc-enters-%d", room.GetID()))
 }
 
 func (cli *Client) Die(npc interfaces.NPCI) {

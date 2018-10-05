@@ -4,7 +4,7 @@ import (
   "testing"
   "time"
 
-	"github.com/joelevering/gomud/room"
+  "github.com/joelevering/gomud/npc"
 )
 
 func Test_CalculateDamageWorks(t *testing.T) {
@@ -12,7 +12,7 @@ func Test_CalculateDamageWorks(t *testing.T) {
     End: 100,
     Str: 100,
 	}
-  npc := &room.NPC{
+  npc := &npc.NPC{
     End: 50,
     Str: 50,
   }
@@ -38,7 +38,7 @@ func Test_ApplyDamageRemovesHealth(t *testing.T) {
 		MaxHealth:     200,
 		Health:        200,
 	}
-  npc := &room.NPC{
+  npc := &npc.NPC{
     MaxHealth: 100,
     Health:    100,
   }
@@ -64,7 +64,7 @@ func Test_ApplyDamageZeroesHealthForLethalDamage(t *testing.T) {
 		MaxHealth:     200,
 		Health:        200,
 	}
-  npc := &room.NPC{
+  npc := &npc.NPC{
     MaxHealth: 100,
     Health:    100,
   }
