@@ -13,6 +13,7 @@ import (
 
 type Client struct {
 	Channel   chan string
+  Queue     interfaces.QueueI
 	Name      string
 	Room      interfaces.RoomI
   Level     int
@@ -25,9 +26,10 @@ type Client struct {
   Spawn     interfaces.RoomI
 }
 
-func NewClient(ch chan string) *Client {
+func NewClient(ch chan string, q interfaces.QueueI) *Client {
 	return &Client{
 		Channel:   ch,
+    Queue:     q,
     Level:     1,
     ExpToLvl:  10,
 		MaxHealth: 200,

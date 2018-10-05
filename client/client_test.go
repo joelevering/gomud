@@ -46,7 +46,7 @@ func Test_LeaveRoom(t *testing.T) {
 
 func Test_SendMsg(t *testing.T) {
 	ch := make(chan string)
-	cli := NewClient(ch)
+	cli := NewClient(ch, &mocks.MockQueue{})
 
 	go cli.SendMsg("testing SendMsg")
 
@@ -60,7 +60,7 @@ func Test_SendMsg(t *testing.T) {
 func Test_List(t *testing.T) {
 	ch := make(chan string)
 	defer close(ch)
-	cli := NewClient(ch)
+	cli := NewClient(ch, &mocks.MockQueue{})
 	room := &mocks.MockRoom{
 		Clients: []interfaces.CliI{
 			&Client{
@@ -98,7 +98,7 @@ func Test_List(t *testing.T) {
 func Test_Look(t *testing.T) {
 	ch := make(chan string)
 	defer close(ch)
-	cli := NewClient(ch)
+	cli := NewClient(ch, &mocks.MockQueue{})
 	room := &mocks.MockRoom{
 		Name: "Name",
 		Exits: []interfaces.ExitI{
@@ -152,7 +152,7 @@ func Test_Look(t *testing.T) {
 func Test_LookNPCWithNPCName(t *testing.T) {
 	ch := make(chan string)
 	defer close(ch)
-	cli := NewClient(ch)
+	cli := NewClient(ch, &mocks.MockQueue{})
 	room := &mocks.MockRoom{}
 	cli.Room = room
 
@@ -171,7 +171,7 @@ func Test_LookNPCWithNPCName(t *testing.T) {
 func Test_LookNPCWithNoNPC(t *testing.T) {
 	ch := make(chan string)
 	defer close(ch)
-	cli := NewClient(ch)
+	cli := NewClient(ch, &mocks.MockQueue{})
 	room := &mocks.MockRoom{}
 	cli.Room = room
 
@@ -186,7 +186,7 @@ func Test_LookNPCWithNoNPC(t *testing.T) {
 func Test_Say(t *testing.T) {
 	ch := make(chan string)
 	defer close(ch)
-	cli := NewClient(ch)
+	cli := NewClient(ch, &mocks.MockQueue{})
 	room := &mocks.MockRoom{}
 	cli.Room = room
 
@@ -200,7 +200,7 @@ func Test_Say(t *testing.T) {
 func Test_Yell(t *testing.T) {
 	ch := make(chan string)
 	defer close(ch)
-	cli := NewClient(ch)
+	cli := NewClient(ch, &mocks.MockQueue{})
 	adjacentRoom := &mocks.MockRoom{}
 	room := &mocks.MockRoom{
 		Exits: []interfaces.ExitI{
@@ -221,7 +221,7 @@ func Test_Yell(t *testing.T) {
 func Test_MoveWithAccurateExitKey(t *testing.T) {
 	ch := make(chan string)
 	defer close(ch)
-	cli := NewClient(ch)
+	cli := NewClient(ch, &mocks.MockQueue{})
 	adjacentRoom := &mocks.MockRoom{
 		Name: "Adjacent Room",
 	}
@@ -260,7 +260,7 @@ func Test_MoveWithAccurateExitKey(t *testing.T) {
 func Test_MoveWithInaccurateExitKey(t *testing.T) {
 	ch := make(chan string)
 	defer close(ch)
-	cli := NewClient(ch)
+	cli := NewClient(ch, &mocks.MockQueue{})
 	room := &mocks.MockRoom{}
 	cli.Room = room
 
@@ -275,7 +275,7 @@ func Test_MoveWithInaccurateExitKey(t *testing.T) {
 
 func Test_Die(t *testing.T) {
 	ch := make(chan string)
-	cli := NewClient(ch)
+	cli := NewClient(ch, &mocks.MockQueue{})
 
   origRoom := &mocks.MockRoom{ Name: "origin" }
   spawn := &mocks.MockRoom{ Name: "spawn" }
@@ -312,7 +312,7 @@ func Test_Die(t *testing.T) {
 func Test_DefeatGivesExp(t *testing.T) {
 	ch := make(chan string)
   defer close(ch)
-	cli := NewClient(ch)
+	cli := NewClient(ch, &mocks.MockQueue{})
   room := &mocks.MockRoom{}
   cli.Room = room
 
@@ -338,7 +338,7 @@ func Test_DefeatGivesExp(t *testing.T) {
 
 func Test_DefeatLevelsUpPC(t *testing.T) {
 	ch := make(chan string)
-	cli := NewClient(ch)
+	cli := NewClient(ch, &mocks.MockQueue{})
   rm := &mocks.MockRoom{}
 	rm.NPCs = []interfaces.NPCI{
 		&npc.NPC{

@@ -35,6 +35,7 @@ func main() {
 	connHandler := ConnHandler{
 		entering: entering,
 		leaving:  leaving,
+    state:    gameState,
 	}
 
 	gateKeeper := Gatekeeper{

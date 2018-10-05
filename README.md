@@ -6,8 +6,12 @@ A golang-based MUD client.
 * In another terminal: `telnet <ip> <port>`
 * 'help' to show available commands
 
-Notes:
-* Update channels to be unique to the NPCs room
+To-do:
+* Publish on triggering PC actions
+  * PC entering a room
+  * PC leaving a room
+
+Follow up:
 * Let NPCs move between rooms (will require them to unsub/re-sub behavior)
 * Add a "move" action
 * Add some more triggers

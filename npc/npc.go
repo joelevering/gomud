@@ -94,7 +94,8 @@ func (n *NPC) IsAlive() bool {
 
 func (n *NPC) SetBehavior(queue interfaces.QueueI) {
 	for _, b := range n.Behaviors {
-    ch := queue.Sub(b.Trigger)
+    topic := fmt.Sprintf("%s-%d", b.Trigger, n.Room.GetID())
+    ch := queue.Sub(topic)
     go func(n interfaces.NPCI, ch chan bool, chance float64, actions [][]string) {
       for range ch {
         if (rand.Float64() <= chance) {

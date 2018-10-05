@@ -34,7 +34,19 @@
         "health": 999999,
         "strength": 9999,
         "endurance": 9999,
-        "experience": 999999
+        "experience": 999999,
+        "ooc_behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [["say", "GREETINGS"]],
+            "chance": 1
+          },
+          {
+            "trigger": "pc-leaves",
+            "actions": [["emote", "waves a stubby goo-hand goodbye."]],
+            "chance": 1
+          }
+        ]
       }
     ]
   },
