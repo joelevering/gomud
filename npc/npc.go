@@ -99,6 +99,7 @@ func (n *NPC) SetBehavior(queue interfaces.QueueI) {
     go func(n interfaces.NPCI, ch chan bool, chance float64, actions [][]string) {
       for range ch {
         if (rand.Float64() <= chance) {
+          time.Sleep(100 * time.Millisecond) // Otherwise triggers on enter happen during room desc
           for _, action := range actions {
             switch action[0] {
             case "say":

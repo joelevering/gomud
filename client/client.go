@@ -165,11 +165,13 @@ func (cli *Client) LeaveRoom(msg string) {
 	}
 
 	cli.Room.RemoveCli(cli, msg)
+  cli.Queue.Pub(fmt.Sprintf("pc-leaves-%d", cli.Room.GetID()))
 }
 
 func (cli *Client) EnterRoom(room interfaces.RoomI) {
 	room.AddCli(cli)
 	cli.Room = room
+  cli.Queue.Pub(fmt.Sprintf("pc-enters-%d", room.GetID()))
 }
 
 func (cli *Client) Die(npc interfaces.NPCI) {
