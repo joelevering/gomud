@@ -11,6 +11,18 @@ import (
 	"github.com/joelevering/gomud/interfaces"
 )
 
+const helpMsg = `
+Available commands:
+'say <message>' to communicate with people in your room
+'move <exit key>' to move to a new room
+'look' to see where you are
+'look <npc name>' to see more details about an NPC
+'list' to see who is currently in your room
+'help' to repeat this message
+
+Most commands have their first letter as a shortcut
+`
+
 type Client struct {
 	Channel   chan string
   Queue     interfaces.QueueI
@@ -42,6 +54,41 @@ func NewClient(ch chan string, q interfaces.QueueI) *Client {
 func (cli Client) StartWriter(conn net.Conn) {
 	for msg := range cli.Channel {
 		fmt.Fprintln(conn, msg)
+	}
+}
+
+func (cli *Client) Cmd(cmd string) {
+	words := strings.Split(cmd, " ")
+	key := words[0]
+
+	switch strings.ToLower(key) {
+	case "":
+	case "ls", "list":
+		cli.List()
+	case "l", "look":
+		if len(words) == 1 {
+			cli.Look()
+		} else if len(words) > 1 {
+			cli.LookNPC(words[1])
+		}
+	case "m", "move":
+		if len(words) > 1 {
+			cli.Move(words[1])
+		} else {
+			cli.SendMsg("Where are you trying to go??")
+		}
+	case "h", "help":
+		cli.SendMsg(helpMsg)
+	case "s", "say":
+		cli.Say(strings.Join(words[1:], " "))
+	case "y", "yell":
+		cli.Yell(strings.Join(words[1:], " "))
+	case "a", "attack":
+		cli.AttackNPC(words[1])
+	case "st", "status":
+		cli.Status()
+	default:
+		cli.SendMsg("I'm not sure what you mean. Type 'help' for assistance.")
 	}
 }
 

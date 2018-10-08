@@ -80,9 +80,11 @@ func Test_InitializingNPCs(t *testing.T) {
 	if room.GetNpcs()[0].GetName() != npc.GetName() {
 		t.Errorf("Expected %v to be in %v", npc.GetName(), room.GetName())
 	}
+
   if len(queue.Chans["pc-enters-1"]) != 1 {
     t.Error("Expected King Slime to sub to pc-enters-1, but it didn't")
   }
+
   if len(queue.Chans["pc-leaves-1"]) != 1 {
     t.Error("Expected King Slime to sub to pc-leaves-1, but it didn't")
   }
