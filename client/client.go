@@ -8,6 +8,7 @@ import (
 	"time"
   "unicode/utf8"
 
+	"github.com/joelevering/gomud/classes"
 	"github.com/joelevering/gomud/interfaces"
 )
 
@@ -30,6 +31,7 @@ type Client struct {
 	Room      interfaces.RoomI
   InCombat  bool
   CombatCmd []string
+  Class     interfaces.ClassI
   Level     int
   Exp       int
   ExpToLvl  int
@@ -44,6 +46,7 @@ func NewClient(ch chan string, q interfaces.QueueI) *Client {
 	return &Client{
 		Channel:   ch,
     Queue:     q,
+    Class:     classes.Conscript{},
     Level:     1,
     ExpToLvl:  10,
 		MaxHealth: 200,
@@ -57,6 +60,50 @@ func (cli Client) StartWriter(conn net.Conn) {
 	for msg := range cli.Channel {
 		fmt.Fprintln(conn, msg)
 	}
+}
+
+func (cli *Client) GetHealth() int {
+	return cli.Health
+}
+
+func (cli *Client) SetHealth(health int) {
+  cli.Health = health
+}
+
+func (cli *Client) GetMaxHealth() int {
+	return cli.MaxHealth
+}
+
+func (cli *Client) SetMaxHealth(maxHealth int) {
+  cli.MaxHealth = maxHealth
+}
+
+func (cli *Client) GetStr() int {
+	return cli.Str
+}
+
+func (cli *Client) SetStr(str int) {
+  cli.Str = str
+}
+
+func (cli *Client) GetEnd() int {
+	return cli.End
+}
+
+func (cli *Client) SetEnd(end int) {
+  cli.End = end
+}
+
+func (cli *Client) GetCombatCmd() []string {
+	return cli.CombatCmd
+}
+
+func (cli *Client) GetName() string {
+	return cli.Name
+}
+
+func (cli *Client) GetRoom() interfaces.RoomI {
+	return cli.Room
 }
 
 func (cli *Client) Cmd(cmd string) {
@@ -93,6 +140,8 @@ func (cli *Client) Cmd(cmd string) {
 		cli.AttackNPC(words[1])
 	case "st", "status":
 		cli.Status()
+  case "c", "change":
+    cli.ChangeClass(words[1])
 	default:
 		cli.SendMsg("I'm not sure what you mean. Type 'help' for assistance.")
 	}
@@ -189,13 +238,13 @@ func (cli *Client) Move(exitKey string) {
 	cli.SendMsg("Where are you trying to go??")
 }
 
-func (cli Client) Say(msg string) {
+func (cli *Client) Say(msg string) {
 	if msg != "" {
 		cli.Room.Message(fmt.Sprintf("%s says \"%s\"", cli.Name, msg))
 	}
 }
 
-func (cli Client) Yell(msg string) {
+func (cli *Client) Yell(msg string) {
 	if msg != "" {
 		fullMsg := fmt.Sprintf("%s yells \"%s\"", cli.Name, msg)
 		cli.Room.Message(fullMsg)
@@ -206,7 +255,22 @@ func (cli Client) Yell(msg string) {
 	}
 }
 
-func (cli Client) SendMsg(msgs ...string) {
+func (cli *Client) ChangeClass(class string) {
+	switch strings.ToLower(class) {
+	case "toxicologist":
+    // something
+	case "minder":
+    // something
+  case "tracker":
+    // something
+  case "conscript":
+    // something
+  case "acolyte":
+    // something
+  }
+}
+
+func (cli *Client) SendMsg(msgs ...string) {
 	for _, msg := range msgs {
 		stamp := time.Now().Format(time.Kitchen)
 		cli.Channel <- fmt.Sprintf("%s %s", stamp, msg)
@@ -250,50 +314,16 @@ func (cli *Client) Defeat(npc interfaces.NPCI) {
 
   if cli.Exp >= cli.ExpToLvl {
     cli.SendMsg(fmt.Sprintf("You gained %d experience and leveled up!", npc.GetExp()))
-    cli.levelUp()
+    cli.LevelUp()
   } else {
     toLvl := cli.ExpToLvl - cli.Exp
     cli.SendMsg(fmt.Sprintf("You gained %d experience! You need %d more experience to level up.", npc.GetExp(), toLvl))
   }
 }
 
-func (cli *Client) GetHealth() int {
-	return cli.Health
-}
-
-func (cli *Client) SetHealth(health int) {
-  cli.Health = health
-}
-
-func (cli *Client) GetMaxHealth() int {
-	return cli.MaxHealth
-}
-
-func (cli *Client) GetStr() int {
-	return cli.Str
-}
-
-func (cli *Client) GetEnd() int {
-	return cli.End
-}
-
-func (cli *Client) GetCombatCmd() []string {
-	return cli.CombatCmd
-}
-
-func (cli *Client) GetName() string {
-	return cli.Name
-}
-
-func (cli *Client) GetRoom() interfaces.RoomI {
-	return cli.Room
-}
-
-func (cli *Client) levelUp() {
-  // Increase stats
-  cli.MaxHealth += 25
-  cli.Str += 2
-  cli.End += 3
+func (cli *Client) LevelUp() {
+  // Increase stats based on Class
+  cli.Class.LevelUp(cli)
 
   // Level up and carryover EXP
   cli.Level += 1
@@ -306,4 +336,5 @@ func (cli *Client) levelUp() {
   cli.Health = cli.MaxHealth // Heal
 
   cli.SendMsg(fmt.Sprintf("You're now level %d!", cli.Level))
+
 }

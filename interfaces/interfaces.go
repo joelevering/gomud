@@ -2,6 +2,12 @@ package interfaces
 
 import "net"
 
+type QueueI interface {
+  Sub(string) chan bool
+  Unsub(string, chan bool)
+  Pub(string)
+}
+
 type RoomI interface {
 	Message(string)
 	AddCli(CliI)
@@ -60,13 +66,15 @@ type CliI interface {
   GetHealth() int
   SetHealth(int)
   GetMaxHealth() int
+  SetMaxHealth(int)
   GetStr() int
+  SetStr(int)
   GetEnd() int
+  SetEnd(int)
   GetCombatCmd() []string
 }
 
-type QueueI interface {
-  Sub(string) chan bool
-  Unsub(string, chan bool)
-  Pub(string)
+type ClassI interface {
+  GetName() string
+  LevelUp(CliI)
 }

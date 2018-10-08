@@ -35,8 +35,11 @@ func (m *MockClient) GetRoom() interfaces.RoomI { return nil }
 func (m *MockClient) GetHealth() int { return m.Health }
 func (m *MockClient) SetHealth(health int) { m.Health = health }
 func (m *MockClient) GetMaxHealth() int { return m.MaxHealth }
+func (m *MockClient) SetMaxHealth(maxHealth int) { m.MaxHealth = maxHealth }
 func (m *MockClient) GetStr() int { return m.Str }
+func (m *MockClient) SetStr(str int) { m.Str = str }
 func (m *MockClient) GetEnd() int { return m.End }
+func (m *MockClient) SetEnd(end int) { m.End = end }
 func (m *MockClient) GetCombatCmd() []string { return m.CombatCmd }
 
 func (m *MockClient) Die(npc interfaces.NPCI) {
