@@ -28,6 +28,8 @@ type Client struct {
   Queue     interfaces.QueueI
 	Name      string
 	Room      interfaces.RoomI
+  InCombat  bool
+  CombatCmd []string
   Level     int
   Exp       int
   ExpToLvl  int
@@ -59,9 +61,13 @@ func (cli Client) StartWriter(conn net.Conn) {
 
 func (cli *Client) Cmd(cmd string) {
 	words := strings.Split(cmd, " ")
-	key := words[0]
 
-	switch strings.ToLower(key) {
+  if cli.InCombat == true {
+    cli.CombatCmd = words
+    return
+  }
+
+	switch strings.ToLower(words[0]) {
 	case "":
 	case "ls", "list":
 		cli.List()
@@ -151,7 +157,8 @@ func (cli *Client) Status() {
 func (cli *Client) AttackNPC(npcName string) {
 	attack := func(cli *Client, npc interfaces.NPCI) {
 		cli.SendMsg(fmt.Sprintf("You attack %s!", npc.GetName()))
-		ci := CombatInstance{cli: cli, npc: npc}
+		ci := &CombatInstance{cli: cli, npc: npc}
+    cli.InCombat = true
 		go ci.Start()
 	}
 
@@ -222,6 +229,8 @@ func (cli *Client) EnterRoom(room interfaces.RoomI) {
 }
 
 func (cli *Client) Die(npc interfaces.NPCI) {
+  cli.InCombat = false
+
   deathNotice := fmt.Sprintf("%s was defeated by %s. Their body dissipates.", cli.Name, npc.GetName())
   cli.LeaveRoom(deathNotice)
 
@@ -236,6 +245,7 @@ func (cli *Client) Die(npc interfaces.NPCI) {
 }
 
 func (cli *Client) Defeat(npc interfaces.NPCI) {
+  cli.InCombat = false
   cli.Exp += npc.GetExp()
 
   if cli.Exp >= cli.ExpToLvl {
@@ -245,6 +255,30 @@ func (cli *Client) Defeat(npc interfaces.NPCI) {
     toLvl := cli.ExpToLvl - cli.Exp
     cli.SendMsg(fmt.Sprintf("You gained %d experience! You need %d more experience to level up.", npc.GetExp(), toLvl))
   }
+}
+
+func (cli *Client) GetHealth() int {
+	return cli.Health
+}
+
+func (cli *Client) SetHealth(health int) {
+  cli.Health = health
+}
+
+func (cli *Client) GetMaxHealth() int {
+	return cli.MaxHealth
+}
+
+func (cli *Client) GetStr() int {
+	return cli.Str
+}
+
+func (cli *Client) GetEnd() int {
+	return cli.End
+}
+
+func (cli *Client) GetCombatCmd() []string {
+	return cli.CombatCmd
 }
 
 func (cli *Client) GetName() string {
