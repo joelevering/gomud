@@ -35,7 +35,7 @@ type NPCI interface {
   Spawn()
   Say(string)
   Emote(string)
-  Die()
+  Die(CliI)
   IsAlive() bool
   SetBehavior(QueueI)
 }
@@ -54,8 +54,15 @@ type CliI interface {
 	LeaveRoom(string)
 	EnterRoom(RoomI)
   Die(NPCI)
+  Defeat(NPCI)
 	GetName() string
 	GetRoom() RoomI
+  GetHealth() int
+  SetHealth(int)
+  GetMaxHealth() int
+  GetStr() int
+  GetEnd() int
+  GetCombatCmd() []string
 }
 
 type QueueI interface {

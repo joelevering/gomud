@@ -11,6 +11,18 @@ import (
 	"github.com/joelevering/gomud/room"
 )
 
+func Test_CmdSetsCombatCmdInCombat(t *testing.T) {
+	ch := make(chan string)
+  q := &mocks.MockQueue{}
+	cli := NewClient(ch, q)
+  cli.InCombat = true
+  cli.Cmd("smite")
+
+  if len(cli.CombatCmd) != 1 || cli.CombatCmd[0] != "smite" {
+    t.Errorf("Expected CombatCmd to be 'smite' when sent as Cmd while InCombat, but got %v", cli.CombatCmd)
+  }
+}
+
 func Test_EnterRoom(t *testing.T) {
 	ch := make(chan string)
   q := &mocks.MockQueue{}
@@ -290,6 +302,7 @@ func Test_MoveWithInaccurateExitKey(t *testing.T) {
 func Test_Die(t *testing.T) {
 	ch := make(chan string)
 	cli := NewClient(ch, &mocks.MockQueue{})
+  cli.InCombat = true
 
   origRoom := &mocks.MockRoom{ Name: "origin" }
   spawn := &mocks.MockRoom{ Name: "spawn" }
@@ -305,6 +318,10 @@ func Test_Die(t *testing.T) {
 	res := <-ch
 
   time.Sleep(1600 * time.Millisecond) // matches sleep in code
+
+  if cli.InCombat {
+    t.Error("Dying should mark client out of combat, but it didn't")
+  }
 
 	if !strings.Contains(res, "You were defeated by Harold") {
 		t.Errorf("Expected 'You were defeated by Harold' on death, but got '%s'", res)
@@ -323,10 +340,11 @@ func Test_Die(t *testing.T) {
   }
 }
 
-func Test_DefeatGivesExp(t *testing.T) {
+func Test_DefeatEndsCombatAndGivesExp(t *testing.T) {
 	ch := make(chan string)
   defer close(ch)
 	cli := NewClient(ch, &mocks.MockQueue{})
+  cli.InCombat = true
   room := &mocks.MockRoom{}
   cli.Room = room
 
@@ -336,6 +354,9 @@ func Test_DefeatGivesExp(t *testing.T) {
 
 	res := <-ch
 
+  if cli.InCombat {
+    t.Error("Defeating an enemy should mark client out of combat, but it didn't")
+  }
 	if !strings.Contains(res, "You gained 2 experience!") {
 		t.Errorf("Expected 'You gained 2 experience' on defeating, but got '%s'", res)
 	}

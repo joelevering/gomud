@@ -11,11 +11,25 @@ import (
 	"github.com/joelevering/gomud/interfaces"
 )
 
+const helpMsg = `
+Available commands:
+'say <message>' to communicate with people in your room
+'move <exit key>' to move to a new room
+'look' to see where you are
+'look <npc name>' to see more details about an NPC
+'list' to see who is currently in your room
+'help' to repeat this message
+
+Most commands have their first letter as a shortcut
+`
+
 type Client struct {
 	Channel   chan string
   Queue     interfaces.QueueI
 	Name      string
 	Room      interfaces.RoomI
+  InCombat  bool
+  CombatCmd []string
   Level     int
   Exp       int
   ExpToLvl  int
@@ -42,6 +56,45 @@ func NewClient(ch chan string, q interfaces.QueueI) *Client {
 func (cli Client) StartWriter(conn net.Conn) {
 	for msg := range cli.Channel {
 		fmt.Fprintln(conn, msg)
+	}
+}
+
+func (cli *Client) Cmd(cmd string) {
+	words := strings.Split(cmd, " ")
+
+  if cli.InCombat == true {
+    cli.CombatCmd = words
+    return
+  }
+
+	switch strings.ToLower(words[0]) {
+	case "":
+	case "ls", "list":
+		cli.List()
+	case "l", "look":
+		if len(words) == 1 {
+			cli.Look()
+		} else if len(words) > 1 {
+			cli.LookNPC(words[1])
+		}
+	case "m", "move":
+		if len(words) > 1 {
+			cli.Move(words[1])
+		} else {
+			cli.SendMsg("Where are you trying to go??")
+		}
+	case "h", "help":
+		cli.SendMsg(helpMsg)
+	case "s", "say":
+		cli.Say(strings.Join(words[1:], " "))
+	case "y", "yell":
+		cli.Yell(strings.Join(words[1:], " "))
+	case "a", "attack":
+		cli.AttackNPC(words[1])
+	case "st", "status":
+		cli.Status()
+	default:
+		cli.SendMsg("I'm not sure what you mean. Type 'help' for assistance.")
 	}
 }
 
@@ -104,7 +157,8 @@ func (cli *Client) Status() {
 func (cli *Client) AttackNPC(npcName string) {
 	attack := func(cli *Client, npc interfaces.NPCI) {
 		cli.SendMsg(fmt.Sprintf("You attack %s!", npc.GetName()))
-		ci := CombatInstance{cli: cli, npc: npc}
+		ci := &CombatInstance{cli: cli, npc: npc}
+    cli.InCombat = true
 		go ci.Start()
 	}
 
@@ -175,6 +229,8 @@ func (cli *Client) EnterRoom(room interfaces.RoomI) {
 }
 
 func (cli *Client) Die(npc interfaces.NPCI) {
+  cli.InCombat = false
+
   deathNotice := fmt.Sprintf("%s was defeated by %s. Their body dissipates.", cli.Name, npc.GetName())
   cli.LeaveRoom(deathNotice)
 
@@ -189,6 +245,7 @@ func (cli *Client) Die(npc interfaces.NPCI) {
 }
 
 func (cli *Client) Defeat(npc interfaces.NPCI) {
+  cli.InCombat = false
   cli.Exp += npc.GetExp()
 
   if cli.Exp >= cli.ExpToLvl {
@@ -198,6 +255,30 @@ func (cli *Client) Defeat(npc interfaces.NPCI) {
     toLvl := cli.ExpToLvl - cli.Exp
     cli.SendMsg(fmt.Sprintf("You gained %d experience! You need %d more experience to level up.", npc.GetExp(), toLvl))
   }
+}
+
+func (cli *Client) GetHealth() int {
+	return cli.Health
+}
+
+func (cli *Client) SetHealth(health int) {
+  cli.Health = health
+}
+
+func (cli *Client) GetMaxHealth() int {
+	return cli.MaxHealth
+}
+
+func (cli *Client) GetStr() int {
+	return cli.Str
+}
+
+func (cli *Client) GetEnd() int {
+	return cli.End
+}
+
+func (cli *Client) GetCombatCmd() []string {
+	return cli.CombatCmd
 }
 
 func (cli *Client) GetName() string {
