@@ -9,11 +9,6 @@ import (
 
 const tick = 1500 * time.Millisecond
 
-type CombatInstance struct {
-	cli  interfaces.CliI
-	npc  interfaces.NPCI
-}
-
 type CombatResults struct {
   pcDmg     int
   npcDmg    int
@@ -23,7 +18,15 @@ type CombatResults struct {
   npcEffect string
 }
 
+type CombatInstance struct {
+	cli  interfaces.CliI
+  pc   interfaces.CharI
+	npc  interfaces.NPCI
+}
+
 func (ci *CombatInstance) Start() {
+  ci.pc.EnterCombat()
+
 	for true {
     combatOver := ci.Loop(true)
     if combatOver { break }
@@ -44,14 +47,16 @@ func (ci *CombatInstance) Loop(report bool) (combatOver bool) {
     ci.report(npcDmg, pcDmg)
   }
 
-  if ci.cliIsDead() {
-    ci.cli.Die(ci.npc)
+  if ci.pcIsDead() {
+    ci.pc.LeaveCombat()
+    ci.cli.LoseCombat(ci.npc)
     return true
   }
 
   if ci.npcIsDead() {
-    ci.npc.Die(ci.cli)
-    ci.cli.Defeat(ci.npc)
+    ci.pc.LeaveCombat()
+    ci.npc.LoseCombat(ci.pc)
+    ci.cli.WinCombat(ci.npc)
     return true
   }
 
@@ -63,17 +68,17 @@ func (ci *CombatInstance) getPCResults() *CombatResults {
   combatCmd := ci.cli.GetCombatCmd()
 
   if len(combatCmd) == 0 {
-    res.npcDmg = CalcAtkDmg(ci.cli.GetStr(), ci.npc.GetEnd())
+    res.npcDmg = CalcAtkDmg(ci.pc.GetStr(), ci.npc.GetEnd())
     return res
   }
 
   // TODO turn this into a map loaded once on app load and accessible by any CI
 	switch combatCmd[0] {
 	case "bash":
-    smiteStr := int(float64(ci.cli.GetStr()) * 1.1)
+    smiteStr := int(float64(ci.pc.GetStr()) * 1.1)
     res.npcDmg = CalcAtkDmg(smiteStr, ci.npc.GetEnd())
   default: // attack
-    res.npcDmg = CalcAtkDmg(ci.cli.GetStr(), ci.npc.GetEnd())
+    res.npcDmg = CalcAtkDmg(ci.pc.GetStr(), ci.npc.GetEnd())
   }
 
   return res
@@ -81,7 +86,7 @@ func (ci *CombatInstance) getPCResults() *CombatResults {
 
 func (ci *CombatInstance) getNPCResults() *CombatResults {
   return &CombatResults{
-    pcDmg: CalcAtkDmg(ci.npc.GetStr(), ci.cli.GetEnd()),
+    pcDmg: CalcAtkDmg(ci.npc.GetStr(), ci.pc.GetEnd()),
   }
 }
 
@@ -95,12 +100,12 @@ func CalcAtkDmg(atkStr int, defEnd int) int {
 
 func (ci *CombatInstance) applyDamage(npcDmg, pcDmg int) {
   npcHealth := ci.npc.GetHealth()
-  pcHealth := ci.cli.GetHealth()
+  pcHealth := ci.pc.GetHealth()
 
   if pcHealth-pcDmg < 0 {
-    ci.cli.SetHealth(0)
+    ci.pc.SetHealth(0)
   } else {
-    ci.cli.SetHealth(pcHealth - pcDmg)
+    ci.pc.SetHealth(pcHealth - pcDmg)
   }
 
   if npcHealth-npcDmg < 0 {
@@ -110,8 +115,8 @@ func (ci *CombatInstance) applyDamage(npcDmg, pcDmg int) {
   }
 }
 
-func (ci *CombatInstance) cliIsDead() bool {
-  return ci.cli.GetHealth() <= 0
+func (ci *CombatInstance) pcIsDead() bool {
+  return ci.pc.GetHealth() <= 0
 }
 
 func (ci *CombatInstance) npcIsDead() bool {
@@ -123,7 +128,7 @@ func (ci *CombatInstance) report(npcDmg, pcDmg int) {
   ci.cli.SendMsg(fmt.Sprintf("You took %d damage!", pcDmg))
   ci.cli.SendMsg("")
 
-  if ci.cliIsDead() {
+  if ci.pcIsDead() {
     return // handled in Start()
   }
 
@@ -135,5 +140,5 @@ func (ci *CombatInstance) report(npcDmg, pcDmg int) {
     npcMsg = fmt.Sprintf("%s has %d/%d", ci.npc.GetName(), ci.npc.GetHealth(), ci.npc.GetMaxHealth())
   }
 
-  ci.cli.SendMsg(fmt.Sprintf("You have %d/%d health left. %s", ci.cli.GetHealth(), ci.cli.GetMaxHealth(), npcMsg))
+  ci.cli.SendMsg(fmt.Sprintf("You have %d/%d health left. %s", ci.pc.GetHealth(), ci.pc.GetMaxHealth(), npcMsg))
 }

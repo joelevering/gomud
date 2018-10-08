@@ -2,13 +2,11 @@ package client
 
 import (
 	"fmt"
-  "math"
 	"net"
 	"strings"
 	"time"
   "unicode/utf8"
 
-	"github.com/joelevering/gomud/classes"
 	"github.com/joelevering/gomud/interfaces"
 )
 
@@ -27,32 +25,16 @@ Most commands have their first letter as a shortcut
 type Client struct {
 	Channel   chan string
   Queue     interfaces.QueueI
-	Name      string
 	Room      interfaces.RoomI
-  InCombat  bool
+  Character interfaces.CharI
   CombatCmd []string
-  Class     interfaces.ClassI
-  Level     int
-  Exp       int
-  ExpToLvl  int
-	MaxHealth int
-	Health    int
-	Str       int
-	End       int
-  Spawn     interfaces.RoomI
 }
 
 func NewClient(ch chan string, q interfaces.QueueI) *Client {
 	return &Client{
 		Channel:   ch,
     Queue:     q,
-    Class:     classes.Conscript{},
-    Level:     1,
-    ExpToLvl:  10,
-		MaxHealth: 200,
-		Health:    200,
-		Str:       20,
-		End:       50,
+    Character: NewCharacter(),
 	}
 }
 
@@ -62,55 +44,11 @@ func (cli Client) StartWriter(conn net.Conn) {
 	}
 }
 
-func (cli *Client) GetHealth() int {
-	return cli.Health
-}
-
-func (cli *Client) SetHealth(health int) {
-  cli.Health = health
-}
-
-func (cli *Client) GetMaxHealth() int {
-	return cli.MaxHealth
-}
-
-func (cli *Client) SetMaxHealth(maxHealth int) {
-  cli.MaxHealth = maxHealth
-}
-
-func (cli *Client) GetStr() int {
-	return cli.Str
-}
-
-func (cli *Client) SetStr(str int) {
-  cli.Str = str
-}
-
-func (cli *Client) GetEnd() int {
-	return cli.End
-}
-
-func (cli *Client) SetEnd(end int) {
-  cli.End = end
-}
-
-func (cli *Client) GetCombatCmd() []string {
-	return cli.CombatCmd
-}
-
-func (cli *Client) GetName() string {
-	return cli.Name
-}
-
-func (cli *Client) GetRoom() interfaces.RoomI {
-	return cli.Room
-}
-
 func (cli *Client) Cmd(cmd string) {
 	words := strings.Split(cmd, " ")
 
-  if cli.InCombat == true {
-    cli.CombatCmd = words
+  if cli.Character.IsInCombat() {
+    cli.SetCombatCmd(words)
     return
   }
 
@@ -148,10 +86,10 @@ func (cli *Client) Cmd(cmd string) {
 }
 
 func (cli Client) List() {
-	names := []string{fmt.Sprintf("Yourself (%s)", cli.Name)}
+	names := []string{fmt.Sprintf("Yourself (%s)", cli.GetName())}
 
 	for _, otherCli := range cli.Room.GetClients() {
-		if otherCli.GetName() != cli.Name {
+		if otherCli.GetName() != cli.GetName() {
 			names = append(names, otherCli.GetName())
 		}
 	}
@@ -192,22 +130,27 @@ func (cli Client) LookNPC(npcName string) {
 }
 
 func (cli *Client) Status() {
-  header := fmt.Sprintf("~~~~~~~~~~*%s*~~~~~~~~~~", cli.Name)
+  pc := cli.Character
+  header := fmt.Sprintf("~~~~~~~~~~*%s*~~~~~~~~~~", cli.GetName())
   cli.SendMsg(header)
-  cli.SendMsg(fmt.Sprintf("Level: %d", cli.Level))
-  cli.SendMsg(fmt.Sprintf("Experience: %d/%d", cli.Exp, cli.ExpToLvl))
+  cli.SendMsg(fmt.Sprintf("Level: %d", pc.GetLevel()))
+  cli.SendMsg(fmt.Sprintf("Experience: %d/%d", pc.GetExp(), pc.GetNextLvlExp()))
   cli.SendMsg("")
-  cli.SendMsg(fmt.Sprintf("Health: %d/%d", cli.Health, cli.MaxHealth))
-  cli.SendMsg(fmt.Sprintf("Strength: %d", cli.Str))
-  cli.SendMsg(fmt.Sprintf("Endurance: %d", cli.End))
+  cli.SendMsg(fmt.Sprintf("Health: %d/%d", pc.GetHealth(), pc.GetMaxHealth()))
+  cli.SendMsg(fmt.Sprintf("Strength: %d", pc.GetStr()))
+  cli.SendMsg(fmt.Sprintf("Endurance: %d", pc.GetEnd()))
   cli.SendMsg(strings.Repeat("~", utf8.RuneCountInString(header)))
 }
 
 func (cli *Client) AttackNPC(npcName string) {
 	attack := func(cli *Client, npc interfaces.NPCI) {
 		cli.SendMsg(fmt.Sprintf("You attack %s!", npc.GetName()))
-		ci := &CombatInstance{cli: cli, npc: npc}
-    cli.InCombat = true
+		ci := &CombatInstance{
+      cli: cli,
+      pc: cli.Character,
+      npc: npc,
+    }
+
 		go ci.Start()
 	}
 
@@ -228,7 +171,7 @@ func (cli *Client) findNpcAndExecute(npcName, notFound string, function func(*Cl
 func (cli *Client) Move(exitKey string) {
 	for _, exit := range cli.Room.GetExits() {
 		if strings.ToUpper(exitKey) == strings.ToUpper(exit.GetKey()) {
-			cli.LeaveRoom(fmt.Sprintf("%s heads to %s!", cli.Name, exit.GetRoom().GetName()))
+			cli.LeaveRoom(fmt.Sprintf("%s heads to %s!", cli.GetName(), exit.GetRoom().GetName()))
 			cli.EnterRoom(exit.GetRoom())
 			cli.Look()
 			return
@@ -240,13 +183,13 @@ func (cli *Client) Move(exitKey string) {
 
 func (cli *Client) Say(msg string) {
 	if msg != "" {
-		cli.Room.Message(fmt.Sprintf("%s says \"%s\"", cli.Name, msg))
+		cli.Room.Message(fmt.Sprintf("%s says \"%s\"", cli.GetName(), msg))
 	}
 }
 
 func (cli *Client) Yell(msg string) {
 	if msg != "" {
-		fullMsg := fmt.Sprintf("%s yells \"%s\"", cli.Name, msg)
+		fullMsg := fmt.Sprintf("%s yells \"%s\"", cli.GetName(), msg)
 		cli.Room.Message(fullMsg)
 
 		for _, exit := range cli.Room.GetExits() {
@@ -279,7 +222,7 @@ func (cli *Client) SendMsg(msgs ...string) {
 
 func (cli *Client) LeaveRoom(msg string) {
 	if msg == "" {
-		msg = fmt.Sprintf("%s has left the room!", cli.Name)
+		msg = fmt.Sprintf("%s has left the room!", cli.GetName())
 	}
 
 	cli.Room.RemoveCli(cli, msg)
@@ -292,49 +235,55 @@ func (cli *Client) EnterRoom(room interfaces.RoomI) {
   cli.Queue.Pub(fmt.Sprintf("pc-enters-%d", room.GetID()))
 }
 
-func (cli *Client) Die(npc interfaces.NPCI) {
-  cli.InCombat = false
+func (cli *Client) LoseCombat(npc interfaces.NPCI) {
+  pc := cli.Character
+  spawn := pc.GetSpawn()
 
-  deathNotice := fmt.Sprintf("%s was defeated by %s. Their body dissipates.", cli.Name, npc.GetName())
+  deathNotice := fmt.Sprintf("%s was defeated by %s. Their body dissipates.", cli.GetName(), npc.GetName())
   cli.LeaveRoom(deathNotice)
 
   cli.SendMsg(fmt.Sprintf("You were defeated by %s.", npc.GetName()))
   time.Sleep(1500 * time.Millisecond)
-  cli.EnterRoom(cli.Spawn)
-  cli.Health = cli.MaxHealth
-  cli.SendMsg(fmt.Sprintf("You find yourself back in a familiar place: %s", cli.Spawn.GetName()))
+  cli.EnterRoom(spawn)
+  pc.Heal()
+  cli.SendMsg(fmt.Sprintf("You find yourself back in a familiar place: %s", spawn.GetName()))
   time.Sleep(1500 * time.Millisecond)
   cli.SendMsg("")
   cli.Look()
 }
 
-func (cli *Client) Defeat(npc interfaces.NPCI) {
-  cli.InCombat = false
-  cli.Exp += npc.GetExp()
+func (cli *Client) WinCombat(loser interfaces.NPCI) {
+  expGained := loser.GetExp()
+  leveledUp := cli.Character.GainExp(expGained)
 
-  if cli.Exp >= cli.ExpToLvl {
-    cli.SendMsg(fmt.Sprintf("You gained %d experience and leveled up!", npc.GetExp()))
-    cli.LevelUp()
+  if leveledUp {
+    cli.SendMsg(fmt.Sprintf("You gained %d experience and leveled up!", expGained))
+    cli.SendMsg(fmt.Sprintf("You're now level %d!", cli.Character.GetLevel()))
   } else {
-    toLvl := cli.ExpToLvl - cli.Exp
-    cli.SendMsg(fmt.Sprintf("You gained %d experience! You need %d more experience to level up.", npc.GetExp(), toLvl))
+    cli.SendMsg(fmt.Sprintf("You gained %d experience! You need %d more experience to level up.", expGained, cli.Character.ExpToLvl()))
   }
 }
 
-func (cli *Client) LevelUp() {
-  // Increase stats based on Class
-  cli.Class.LevelUp(cli)
+func (cli *Client) GetName() string {
+  return cli.Character.GetName()
+}
 
-  // Level up and carryover EXP
-  cli.Level += 1
-  cli.Exp = cli.Exp - cli.ExpToLvl
+func (cli *Client) SetName(name string) {
+  cli.Character.SetName(name)
+}
 
-  // Set new EXP to level
-  newExpToLvl := float64(cli.ExpToLvl) * 1.25
-  cli.ExpToLvl = int(math.Round(newExpToLvl))
+func (cli *Client) GetRoom() interfaces.RoomI {
+	return cli.Room
+}
 
-  cli.Health = cli.MaxHealth // Heal
+func (cli *Client) GetCombatCmd() []string {
+	return cli.CombatCmd
+}
 
-  cli.SendMsg(fmt.Sprintf("You're now level %d!", cli.Level))
+func (cli *Client) SetCombatCmd(cmd []string) {
+  cli.CombatCmd = cmd
+}
 
+func (cli *Client) Spawn() {
+  cli.EnterRoom(cli.Character.GetSpawn())
 }

@@ -78,7 +78,7 @@ func (n *NPC) Emote(emote string) {
   n.Room.Message(fmt.Sprintf("%s %s", n.Name, emote))
 }
 
-func (n *NPC) Die(killer interfaces.CliI) {
+func (n *NPC) LoseCombat(winner interfaces.CharI) {
   n.Alive = false
 
   go func() {

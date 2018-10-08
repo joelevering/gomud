@@ -7,7 +7,6 @@ import (
 
 	"github.com/joelevering/gomud/interfaces"
 	"github.com/joelevering/gomud/mocks"
-	"github.com/joelevering/gomud/npc"
 	"github.com/joelevering/gomud/room"
 )
 
@@ -15,7 +14,8 @@ func Test_CmdSetsCombatCmdInCombat(t *testing.T) {
 	ch := make(chan string)
   q := &mocks.MockQueue{}
 	cli := NewClient(ch, q)
-  cli.InCombat = true
+  pc := &mocks.MockCharacter{ InCombat: true }
+  cli.Character = pc
   cli.Cmd("smite")
 
   if len(cli.CombatCmd) != 1 || cli.CombatCmd[0] != "smite" {
@@ -90,7 +90,7 @@ func Test_List(t *testing.T) {
 	room := &mocks.MockRoom{
 		Clients: []interfaces.CliI{
 			&Client{
-				Name: "Heide",
+        Character: &mocks.MockCharacter{},
 			},
 		},
 	}
@@ -299,29 +299,25 @@ func Test_MoveWithInaccurateExitKey(t *testing.T) {
 	}
 }
 
-func Test_Die(t *testing.T) {
+func Test_LoseCombat(t *testing.T) {
 	ch := make(chan string)
 	cli := NewClient(ch, &mocks.MockQueue{})
-  cli.InCombat = true
 
   origRoom := &mocks.MockRoom{ Name: "origin" }
-  spawn := &mocks.MockRoom{ Name: "spawn" }
   cli.Room = origRoom
-	cli.Spawn = spawn
-  cli.Health = 0
+
+  spawn := &mocks.MockRoom{ Name: "spawn" }
+  pc := &mocks.MockCharacter{Spawn: spawn}
+  cli.Character = pc
 
 	go func (ch chan string) {
     defer close(ch)
-    cli.Die(cli.Room.GetNpcs()[0])
+    cli.LoseCombat(cli.Room.GetNpcs()[0])
   }(ch)
 
 	res := <-ch
 
   time.Sleep(1600 * time.Millisecond) // matches sleep in code
-
-  if cli.InCombat {
-    t.Error("Dying should mark client out of combat, but it didn't")
-  }
 
 	if !strings.Contains(res, "You were defeated by Harold") {
 		t.Errorf("Expected 'You were defeated by Harold' on death, but got '%s'", res)
@@ -335,60 +331,53 @@ func Test_Die(t *testing.T) {
     t.Errorf("Expected to be moved to spawn on death but moved to '%s' instead", cli.Room.GetName())
   }
 
-  if cli.Health != cli.MaxHealth {
-    t.Errorf("Expected health to be refilled on death but it's set to %d/%d", cli.Health, cli.MaxHealth)
+  if !pc.Healed {
+    t.Error("Expected PC to be healed on combat loss/respawn, but it wasn't")
   }
 }
 
-func Test_DefeatEndsCombatAndGivesExp(t *testing.T) {
+func Test_WinCombatEndsCombatAndGivesExp(t *testing.T) {
 	ch := make(chan string)
   defer close(ch)
 	cli := NewClient(ch, &mocks.MockQueue{})
-  cli.InCombat = true
+
+  pc := &mocks.MockCharacter{}
+  cli.Character = pc
+
   room := &mocks.MockRoom{}
   cli.Room = room
 
 	go func (ch chan string) {
-    cli.Defeat(cli.Room.GetNpcs()[0])
+    cli.WinCombat(cli.Room.GetNpcs()[0])
   }(ch)
 
 	res := <-ch
 
-  if cli.InCombat {
-    t.Error("Defeating an enemy should mark client out of combat, but it didn't")
-  }
-	if !strings.Contains(res, "You gained 2 experience!") {
+	if !strings.Contains(res, "You gained 2 experience!") { // hardcoded mock room npc exp
 		t.Errorf("Expected 'You gained 2 experience' on defeating, but got '%s'", res)
 	}
-  if cli.Exp != 2 {
-    t.Errorf("Expected exp to be 2 but got %d", cli.Exp)
+  if pc.ExpGained != 2 {
+    t.Errorf("Expected exp to be 2 but got %d", pc.GetExp())
   }
-	if !strings.Contains(res, "You need 8 more experience to level up.") {
-    t.Errorf("Expected 'You need 8 more experience to level up' on defeating, but got '%s'", res)
+	if !strings.Contains(res, "You need 100 more experience to level up.") {
+    t.Errorf("Expected 'You need 100 more experience to level up' on defeating, but got '%s'", res)
 	}
-  if cli.Level != 1 {
-    t.Errorf("Expected to not level up from one fight but hit level %d", cli.Level)
+  if pc.LeveledUp {
+    t.Error("Expected PC to not level up, but it did")
   }
 }
 
-func Test_DefeatLevelsUpPC(t *testing.T) {
+func Test_WinCombatLevelsUpPC(t *testing.T) {
 	ch := make(chan string)
 	cli := NewClient(ch, &mocks.MockQueue{})
   rm := &mocks.MockRoom{}
-	rm.NPCs = []interfaces.NPCI{
-		&npc.NPC{
-      Exp:       10,
-		},
-	}
   cli.Room = rm
-  cli.Health -= 1
-  origMaxHealth := cli.MaxHealth
-  origEnd := cli.End
-  origStr := cli.Str
+  pc := &mocks.MockCharacter{ShouldLevelUp: true}
+  cli.Character = pc
 
 	go func (ch chan string) {
     defer close(ch)
-    cli.Defeat(cli.Room.GetNpcs()[0])
+    cli.WinCombat(cli.Room.GetNpcs()[0])
   }(ch)
 
 	res := <-ch // Exp gain
@@ -400,16 +389,4 @@ func Test_DefeatLevelsUpPC(t *testing.T) {
   if !strings.Contains(res, "You're now level 2!") {
     t.Errorf("Expected 'You're now level 2!'' on defeating, but got '%s'", res)
 	}
-  if !(cli.MaxHealth > origMaxHealth) {
-    t.Error("Expected max health to increase on defeating but it didn't")
-  }
-  if !(cli.End > origEnd) || !(cli.Str > origStr) {
-    t.Error("Expected END and STR to increase on defeating but they didn't")
-  }
-  if cli.Level != 2 {
-    t.Errorf("Expected to level up to 2 from defeating but PC is at level %d", cli.Level)
-  }
-  if cli.Health != cli.MaxHealth {
-    t.Errorf("Expected to heal fully on level up but health is %d/%d", cli.Health, cli.MaxHealth)
-  }
 }

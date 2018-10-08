@@ -12,7 +12,7 @@ type MockNPC struct {
   Exp       int
   IsDead    bool
 
-  KilledBy  interfaces.CliI
+  DefeatedBy  interfaces.CharI
 }
 
 func (m *MockNPC) GetName() string { return "" }
@@ -33,7 +33,7 @@ func (m *MockNPC) IsAlive() bool { return !m.IsDead }
 func (m *MockNPC) Say(string) {}
 func (m *MockNPC) Emote(string) {}
 
-func (m *MockNPC) Die(cli interfaces.CliI) {
+func (m *MockNPC) LoseCombat(ch interfaces.CharI) {
   m.IsDead = true
-  m.KilledBy = cli
+  m.DefeatedBy = ch
 }

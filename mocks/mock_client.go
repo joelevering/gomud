@@ -7,14 +7,8 @@ import (
 )
 
 type MockClient struct {
-  MaxHealth int
-  Health    int
-  Str       int
-  End       int
-  CombatCmd []string
-
   Defeated  interfaces.NPCI
-  KilledBy  interfaces.NPCI
+  DefeatedBy  interfaces.NPCI
 }
 
 func (m *MockClient) StartWriter(conn net.Conn) {}
@@ -30,22 +24,16 @@ func (m *MockClient) SendMsg(...string) {}
 func (m *MockClient) LeaveRoom(string) {}
 func (m *MockClient) EnterRoom(interfaces.RoomI) {}
 func (m *MockClient) GetName() string { return "" }
+func (m *MockClient) SetName(name string) {}
 func (m *MockClient) GetRoom() interfaces.RoomI { return nil }
 
-func (m *MockClient) GetHealth() int { return m.Health }
-func (m *MockClient) SetHealth(health int) { m.Health = health }
-func (m *MockClient) GetMaxHealth() int { return m.MaxHealth }
-func (m *MockClient) SetMaxHealth(maxHealth int) { m.MaxHealth = maxHealth }
-func (m *MockClient) GetStr() int { return m.Str }
-func (m *MockClient) SetStr(str int) { m.Str = str }
-func (m *MockClient) GetEnd() int { return m.End }
-func (m *MockClient) SetEnd(end int) { m.End = end }
-func (m *MockClient) GetCombatCmd() []string { return m.CombatCmd }
+func (m *MockClient) GetCombatCmd() []string { return []string{} }
+func (m *MockClient) SetCombatCmd(cmd []string) {}
 
-func (m *MockClient) Die(npc interfaces.NPCI) {
-  m.KilledBy = npc
+func (m *MockClient) LoseCombat(npc interfaces.NPCI) {
+  m.DefeatedBy = npc
 }
 
-func (m *MockClient) Defeat(npc interfaces.NPCI) {
+func (m *MockClient) WinCombat(npc interfaces.NPCI) {
   m.Defeated = npc
 }

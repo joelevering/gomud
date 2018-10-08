@@ -41,13 +41,18 @@ type NPCI interface {
   Spawn()
   Say(string)
   Emote(string)
-  Die(CliI)
+  LoseCombat(CharI)
   IsAlive() bool
   SetBehavior(QueueI)
 }
 
 type CliI interface {
 	StartWriter(net.Conn)
+  GetName() string
+  SetName(string)
+	GetRoom() RoomI
+  GetCombatCmd() []string
+  SetCombatCmd([]string)
 	List()
 	Look()
 	LookNPC(string)
@@ -59,10 +64,13 @@ type CliI interface {
 	SendMsg(...string)
 	LeaveRoom(string)
 	EnterRoom(RoomI)
-  Die(NPCI)
-  Defeat(NPCI)
+  LoseCombat(NPCI)
+  WinCombat(NPCI)
+}
+
+type CharI interface {
 	GetName() string
-	GetRoom() RoomI
+  SetName(string)
   GetHealth() int
   SetHealth(int)
   GetMaxHealth() int
@@ -71,10 +79,21 @@ type CliI interface {
   SetStr(int)
   GetEnd() int
   SetEnd(int)
-  GetCombatCmd() []string
+  GetLevel() int
+  GetExp() int
+  GetNextLvlExp() int
+  GetSpawn() RoomI
+  SetSpawn(RoomI)
+
+  Heal()
+  EnterCombat()
+  LeaveCombat()
+  IsInCombat() bool
+  GainExp(int) bool
+  ExpToLvl() int
 }
 
 type ClassI interface {
   GetName() string
-  LevelUp(CliI)
+  LevelUp(CharI)
 }

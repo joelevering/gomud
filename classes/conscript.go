@@ -8,9 +8,9 @@ func (c Conscript) GetName() string {
   return "Conscript"
 }
 
-func (c Conscript) LevelUp(cli interfaces.CliI) {
+func (c Conscript) LevelUp(ch interfaces.CharI) {
   // Increase stats
-  cli.SetMaxHealth(cli.GetMaxHealth() + 25)
-  cli.SetStr(cli.GetStr() + 2)
-  cli.SetEnd(cli.GetEnd() + 3)
+  ch.SetMaxHealth(ch.GetMaxHealth() + 25)
+  ch.SetStr(ch.GetStr() + 2)
+  ch.SetEnd(ch.GetEnd() + 3)
 }
