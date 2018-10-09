@@ -78,14 +78,18 @@ type CharI interface {
   GetClassName() string
 	GetName() string
   SetName(string)
-  GetDet() int
-  SetDet(int)
   GetMaxDet() int
   SetMaxDet(int)
+  GetDet() int
+  SetDet(int)
   GetMaxStm() int
   SetMaxStm(int)
+  GetStm() int
+  SetStm(int)
   GetMaxFoc() int
   SetMaxFoc(int)
+  GetFoc() int
+  SetFoc(int)
   GetStr() int
   SetStr(int)
   GetFlo() int

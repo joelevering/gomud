@@ -25,8 +25,12 @@ func (m *MockCharacter) GetDet() int { return 199 }
 func (m *MockCharacter) SetDet(det int) { m.SetDetArg = det }
 func (m *MockCharacter) GetMaxDet() int { return 200 }
 func (m *MockCharacter) SetMaxDet(maxDet int) { m.SetMaxDetArg = maxDet }
+func (m *MockCharacter) GetStm() int { return 198 }
+func (m *MockCharacter) SetStm(stm int) {}
 func (m *MockCharacter) GetMaxStm() int { return 100 }
 func (m *MockCharacter) SetMaxStm(maxStm int) {}
+func (m *MockCharacter) GetFoc() int { return 197 }
+func (m *MockCharacter) SetFoc(foc int) {}
 func (m *MockCharacter) GetMaxFoc() int { return 100 }
 func (m *MockCharacter) SetMaxFoc(maxFoc int) {}
 func (m *MockCharacter) GetStr() int { return 30 }

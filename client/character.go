@@ -72,20 +72,20 @@ func (ch *Character) GetNextLvlExp() int {
   return ch.NextLvlExp
 }
 
-func (ch *Character) GetDet() int {
-  return ch.Det
-}
-
-func (ch *Character) SetDet(det int) {
-  ch.Det = det
-}
-
 func (ch *Character) GetMaxDet() int {
   return ch.MaxDet
 }
 
 func (ch *Character) SetMaxDet(maxDet int) {
   ch.MaxDet = maxDet
+}
+
+func (ch *Character) GetDet() int {
+  return ch.Det
+}
+
+func (ch *Character) SetDet(det int) {
+  ch.Det = det
 }
 
 func (ch *Character) GetMaxStm() int {
@@ -96,12 +96,28 @@ func (ch *Character) SetMaxStm(maxStm int) {
   ch.MaxStm = maxStm
 }
 
+func (ch *Character) GetStm() int {
+  return ch.Stm
+}
+
+func (ch *Character) SetStm(stm int) {
+  ch.Stm = stm
+}
+
 func (ch *Character) GetMaxFoc() int {
   return ch.MaxFoc
 }
 
 func (ch *Character) SetMaxFoc(maxFoc int) {
   ch.MaxFoc = maxFoc
+}
+
+func (ch *Character) GetFoc() int {
+  return ch.Foc
+}
+
+func (ch *Character) SetFoc(foc int) {
+  ch.Foc = foc
 }
 
 func (ch *Character) GetStr() int {
