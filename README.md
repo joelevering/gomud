@@ -15,6 +15,7 @@ Ideas for actually building out the game after the skeleton is done:
   * Questions:
     * Static ability gain vs. ability points/skill tree
     * Is there anyway to incorporate party-style RPG combat into a MUD? E.g. each player controls a 'party'
+    * What about FFXI/FFXIV-style class-switching so a client can use the best class for the area they're in or who they're playing with
 * Souls-like combat
   * Use a mostly-static list of abiltiies (e.g. dodge, parry)
   * Require players to learn how to respond to each enemy/room

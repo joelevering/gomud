@@ -31,25 +31,28 @@ func (gk *Gatekeeper) broadcast(msg string) {
 }
 
 func (gk *Gatekeeper) logIn(cli *client.Client) {
-	log.Printf("User logged in: %s", cli.Name)
+  name := cli.GetName()
 
-	gk.state.Clients[cli.Name] = cli
+  log.Printf("User logged in: %s", name)
 
-  cli.Spawn = gk.state.DefaultRoom
-	cli.EnterRoom(cli.Spawn)
+	gk.state.Clients[name] = cli
+
+  cli.Character.SetSpawn(gk.state.DefaultRoom)
+	cli.Spawn()
 
 	cli.Look()
 
-	go gk.broadcast(fmt.Sprintf("%s has logged in!", cli.Name))
+  go gk.broadcast(fmt.Sprintf("%s has logged in!", name))
 }
 
 func (gk *Gatekeeper) logOut(cli *client.Client) {
+  name := cli.GetName()
 	cli.LeaveRoom("")
 
-	log.Printf("User logged out: %s", cli.Name)
+	log.Printf("User logged out: %s", name)
 
-	delete(gk.state.Clients, cli.Name)
+	delete(gk.state.Clients, name)
 	close(cli.Channel)
 
-	go gk.broadcast(fmt.Sprintf("%s has logged out!", cli.Name))
+	go gk.broadcast(fmt.Sprintf("%s has logged out!", name))
 }

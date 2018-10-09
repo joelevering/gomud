@@ -1,6 +1,16 @@
 package interfaces
 
-import "net"
+import (
+  "net"
+
+  "github.com/joelevering/gomud/classes"
+)
+
+type QueueI interface {
+  Sub(string) chan bool
+  Unsub(string, chan bool)
+  Pub(string)
+}
 
 type RoomI interface {
 	Message(string)
@@ -35,13 +45,18 @@ type NPCI interface {
   Spawn()
   Say(string)
   Emote(string)
-  Die(CliI)
+  LoseCombat(CharI)
   IsAlive() bool
   SetBehavior(QueueI)
 }
 
 type CliI interface {
 	StartWriter(net.Conn)
+  GetName() string
+  SetName(string)
+	GetRoom() RoomI
+  GetCombatCmd() []string
+  SetCombatCmd([]string)
 	List()
 	Look()
 	LookNPC(string)
@@ -53,20 +68,36 @@ type CliI interface {
 	SendMsg(...string)
 	LeaveRoom(string)
 	EnterRoom(RoomI)
-  Die(NPCI)
-  Defeat(NPCI)
+  LoseCombat(NPCI)
+  WinCombat(NPCI)
+}
+
+type CharI interface {
 	GetName() string
-	GetRoom() RoomI
+  SetName(string)
   GetHealth() int
   SetHealth(int)
   GetMaxHealth() int
+  SetMaxHealth(int)
   GetStr() int
+  SetStr(int)
   GetEnd() int
-  GetCombatCmd() []string
+  SetEnd(int)
+  GetLevel() int
+  GetExp() int
+  GetNextLvlExp() int
+  GetSpawn() RoomI
+  SetSpawn(RoomI)
+
+  Heal()
+  EnterCombat()
+  LeaveCombat()
+  IsInCombat() bool
+  GainExp(int) bool
+  ExpToLvl() int
 }
 
-type QueueI interface {
-  Sub(string) chan bool
-  Unsub(string, chan bool)
-  Pub(string)
+type ClassI interface {
+  GetName() string
+  GetStatGrowth() classes.StatGrowth
 }
