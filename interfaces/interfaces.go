@@ -1,6 +1,10 @@
 package interfaces
 
-import "net"
+import (
+  "net"
+
+  "github.com/joelevering/gomud/classes"
+)
 
 type QueueI interface {
   Sub(string) chan bool
@@ -95,5 +99,5 @@ type CharI interface {
 
 type ClassI interface {
   GetName() string
-  LevelUp(CharI)
+  GetStatGrowth() classes.StatGrowth
 }

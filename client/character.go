@@ -122,7 +122,10 @@ func (ch *Character) GainExp(exp int) (leveledUp bool) {
 
 func (ch *Character) levelUp() {
   // Increase stats based on Class
-  ch.Class.LevelUp(ch)
+  statGrowth := ch.Class.GetStatGrowth()
+  ch.SetMaxHealth(ch.MaxHealth + statGrowth.Health)
+  ch.SetStr(ch.Str + statGrowth.Str)
+  ch.SetEnd(ch.End + statGrowth.End)
 
   // Level up and carryover EXP
   ch.Level += 1

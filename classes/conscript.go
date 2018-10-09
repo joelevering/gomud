@@ -1,6 +1,10 @@
 package classes
 
-import "github.com/joelevering/gomud/interfaces"
+var ConscriptGrowth = StatGrowth{
+  Health: 25,
+  Str: 2,
+  End: 3,
+}
 
 type Conscript struct {}
 
@@ -8,9 +12,6 @@ func (c Conscript) GetName() string {
   return "Conscript"
 }
 
-func (c Conscript) LevelUp(ch interfaces.CharI) {
-  // Increase stats
-  ch.SetMaxHealth(ch.GetMaxHealth() + 25)
-  ch.SetStr(ch.GetStr() + 2)
-  ch.SetEnd(ch.GetEnd() + 3)
+func (c Conscript) GetStatGrowth() StatGrowth {
+  return ConscriptGrowth
 }

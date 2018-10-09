@@ -51,8 +51,10 @@ func Test_GainExpLevelsUp(t *testing.T) {
   if !(pc.NextLvlExp > 100) {
     t.Error("Expected NextLvlExp to increase on level, but it didn't")
   }
-
-  if class.LeveledUpChar != pc {
-    t.Error("Expected leveling up to call class LevelUp method, but it didn't")
+  if pc.MaxHealth <= 100 {
+    t.Error("Expected leveling up to raise max health, but it didn't")
+  }
+  if pc.Str <= 30 || pc.End <= 50 {
+    t.Error("Expected leveling up to raise max str and end, but it didn't")
   }
 }
