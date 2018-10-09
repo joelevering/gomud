@@ -38,15 +38,15 @@ func (m *MockRoom) GetNpcs() []interfaces.NPCI {
 
 	return []interfaces.NPCI{
 		&npc.NPC{
-			Id:        1,
-			Name:      "Harold",
-			Desc:      "Holding a purple crayon",
-			MaxHealth: 100,
-			Health:    99,
-			Str:       98,
-			End:       97,
-      Exp:       2,
-      Alive:     true,
+			Id:     1,
+			Name:   "Harold",
+			Desc:   "Holding a purple crayon",
+			MaxDet: 100,
+			Det:    99,
+			Str:    98,
+			Flo:    97,
+      Exp:    2,
+      Alive:  true,
 		},
 	}
 }

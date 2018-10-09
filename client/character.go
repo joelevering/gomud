@@ -5,6 +5,7 @@ import (
 
 	"github.com/joelevering/gomud/classes"
 	"github.com/joelevering/gomud/interfaces"
+	"github.com/joelevering/gomud/stats"
 )
 
 type Character struct {
@@ -13,24 +14,42 @@ type Character struct {
   Level      int
   Exp        int
   NextLvlExp int
-	MaxHealth  int
-	Health     int
+	MaxDet     int
+	Det        int
+  MaxStm     int
+  Stm        int
+  MaxFoc     int
+  Foc        int
 	Str        int
-	End        int
+  Flo        int
+  Ing        int
+	Kno        int
+	Sag        int
   InCombat   bool
   Spawn      interfaces.RoomI
 }
 
 func NewCharacter() *Character {
   return &Character{
-    Class:      classes.Conscript{},
+    Class:      classes.Conscript,
     Level:      1,
     NextLvlExp: 10,
-    MaxHealth:  200,
-    Health:     200,
-    Str:        20,
-    End:        50,
+    MaxDet:     200,
+    Det:        200,
+    MaxStm:     100,
+    Stm:        100,
+    MaxFoc:     100,
+    Foc:        100,
+    Str:        10,
+    Flo:        10,
+    Ing:        10,
+    Kno:        10,
+    Sag:        10,
   }
+}
+
+func (ch *Character) GetClassName() string {
+  return ch.Class.GetName()
 }
 
 func (ch *Character) GetName() string {
@@ -53,20 +72,36 @@ func (ch *Character) GetNextLvlExp() int {
   return ch.NextLvlExp
 }
 
-func (ch *Character) GetHealth() int {
-  return ch.Health
+func (ch *Character) GetDet() int {
+  return ch.Det
 }
 
-func (ch *Character) SetHealth(health int) {
-  ch.Health = health
+func (ch *Character) SetDet(det int) {
+  ch.Det = det
 }
 
-func (ch *Character) GetMaxHealth() int {
-  return ch.MaxHealth
+func (ch *Character) GetMaxDet() int {
+  return ch.MaxDet
 }
 
-func (ch *Character) SetMaxHealth(maxHealth int) {
-  ch.MaxHealth = maxHealth
+func (ch *Character) SetMaxDet(maxDet int) {
+  ch.MaxDet = maxDet
+}
+
+func (ch *Character) GetMaxStm() int {
+  return ch.MaxStm
+}
+
+func (ch *Character) SetMaxStm(maxStm int) {
+  ch.MaxStm = maxStm
+}
+
+func (ch *Character) GetMaxFoc() int {
+  return ch.MaxFoc
+}
+
+func (ch *Character) SetMaxFoc(maxFoc int) {
+  ch.MaxFoc = maxFoc
 }
 
 func (ch *Character) GetStr() int {
@@ -77,12 +112,80 @@ func (ch *Character) SetStr(str int) {
   ch.Str = str
 }
 
-func (ch *Character) GetEnd() int {
-  return ch.End
+func (ch *Character) GetFlo() int {
+  return ch.Flo
 }
 
-func (ch *Character) SetEnd(end int) {
-  ch.End = end
+func (ch *Character) SetFlo(flo int) {
+  ch.Flo = flo
+}
+
+func (ch *Character) GetIng() int {
+  return ch.Ing
+}
+
+func (ch *Character) SetIng(ing int) {
+  ch.Ing = ing
+}
+
+func (ch *Character) GetKno() int {
+  return ch.Kno
+}
+
+func (ch *Character) SetKno(kno int) {
+  ch.Kno = kno
+}
+
+func (ch *Character) GetSag() int {
+  return ch.Sag
+}
+
+func (ch *Character) SetSag(sag int) {
+  ch.Sag = sag
+}
+
+func (ch *Character) GetAtk() int {
+  atk := 0
+  atkStats := ch.Class.GetAtkStats()
+
+  for _, stat := range atkStats {
+    switch stat {
+    case stats.Str:
+      atk += ch.Str
+    case stats.Flo:
+      atk += ch.Flo
+    case stats.Ing:
+      atk += ch.Ing
+    case stats.Kno:
+      atk += ch.Kno
+    case stats.Sag:
+      atk += ch.Sag
+    }
+  }
+
+  return atk
+}
+
+func (ch *Character) GetDef() int {
+  def := 0
+  defStats := ch.Class.GetDefStats()
+
+  for _, stat := range defStats {
+    switch stat {
+    case stats.Str:
+      def += ch.Str
+    case stats.Flo:
+      def += ch.Flo
+    case stats.Ing:
+      def += ch.Ing
+    case stats.Kno:
+      def += ch.Kno
+    case stats.Sag:
+      def += ch.Sag
+    }
+  }
+
+  return def
 }
 
 func (ch *Character) GetSpawn() interfaces.RoomI {
@@ -94,7 +197,7 @@ func (ch *Character) SetSpawn(spawn interfaces.RoomI) {
 }
 
 func (ch *Character) Heal() {
-  ch.Health = ch.MaxHealth
+  ch.Det = ch.MaxDet
 }
 
 func (ch *Character) EnterCombat() {
@@ -123,9 +226,12 @@ func (ch *Character) GainExp(exp int) (leveledUp bool) {
 func (ch *Character) levelUp() {
   // Increase stats based on Class
   statGrowth := ch.Class.GetStatGrowth()
-  ch.SetMaxHealth(ch.MaxHealth + statGrowth.Health)
+  ch.SetMaxDet(ch.MaxDet + statGrowth.Det)
   ch.SetStr(ch.Str + statGrowth.Str)
-  ch.SetEnd(ch.End + statGrowth.End)
+  ch.SetFlo(ch.Flo + statGrowth.Flo)
+  ch.SetIng(ch.Ing + statGrowth.Ing)
+  ch.SetKno(ch.Kno + statGrowth.Kno)
+  ch.SetSag(ch.Sag + statGrowth.Sag)
 
   // Level up and carryover EXP
   ch.Level += 1

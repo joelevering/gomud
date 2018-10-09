@@ -69,12 +69,20 @@ func Test_InitializingNPCs(t *testing.T) {
 		t.Errorf("Expected NPC to have desc 'A massive pile of gelatinous goo adorned with two huge eyes' but got %v", npc.GetDesc())
 	}
 
-	if npc.GetHealth() != 999999 || npc.GetMaxHealth() != 999999 {
-		t.Errorf("Expected NPC to have health and maxHealth of 999999 but got %d health and %d maxHealth", npc.GetHealth(), npc.GetMaxHealth())
+	if npc.GetDet() != 999999 || npc.GetMaxDet() != 999999 {
+		t.Errorf("Expected NPC to have determination and max determination of 999999 but got %d det and %d max det", npc.GetDet(), npc.GetMaxDet())
 	}
 
-	if npc.GetStr() != 9999 || npc.GetEnd() != 9999 {
-		t.Errorf("Expected NPC to have str and end of 9999 but got %d str and %d end", npc.GetStr(), npc.GetEnd())
+	if npc.GetStr() != 9999 {
+		t.Errorf("Expected NPC to have str of 9999 but got %d", npc.GetStr())
+	}
+
+	if npc.GetAtk() != 9999 {
+		t.Errorf("Expected NPC to have atk of 9999 but got %d", npc.GetAtk())
+	}
+
+	if npc.GetDef() != 9999 {
+		t.Errorf("Expected NPC to have def of 9999 but got %d", npc.GetDef())
 	}
 
 	if room.GetNpcs()[0].GetName() != npc.GetName() {

@@ -33,7 +33,12 @@
         "max_health": 999999,
         "health": 999999,
         "strength": 9999,
-        "endurance": 9999,
+        "flow": 9999,
+        "ingenuity": 9999,
+        "knowledge": 9999,
+        "sagacity": 9999,
+        "attack_stats": ["kno"],
+        "defense_stats": ["sag"],
         "experience": 999999,
         "ooc_behavior": [
           {
@@ -108,7 +113,12 @@
         "max_health": 999999,
         "health": 999999,
         "strength": 9999,
-        "endurance": 9999,
+        "flow": 9999,
+        "ingenuity": 9999,
+        "knowledge": 9999,
+        "sagacity": 9999,
+        "attack_stats": ["str"],
+        "defense_stats": ["flo"],
         "experience": 999999
       }
     ]
@@ -132,7 +142,12 @@
         "max_health": 777777,
         "health": 777777,
         "strength": 7777,
-        "endurance": 7777,
+        "flow": 7777,
+        "ingenuity": 7777,
+        "knowledge": 7777,
+        "sagacity": 7777,
+        "attack_stats": ["str"],
+        "defense_stats": ["str"],
         "experience": 777777
       }
     ]
@@ -168,7 +183,12 @@
         "max_health": 888888,
         "health": 888888,
         "strength": 8888,
-        "endurance": 8888,
+        "flow": 8888,
+        "ingenuity": 8888,
+        "knowledge": 8888,
+        "sagacity": 8888,
+        "attack_stats": ["ing"],
+        "defense_stats": ["ing"],
         "experience": 888888
       }
     ]
@@ -192,7 +212,12 @@
         "max_health": 666666,
         "health": 666666,
         "strength": 6666,
-        "endurance": 6666,
+        "flow": 6666,
+        "ingenuity": 6666,
+        "knowledge": 6666,
+        "sagacity": 6666,
+        "attack_stats": ["str"],
+        "defense_stats": ["flo"],
         "experience": 666666
       }
     ]
@@ -215,8 +240,13 @@
         "description": "This crab looks like it's prepared for battle",
         "max_health": 50,
         "health": 50,
-        "strength": 10,
-        "endurance": 30,
+        "strength": 5,
+        "flow": 10,
+        "ingenuity": 0,
+        "knowledge": 0,
+        "sagacity": 0,
+        "attack_stats": ["str"],
+        "defense_stats": ["flo"],
         "experience": 10,
         "ooc_behavior": [
           {

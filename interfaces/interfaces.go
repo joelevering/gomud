@@ -4,6 +4,7 @@ import (
   "net"
 
   "github.com/joelevering/gomud/classes"
+  "github.com/joelevering/gomud/stats"
 )
 
 type QueueI interface {
@@ -35,12 +36,13 @@ type ExitI interface {
 type NPCI interface {
 	GetName() string
 	GetDesc() string
-	GetHealth() int
-	GetMaxHealth() int
-	GetEnd() int
+	GetMaxDet() int
+	GetDet() int
+	SetDet(int)
 	GetStr() int
+  GetAtk() int
+  GetDef() int
   GetExp() int
-	SetHealth(int)
   SetSpawn(RoomI)
   Spawn()
   Say(string)
@@ -73,16 +75,29 @@ type CliI interface {
 }
 
 type CharI interface {
+  GetClassName() string
 	GetName() string
   SetName(string)
-  GetHealth() int
-  SetHealth(int)
-  GetMaxHealth() int
-  SetMaxHealth(int)
+  GetDet() int
+  SetDet(int)
+  GetMaxDet() int
+  SetMaxDet(int)
+  GetMaxStm() int
+  SetMaxStm(int)
+  GetMaxFoc() int
+  SetMaxFoc(int)
   GetStr() int
   SetStr(int)
-  GetEnd() int
-  SetEnd(int)
+  GetFlo() int
+  SetFlo(int)
+  GetIng() int
+  SetIng(int)
+  GetKno() int
+  SetKno(int)
+  GetSag() int
+  SetSag(int)
+  GetAtk() int
+  GetDef() int
   GetLevel() int
   GetExp() int
   GetNextLvlExp() int
@@ -100,4 +115,6 @@ type CharI interface {
 type ClassI interface {
   GetName() string
   GetStatGrowth() classes.StatGrowth
+  GetAtkStats() []stats.Stat
+  GetDefStats() []stats.Stat
 }
