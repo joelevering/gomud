@@ -133,6 +133,7 @@ func (cli *Client) Status() {
   pc := cli.Character
   header := fmt.Sprintf("~~~~~~~~~~*%s*~~~~~~~~~~", cli.GetName())
   cli.SendMsg(header)
+  cli.SendMsg(fmt.Sprintf("Class: %d", pc.Class.GetName()))
   cli.SendMsg(fmt.Sprintf("Level: %d", pc.GetLevel()))
   cli.SendMsg(fmt.Sprintf("Experience: %d/%d", pc.GetExp(), pc.GetNextLvlExp()))
   cli.SendMsg("")

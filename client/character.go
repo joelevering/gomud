@@ -8,17 +8,17 @@ import (
 )
 
 type Character struct {
-	Name      string
-  InCombat  bool
-  Class     interfaces.ClassI
-  Level     int
-  Exp       int
-  NextLvlExp  int
-	MaxHealth int
-	Health    int
-	Str       int
-	End       int
-  Spawn     interfaces.RoomI
+	Name       string
+  Class      interfaces.ClassI
+  Level      int
+  Exp        int
+  NextLvlExp int
+	MaxHealth  int
+	Health     int
+	Str        int
+	End        int
+  InCombat   bool
+  Spawn      interfaces.RoomI
 }
 
 func NewCharacter() *Character {
@@ -34,11 +34,11 @@ func NewCharacter() *Character {
 }
 
 func (ch *Character) GetName() string {
-	return ch.Name
+  return ch.Name
 }
 
 func (ch *Character) SetName(name string) {
-	ch.Name = name
+  ch.Name = name
 }
 
 func (ch *Character) GetLevel() int {
@@ -54,7 +54,7 @@ func (ch *Character) GetNextLvlExp() int {
 }
 
 func (ch *Character) GetHealth() int {
-	return ch.Health
+  return ch.Health
 }
 
 func (ch *Character) SetHealth(health int) {
@@ -62,7 +62,7 @@ func (ch *Character) SetHealth(health int) {
 }
 
 func (ch *Character) GetMaxHealth() int {
-	return ch.MaxHealth
+  return ch.MaxHealth
 }
 
 func (ch *Character) SetMaxHealth(maxHealth int) {
@@ -70,7 +70,7 @@ func (ch *Character) SetMaxHealth(maxHealth int) {
 }
 
 func (ch *Character) GetStr() int {
-	return ch.Str
+  return ch.Str
 }
 
 func (ch *Character) SetStr(str int) {
@@ -78,7 +78,7 @@ func (ch *Character) SetStr(str int) {
 }
 
 func (ch *Character) GetEnd() int {
-	return ch.End
+  return ch.End
 }
 
 func (ch *Character) SetEnd(end int) {
