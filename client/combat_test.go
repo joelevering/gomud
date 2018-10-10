@@ -81,35 +81,3 @@ func Test_NPCDefeat(t *testing.T) {
     t.Error("Expected PC to leave combat on win, but it didn't")
   }
 }
-
-// func Test_NPCDefeat(t *testing.T) {
-//   pc := NewCharacter()
-//   pc.InCombat = true
-// 	cli := &mocks.MockClient{}
-//   npc := &mocks.MockNPC{
-//     Det:    0,
-//   }
-//   ci := CombatInstance{
-//     cli: cli,
-//     pc: pc,
-//     npc: npc,
-//   }
-//
-//   ci.Loop(false)
-//
-//   if pc.IsInCombat() {
-//     t.Error("Expected NPC defeat to remove PC from combat, but it's still in combat")
-//   }
-//
-//   if cli.Defeated != npc {
-//     t.Error("Expected the client to defeat the NPC, but it didn't")
-//   }
-//
-//   if cli.DefeatedBy != nil {
-//     t.Error("Expected the client not to be defeated, but it was")
-//   }
-//
-//   if npc.DefeatedBy != pc {
-//     t.Error("Expected the NPC to be defeated by the PC, but it wasn't")
-//   }
-// }

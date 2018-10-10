@@ -10,18 +10,17 @@ import (
   "github.com/joelevering/gomud/room"
 )
 
-// func Test_CmdSetsCombatCmdInCombat(t *testing.T) {
-//   ch := make(chan string)
-//   q := &mocks.MockQueue{}
-//   cli := NewClient(ch, q)
-//   pc := &mocks.MockCharacter{ InCombat: true }
-//   cli.Character = pc
-//   cli.Cmd("smite")
-//
-//   if len(cli.CombatCmd) != 1 || cli.CombatCmd[0] != "smite" {
-//     t.Errorf("Expected CombatCmd to be 'smite' when sent as Cmd while InCombat, but got %v", cli.CombatCmd)
-//   }
-// }
+func Test_CmdSetsCombatCmdInCombat(t *testing.T) {
+  ch := make(chan string)
+  q := &mocks.MockQueue{}
+  cli := NewClient(ch, q)
+  cli.Character.EnterCombat()
+  cli.Cmd("smite")
+
+  if len(cli.CombatCmd) != 1 || cli.CombatCmd[0] != "smite" {
+    t.Errorf("Expected CombatCmd to be 'smite' when sent as Cmd while InCombat, but got %v", cli.CombatCmd)
+  }
+}
 
 func Test_EnterRoom(t *testing.T) {
   ch := make(chan string)
