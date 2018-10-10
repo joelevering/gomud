@@ -1,34 +1,34 @@
 package mocks
 
 import (
-	"github.com/joelevering/gomud/interfaces"
-	"github.com/joelevering/gomud/npc"
+  "github.com/joelevering/gomud/interfaces"
+  "github.com/joelevering/gomud/npc"
 )
 
 type MockRoom struct {
-	Messages   []string
-	Clients    []interfaces.CliI
-	Exits      []interfaces.ExitI
-	AddedCli   interfaces.CliI
-	RemovedCli interfaces.CliI
+  Messages   []string
+  Clients    []interfaces.CliI
+  Exits      []interfaces.ExitI
+  AddedCli   interfaces.CliI
+  RemovedCli interfaces.CliI
   NPCs       []interfaces.NPCI
-	Name       string
+  Name       string
 }
 
 func (m *MockRoom) Message(msg string) {
-	m.Messages = append(m.Messages, msg)
+  m.Messages = append(m.Messages, msg)
 }
 
 func (m *MockRoom) AddCli(cli interfaces.CliI) {
-	m.AddedCli = cli
+  m.AddedCli = cli
 }
 
 func (m *MockRoom) RemoveCli(cli interfaces.CliI, msg string) {
-	m.RemovedCli = cli
+  m.RemovedCli = cli
 }
 
 func (m *MockRoom) GetExits() []interfaces.ExitI {
-	return m.Exits
+  return m.Exits
 }
 
 func (m *MockRoom) GetNpcs() []interfaces.NPCI {
@@ -36,33 +36,33 @@ func (m *MockRoom) GetNpcs() []interfaces.NPCI {
     return m.NPCs
   }
 
-	return []interfaces.NPCI{
-		&npc.NPC{
-			Id:     1,
-			Name:   "Harold",
-			Desc:   "Holding a purple crayon",
-			MaxDet: 100,
-			Det:    99,
-			Str:    98,
-			Flo:    97,
+  return []interfaces.NPCI{
+    &npc.NPC{
+      Id:     1,
+      Name:   "Harold",
+      Desc:   "Holding a purple crayon",
+      MaxDet: 100,
+      Det:    99,
+      Str:    98,
+      Flo:    97,
       Exp:    2,
       Alive:  true,
-		},
-	}
+    },
+  }
 }
 
 func (m *MockRoom) GetClients() []interfaces.CliI {
-	return m.Clients
+  return m.Clients
 }
 
 func (m *MockRoom) GetName() string {
-	return m.Name
+  return m.Name
 }
 
 func (m *MockRoom) GetDesc() string {
-	return "Desc"
+  return "Desc"
 }
 
 func (m *MockRoom) GetID() int {
-	return 0
+  return 0
 }

@@ -3,28 +3,28 @@ package client
 import (
   "math"
 
-	"github.com/joelevering/gomud/classes"
-	"github.com/joelevering/gomud/interfaces"
-	"github.com/joelevering/gomud/stats"
+  "github.com/joelevering/gomud/classes"
+  "github.com/joelevering/gomud/interfaces"
+  "github.com/joelevering/gomud/stats"
 )
 
 type Character struct {
-	Name       string
+  Name       string
   Class      interfaces.ClassI
   Level      int
   Exp        int
   NextLvlExp int
-	MaxDet     int
-	Det        int
+  MaxDet     int
+  Det        int
   MaxStm     int
   Stm        int
   MaxFoc     int
   Foc        int
-	Str        int
+  Str        int
   Flo        int
   Ing        int
-	Kno        int
-	Sag        int
+  Kno        int
+  Sag        int
   InCombat   bool
   Spawn      interfaces.RoomI
 }
