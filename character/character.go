@@ -49,6 +49,18 @@ func NewCharacter() *Character {
   }
 }
 
+func (ch *Character) ResetStats() {
+  lvl := ch.Level
+  exp := ch.Exp
+
+  ch.Level = 0
+  for i := 0; i < lvl; i++ {
+    ch.levelUp()
+  }
+
+  ch.Exp = exp
+}
+
 func (ch *Character) SetClass() {
   ch.Class = classes.ByName[ch.ClassName]
 }

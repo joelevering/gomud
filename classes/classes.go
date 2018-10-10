@@ -74,42 +74,91 @@ var Sophist = &Class{
 
 var SlimeKing = &Class{
   name: "Slime King",
-  growth: StatGrowth{},
+  growth: StatGrowth{
+    Det: 99999,
+    Stm: 99999,
+    Foc: 99999,
+    Str: 999,
+    Flo: 999,
+    Ing: 999,
+    Kno: 999,
+    Sag: 999,
+  },
   atkStats: []stats.Stat{stats.Kno},
   defStats: []stats.Stat{stats.Sag},
 }
 
 var SlimeChef = &Class{
   name: "Slime Chef",
-  growth: StatGrowth{},
+  growth: StatGrowth{
+    Det: 88888,
+    Stm: 88888,
+    Foc: 88888,
+    Str: 888,
+    Flo: 888,
+    Ing: 888,
+    Kno: 888,
+    Sag: 888,
+  },
   atkStats: []stats.Stat{stats.Ing},
   defStats: []stats.Stat{stats.Ing},
 }
 
 var SlimeGuard = &Class{
   name: "Slime Guard",
-  growth: StatGrowth{},
+  growth: StatGrowth{
+    Det: 77777,
+    Stm: 77777,
+    Foc: 77777,
+    Str: 777,
+    Flo: 777,
+    Ing: 777,
+    Kno: 777,
+    Sag: 777,
+  },
   atkStats: []stats.Stat{stats.Str},
   defStats: []stats.Stat{stats.Str},
 }
 
 var SlimeBaby = &Class{
   name: "Slime Baby",
-  growth: StatGrowth{},
+  growth: StatGrowth{
+    Det: 66666,
+    Stm: 66666,
+    Foc: 66666,
+    Str: 666,
+    Flo: 666,
+    Ing: 666,
+    Kno: 666,
+    Sag: 666,
+  },
   atkStats: []stats.Stat{stats.Str},
   defStats: []stats.Stat{stats.Flo},
 }
 
 var DogGod = &Class{
   name: "Dog God",
-  growth: StatGrowth{},
+  growth: StatGrowth{
+    Det: 100000,
+    Stm: 100000,
+    Foc: 100000,
+    Str: 1000,
+    Flo: 1000,
+    Ing: 1000,
+    Kno: 1000,
+    Sag: 1000,
+  },
   atkStats: []stats.Stat{stats.Str},
   defStats: []stats.Stat{stats.Flo},
 }
 
 var Crab = &Class{
   name: "Crab",
-  growth: StatGrowth{},
+  growth: StatGrowth{
+    Det: 10,
+    Str: 1,
+    Flo: 2,
+  },
   atkStats: []stats.Stat{stats.Str},
   defStats: []stats.Stat{stats.Flo},
 }
