@@ -71,20 +71,20 @@ func Test_InitializingNPCs(t *testing.T) {
 
   npcC := npc.GetCharacter()
 
-  if npcC.GetDet() != 999999 || npcC.GetMaxDet() != 999999 {
-    t.Errorf("Expected NPC to have determination and max determination of 999999 but got %d det and %d max det", npcC.GetDet(), npcC.GetMaxDet())
+  if npcC.GetDet() != 999990 || npcC.GetMaxDet() != 999990 {
+    t.Errorf("Expected NPC to have determination and max determination of 999990 but got %d det and %d max det", npcC.GetDet(), npcC.GetMaxDet())
   }
 
-  if npcC.GetStr() != 9999 {
-    t.Errorf("Expected NPC to have str of 9999 but got %d", npcC.GetStr())
+  if npcC.GetStr() != 9990 {
+    t.Errorf("Expected NPC to have str of 9990 but got %d", npcC.GetStr())
   }
 
-  if npcC.GetAtk() != 9999 {
-    t.Errorf("Expected NPC to have atk of 9999 but got %d", npcC.GetAtk())
+  if npcC.GetAtk() != 9990 {
+    t.Errorf("Expected NPC to have atk of 9990 but got %d", npcC.GetAtk())
   }
 
-  if npcC.GetDef() != 9999 {
-    t.Errorf("Expected NPC to have def of 9999 but got %d", npcC.GetDef())
+  if npcC.GetDef() != 9990 {
+    t.Errorf("Expected NPC to have def of 9990 but got %d", npcC.GetDef())
   }
 
   if room.GetNpcs()[0].GetName() != npc.GetName() {

@@ -72,6 +72,7 @@ type CliI interface {
 
 type CharI interface {
   SetClass()
+  ResetStats()
   GetClassName() string
   GetName() string
   SetName(string)

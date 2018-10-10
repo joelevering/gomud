@@ -22,6 +22,7 @@ type MockCharacter struct {
 }
 
 func (m *MockCharacter) SetClass() {}
+func (m *MockCharacter) ResetStats() {}
 func (m *MockCharacter) GetClassName() string { return "Superstar" }
 func (m *MockCharacter) GetName() string { return "mock char name" }
 func (m *MockCharacter) SetName(name string) {}

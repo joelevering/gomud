@@ -33,6 +33,7 @@ type Behavior struct {
 func (n *NPC) Init(room interfaces.RoomI, queue interfaces.QueueI) {
   n.SetSpawn(room)
   n.Character.SetClass()
+  n.Character.ResetStats()
   n.Spawn()
   n.SetBehavior(queue)
 }
