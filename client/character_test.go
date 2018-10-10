@@ -30,10 +30,10 @@ func Test_GainExpLevelsUp(t *testing.T) {
     Level: 1,
     Exp: 99,
     NextLvlExp: 100,
-    Health: 1,
-    MaxHealth: 100,
+    Det: 1,
+    MaxDet: 100,
     Str: 30,
-    End: 50,
+    Flo: 50,
     Class: class,
   }
 
@@ -45,16 +45,16 @@ func Test_GainExpLevelsUp(t *testing.T) {
   if pc.Level != 2 {
     t.Errorf("Expected PC to hit level 2 after getting NextLvlExp at level 1, but level is %d", pc.Level)
   }
-  if pc.Health != pc.MaxHealth {
-    t.Errorf("Expected to heal fully on level up but health is %d/%d", pc.Health, pc.MaxHealth)
+  if pc.Det != pc.MaxDet {
+    t.Errorf("Expected to heal fully on level up but detrmination is %d/%d", pc.Det, pc.MaxDet)
   }
   if !(pc.NextLvlExp > 100) {
     t.Error("Expected NextLvlExp to increase on level, but it didn't")
   }
-  if pc.MaxHealth <= 100 {
-    t.Error("Expected leveling up to raise max health, but it didn't")
+  if pc.MaxDet <= 100 {
+    t.Error("Expected leveling up to raise max determination, but it didn't")
   }
-  if pc.Str <= 30 || pc.End <= 50 {
-    t.Error("Expected leveling up to raise max str and end, but it didn't")
+  if pc.Str <= 30 || pc.Flo <= 50 {
+    t.Error("Expected leveling up to raise max str and flo, but it didn't")
   }
 }

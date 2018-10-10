@@ -5,24 +5,27 @@ import (
 )
 
 type MockNPC struct {
-  MaxHealth int
-  Health    int
-  Str       int
-  End       int
-  Exp       int
-  IsDead    bool
+  Det    int
+  Str    int
+  Flo    int
+  Exp    int
+  IsDead bool
+  Atk    int
+  Def    int
 
-  DefeatedBy  interfaces.CharI
+  SetDetArg  int
+  DefeatedBy interfaces.CharI
 }
 
 func (m *MockNPC) GetName() string { return "" }
 func (m *MockNPC) GetDesc() string { return "" }
-func (m *MockNPC) GetHealth() int { return m.Health }
-func (m *MockNPC) SetHealth(health int) { m.Health = health }
-func (m *MockNPC) GetMaxHealth() int { return m.MaxHealth }
+func (m *MockNPC) GetDet() int { return m.Det }
+func (m *MockNPC) SetDet(det int) { m.SetDetArg = det }
+func (m *MockNPC) GetMaxDet() int { return 100 }
 func (m *MockNPC) GetStr() int { return m.Str }
-func (m *MockNPC) GetEnd() int { return m.End }
-func (m *MockNPC) GetExp() int { return m.Exp }
+func (m *MockNPC) GetExp() int { return 10 }
+func (m *MockNPC) GetAtk() int { return m.Atk }
+func (m *MockNPC) GetDef() int { return m.Def }
 
 func (m *MockNPC) SetSpawn(spawn interfaces.RoomI) {}
 func (m *MockNPC) SetBehavior(interfaces.QueueI) {}

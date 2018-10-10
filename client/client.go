@@ -133,13 +133,19 @@ func (cli *Client) Status() {
   pc := cli.Character
   header := fmt.Sprintf("~~~~~~~~~~*%s*~~~~~~~~~~", cli.GetName())
   cli.SendMsg(header)
-  cli.SendMsg(fmt.Sprintf("Class: %d", pc.Class.GetName()))
+  cli.SendMsg(fmt.Sprintf("Class: %s", pc.GetClassName()))
   cli.SendMsg(fmt.Sprintf("Level: %d", pc.GetLevel()))
   cli.SendMsg(fmt.Sprintf("Experience: %d/%d", pc.GetExp(), pc.GetNextLvlExp()))
   cli.SendMsg("")
-  cli.SendMsg(fmt.Sprintf("Health: %d/%d", pc.GetHealth(), pc.GetMaxHealth()))
+  cli.SendMsg(fmt.Sprintf("Determination: %d/%d", pc.GetDet(), pc.GetMaxDet()))
+  cli.SendMsg(fmt.Sprintf("Stamina: %d/%d", pc.GetStm(), pc.GetMaxStm()))
+  cli.SendMsg(fmt.Sprintf("Focus: %d/%d", pc.GetFoc(), pc.GetMaxFoc()))
+  cli.SendMsg("")
   cli.SendMsg(fmt.Sprintf("Strength: %d", pc.GetStr()))
-  cli.SendMsg(fmt.Sprintf("Endurance: %d", pc.GetEnd()))
+  cli.SendMsg(fmt.Sprintf("Flow: %d", pc.GetFlo()))
+  cli.SendMsg(fmt.Sprintf("Ingenuity: %d", pc.GetIng()))
+  cli.SendMsg(fmt.Sprintf("Knowledge: %d", pc.GetKno()))
+  cli.SendMsg(fmt.Sprintf("Sagacity: %d", pc.GetSag()))
   cli.SendMsg(strings.Repeat("~", utf8.RuneCountInString(header)))
 }
 
@@ -201,15 +207,15 @@ func (cli *Client) Yell(msg string) {
 
 func (cli *Client) ChangeClass(class string) {
 	switch strings.ToLower(class) {
-	case "toxicologist":
+	case "conscript":
     // something
-	case "minder":
+	case "athlete":
     // something
-  case "tracker":
+  case "charmer":
     // something
-  case "conscript":
+  case "augur":
     // something
-  case "acolyte":
+  case "sophist":
     // something
   }
 }
