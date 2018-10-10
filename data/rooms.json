@@ -28,18 +28,19 @@
     "npcs": [
       {
         "id": 1,
-        "name": "King Slime",
         "description": "A massive pile of gelatinous goo adorned with two huge eyes",
-        "max_health": 999999,
-        "health": 999999,
-        "strength": 9999,
-        "flow": 9999,
-        "ingenuity": 9999,
-        "knowledge": 9999,
-        "sagacity": 9999,
-        "attack_stats": ["kno"],
-        "defense_stats": ["sag"],
-        "experience": 999999,
+        "character": {
+          "name": "King Slime",
+          "class": "Slime King",
+          "max_health": 999999,
+          "health": 999999,
+          "strength": 9999,
+          "flow": 9999,
+          "ingenuity": 9999,
+          "knowledge": 9999,
+          "sagacity": 9999,
+          "experience": 999999
+        },
         "ooc_behavior": [
           {
             "trigger": "pc-enters",
@@ -108,18 +109,19 @@
     "npcs": [
       {
         "id": 5,
-        "name": "Tornado",
         "description": "A playful Dalmatian",
-        "max_health": 999999,
-        "health": 999999,
-        "strength": 9999,
-        "flow": 9999,
-        "ingenuity": 9999,
-        "knowledge": 9999,
-        "sagacity": 9999,
-        "attack_stats": ["str"],
-        "defense_stats": ["flo"],
-        "experience": 999999
+        "character": {
+          "name": "Tornado",
+          "class": "Dog God",
+          "max_health": 999999,
+          "health": 999999,
+          "strength": 9999,
+          "flow": 9999,
+          "ingenuity": 9999,
+          "knowledge": 9999,
+          "sagacity": 9999,
+          "experience": 999999
+        }
       }
     ]
   },
@@ -137,18 +139,19 @@
     "npcs": [
       {
         "id": 3,
-        "name": "Guard Slime",
         "description": "Looks kinda intimidating with that oversized helmet",
-        "max_health": 777777,
-        "health": 777777,
-        "strength": 7777,
-        "flow": 7777,
-        "ingenuity": 7777,
-        "knowledge": 7777,
-        "sagacity": 7777,
-        "attack_stats": ["str"],
-        "defense_stats": ["str"],
-        "experience": 777777
+        "character": {
+          "name": "Guard Slime",
+          "class": "Slime Guard",
+          "max_health": 777777,
+          "health": 777777,
+          "strength": 7777,
+          "flow": 7777,
+          "ingenuity": 7777,
+          "knowledge": 7777,
+          "sagacity": 7777,
+          "experience": 777777
+        }
       }
     ]
   },
@@ -178,18 +181,19 @@
     "npcs": [
       {
         "id": 2,
-        "name": "Chef Slime",
         "description": "Chef slime best slime",
-        "max_health": 888888,
-        "health": 888888,
-        "strength": 8888,
-        "flow": 8888,
-        "ingenuity": 8888,
-        "knowledge": 8888,
-        "sagacity": 8888,
-        "attack_stats": ["ing"],
-        "defense_stats": ["ing"],
-        "experience": 888888
+        "character": {
+          "name": "Chef Slime",
+          "class": "Slime Chef",
+          "max_health": 888888,
+          "health": 888888,
+          "strength": 8888,
+          "flow": 8888,
+          "ingenuity": 8888,
+          "knowledge": 8888,
+          "sagacity": 8888,
+          "experience": 888888
+        }
       }
     ]
   },
@@ -207,18 +211,19 @@
     "npcs": [
       {
         "id": 4,
-        "name": "Baby Slime",
         "description": "Fast asleep amidst a haypile",
-        "max_health": 666666,
-        "health": 666666,
-        "strength": 6666,
-        "flow": 6666,
-        "ingenuity": 6666,
-        "knowledge": 6666,
-        "sagacity": 6666,
-        "attack_stats": ["str"],
-        "defense_stats": ["flo"],
-        "experience": 666666
+        "character": {
+          "name": "Baby Slime",
+          "class": "Slime Baby",
+          "max_health": 666666,
+          "health": 666666,
+          "strength": 6666,
+          "flow": 6666,
+          "ingenuity": 6666,
+          "knowledge": 6666,
+          "sagacity": 6666,
+          "experience": 666666
+        }
       }
     ]
   },
@@ -236,18 +241,19 @@
     "npcs": [
       {
         "id": 6,
-        "name": "Crab",
         "description": "This crab looks like it's prepared for battle",
-        "max_health": 50,
-        "health": 50,
-        "strength": 5,
-        "flow": 10,
-        "ingenuity": 0,
-        "knowledge": 0,
-        "sagacity": 0,
-        "attack_stats": ["str"],
-        "defense_stats": ["flo"],
-        "experience": 10,
+        "character": {
+          "name": "Crab",
+          "class": "Crab",
+          "max_health": 50,
+          "health": 50,
+          "strength": 5,
+          "flow": 10,
+          "ingenuity": 0,
+          "knowledge": 0,
+          "sagacity": 0,
+          "experience": 10
+        },
         "ooc_behavior": [
           {
             "trigger": "pc-enters",

@@ -1,4 +1,4 @@
-package client
+package character
 
 import (
   "math"
@@ -9,22 +9,23 @@ import (
 )
 
 type Character struct {
-  Name       string
+  Name       string            `json:"name"`
+  ClassName  string            `json:"class"`
   Class      interfaces.ClassI
-  Level      int
-  Exp        int
+  Level      int               `json:"level"`
+  Exp        int               `json:"experience"`
   NextLvlExp int
-  MaxDet     int
-  Det        int
-  MaxStm     int
-  Stm        int
-  MaxFoc     int
-  Foc        int
-  Str        int
-  Flo        int
-  Ing        int
-  Kno        int
-  Sag        int
+  MaxDet     int               `json:"max_health"`
+  Det        int               `json:"health"`
+  MaxStm     int               `json:"max_stamina"`
+  Stm        int               `json:"stamina"`
+  MaxFoc     int               `json:"max_focus"`
+  Foc        int               `json:"focus"`
+  Str        int               `json:"strength"`
+  Flo        int               `json:"flow"`
+  Ing        int               `json:"ingenuity"`
+  Kno        int               `json:"knowledge"`
+  Sag        int               `json:"sagacity"`
   InCombat   bool
   Spawn      interfaces.RoomI
 }
@@ -46,6 +47,10 @@ func NewCharacter() *Character {
     Kno:        10,
     Sag:        10,
   }
+}
+
+func (ch *Character) SetClass() {
+  ch.Class = classes.ByName[ch.ClassName]
 }
 
 func (ch *Character) GetClassName() string {

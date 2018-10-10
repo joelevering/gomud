@@ -13,15 +13,25 @@ type MockCharacter struct {
   SetStrArg     int
   SetFloArg     int
   LeveledUp     bool
+  LeftCombat    bool
+  EnteredCombat bool
   Healed        bool
   ExpGained     int
   ShouldLevelUp bool
+  ShouldDie     bool
 }
 
+func (m *MockCharacter) SetClass() {}
 func (m *MockCharacter) GetClassName() string { return "Superstar" }
-func (m *MockCharacter) GetName() string { return "Heide" }
+func (m *MockCharacter) GetName() string { return "mock char name" }
 func (m *MockCharacter) SetName(name string) {}
-func (m *MockCharacter) GetDet() int { return 199 }
+func (m *MockCharacter) GetDet() int {
+  if m.ShouldDie {
+    return 0
+  }
+
+  return 150
+}
 func (m *MockCharacter) SetDet(det int) { m.SetDetArg = det }
 func (m *MockCharacter) GetMaxDet() int { return 200 }
 func (m *MockCharacter) SetMaxDet(maxDet int) { m.SetMaxDetArg = maxDet }
@@ -46,14 +56,14 @@ func (m *MockCharacter) SetSag(sag int) {}
 func (m *MockCharacter) GetAtk() int { return m.Atk }
 func (m *MockCharacter) GetDef() int { return m.Def }
 func (m *MockCharacter) GetLevel() int { return 2 }
-func (m *MockCharacter) GetExp() int { return 666 }
+func (m *MockCharacter) GetExp() int { return 2 }
 func (m *MockCharacter) GetNextLvlExp() int { return 1000 }
 func (m *MockCharacter) GetSpawn() interfaces.RoomI { return m.Spawn }
 func (m *MockCharacter) SetSpawn(spawn interfaces.RoomI) {}
 
-func (m *MockCharacter) EnterCombat() {}
-func (m *MockCharacter) LeaveCombat() {}
-func (m *MockCharacter) IsInCombat() bool { return m.InCombat }
+func (m *MockCharacter) EnterCombat() { m.EnteredCombat = true }
+func (m *MockCharacter) LeaveCombat() { m.LeftCombat = true }
+func (m *MockCharacter) IsInCombat() bool { return false }
 func (m *MockCharacter) ExpToLvl() int { return 100 }
 
 func (m *MockCharacter) Heal() {
