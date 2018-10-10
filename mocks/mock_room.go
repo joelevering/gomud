@@ -1,9 +1,6 @@
 package mocks
 
-import (
-  "github.com/joelevering/gomud/interfaces"
-  "github.com/joelevering/gomud/npc"
-)
+import "github.com/joelevering/gomud/interfaces"
 
 type MockRoom struct {
   Messages   []string
@@ -37,16 +34,16 @@ func (m *MockRoom) GetNpcs() []interfaces.NPCI {
   }
 
   return []interfaces.NPCI{
-    &npc.NPC{
-      Id:     1,
-      Name:   "Harold",
-      Desc:   "Holding a purple crayon",
-      MaxDet: 100,
-      Det:    99,
-      Str:    98,
-      Flo:    97,
-      Exp:    2,
-      Alive:  true,
+    &MockNPC{
+      // Id:     1,
+      // Desc:   "Holding a purple crayon",
+      // Name:   "Harold",
+      // MaxDet: 100,
+      // Det:    99,
+      // Str:    98,
+      // Flo:    97,
+      // Exp:    2,
+      // Alive:  true,
     },
   }
 }

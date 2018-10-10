@@ -34,14 +34,10 @@ type ExitI interface {
 }
 
 type NPCI interface {
+  Init(RoomI, QueueI)
+  GetCharacter() CharI
 	GetName() string
 	GetDesc() string
-	GetMaxDet() int
-	GetDet() int
-	SetDet(int)
-	GetStr() int
-  GetAtk() int
-  GetDef() int
   GetExp() int
   SetSpawn(RoomI)
   Spawn()
@@ -70,13 +66,14 @@ type CliI interface {
 	SendMsg(...string)
 	LeaveRoom(string)
 	EnterRoom(RoomI)
-  LoseCombat(NPCI)
-  WinCombat(NPCI)
+  LoseCombat(CharI)
+  WinCombat(CharI)
 }
 
 type CharI interface {
+  SetClass()
   GetClassName() string
-	GetName() string
+  GetName() string
   SetName(string)
   GetMaxDet() int
   SetMaxDet(int)
