@@ -1,6 +1,8 @@
 package storage
 
-import "github.com/joelevering/gomud/interfaces"
+import (
+  "github.com/joelevering/gomud/interfaces"
+)
 
 // Stores player name to a map of class name to stats
 var store = &Storage{
@@ -19,7 +21,9 @@ type Storage struct {
 }
 
 func CreateStore(pID string) {
-  store.PlayersClasses[pID] = make(map[string]ClassStats)
+  if store.PlayersClasses[pID] == nil {
+    store.PlayersClasses[pID] = make(map[string]ClassStats)
+  }
 }
 
 func PersistClass(p interfaces.PlI, className string) {
