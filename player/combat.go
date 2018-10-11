@@ -19,10 +19,8 @@ type CombatResults struct {
 }
 
 type CombatInstance struct {
-  p    interfaces.PlI
-  np  interfaces.NPI
-  pc   interfaces.CharI
-	npc interfaces.CharI
+  pc    interfaces.PlI
+  npc  interfaces.NPI
 }
 
 func (ci *CombatInstance) Start() {
@@ -50,14 +48,14 @@ func (ci *CombatInstance) Loop(report bool) (combatOver bool) {
 
   if ci.pcIsDead() {
     ci.pc.LeaveCombat()
-    ci.p.LoseCombat(ci.npc)
+    ci.pc.LoseCombat(ci.npc)
     return true
   }
 
   if ci.npcIsDead() {
     ci.pc.LeaveCombat()
-    ci.np.LoseCombat(ci.pc)
-    ci.p.WinCombat(ci.npc)
+    ci.npc.LoseCombat(ci.pc)
+    ci.pc.WinCombat(ci.npc)
     return true
   }
 
@@ -66,7 +64,7 @@ func (ci *CombatInstance) Loop(report bool) (combatOver bool) {
 
 func (ci *CombatInstance) getPCResults() *CombatResults {
   res := &CombatResults{}
-  combatCmd := ci.p.GetCombatCmd()
+  combatCmd := ci.pc.GetCombatCmd()
 
   if len(combatCmd) == 0 {
     res.npcDmg = CalcAtkDmg(ci.pc.GetAtk(), ci.npc.GetDef())
@@ -125,9 +123,9 @@ func (ci *CombatInstance) npcIsDead() bool {
 }
 
 func (ci *CombatInstance) report(npcDmg, pcDmg int) {
-  ci.p.SendMsg(fmt.Sprintf("%s took %d damage!", ci.npc.GetName(), npcDmg))
-  ci.p.SendMsg(fmt.Sprintf("You took %d damage!", pcDmg))
-  ci.p.SendMsg("")
+  ci.pc.SendMsg(fmt.Sprintf("%s took %d damage!", ci.npc.GetName(), npcDmg))
+  ci.pc.SendMsg(fmt.Sprintf("You took %d damage!", pcDmg))
+  ci.pc.SendMsg("")
 
   if ci.pcIsDead() {
     return // handled in Start()
@@ -141,5 +139,5 @@ func (ci *CombatInstance) report(npcDmg, pcDmg int) {
     npcMsg = fmt.Sprintf("%s has %d/%d", ci.npc.GetName(), ci.npc.GetDet(), ci.npc.GetMaxDet())
   }
 
-  ci.p.SendMsg(fmt.Sprintf("You have %d/%d health left. %s", ci.pc.GetDet(), ci.pc.GetMaxDet(), npcMsg))
+  ci.pc.SendMsg(fmt.Sprintf("You have %d/%d health left. %s", ci.pc.GetDet(), ci.pc.GetMaxDet(), npcMsg))
 }

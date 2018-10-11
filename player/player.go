@@ -24,18 +24,19 @@ Most commands have their first letter as a shortcut
 `
 
 type Player struct {
+  *character.Character
+
   Channel   chan string
   Queue     interfaces.QueueI
   Room      interfaces.RoomI
-  Character *character.Character
   CombatCmd []string
 }
 
 func NewPlayer(ch chan string, q interfaces.QueueI) *Player {
   return &Player{
+    Character: character.NewCharacter(),
     Channel:   ch,
     Queue:     q,
-    Character: character.NewCharacter(),
   }
 }
 
@@ -48,7 +49,7 @@ func (p Player) StartWriter(conn net.Conn) {
 func (p *Player) Cmd(cmd string) {
   words := strings.Split(cmd, " ")
 
-  if p.Character.IsInCombat() {
+  if p.IsInCombat() {
     p.SetCombatCmd(words)
     return
   }
@@ -131,22 +132,21 @@ func (p Player) LookNP(npName string) {
 }
 
 func (p *Player) Status() {
-  pc := p.Character
   header := fmt.Sprintf("~~~~~~~~~~*%s*~~~~~~~~~~", p.GetName())
   p.SendMsg(header)
-  p.SendMsg(fmt.Sprintf("Class: %s", pc.GetClassName()))
-  p.SendMsg(fmt.Sprintf("Level: %d", pc.GetLevel()))
-  p.SendMsg(fmt.Sprintf("Experience: %d/%d", pc.GetExp(), pc.GetNextLvlExp()))
+  p.SendMsg(fmt.Sprintf("Class: %s", p.GetClassName()))
+  p.SendMsg(fmt.Sprintf("Level: %d", p.GetLevel()))
+  p.SendMsg(fmt.Sprintf("Experience: %d/%d", p.GetExp(), p.GetNextLvlExp()))
   p.SendMsg("")
-  p.SendMsg(fmt.Sprintf("Determination: %d/%d", pc.GetDet(), pc.GetMaxDet()))
-  p.SendMsg(fmt.Sprintf("Stamina: %d/%d", pc.GetStm(), pc.GetMaxStm()))
-  p.SendMsg(fmt.Sprintf("Focus: %d/%d", pc.GetFoc(), pc.GetMaxFoc()))
+  p.SendMsg(fmt.Sprintf("Determination: %d/%d", p.GetDet(), p.GetMaxDet()))
+  p.SendMsg(fmt.Sprintf("Stamina: %d/%d", p.GetStm(), p.GetMaxStm()))
+  p.SendMsg(fmt.Sprintf("Focus: %d/%d", p.GetFoc(), p.GetMaxFoc()))
   p.SendMsg("")
-  p.SendMsg(fmt.Sprintf("Strength: %d", pc.GetStr()))
-  p.SendMsg(fmt.Sprintf("Flow: %d", pc.GetFlo()))
-  p.SendMsg(fmt.Sprintf("Ingenuity: %d", pc.GetIng()))
-  p.SendMsg(fmt.Sprintf("Knowledge: %d", pc.GetKno()))
-  p.SendMsg(fmt.Sprintf("Sagacity: %d", pc.GetSag()))
+  p.SendMsg(fmt.Sprintf("Strength: %d", p.GetStr()))
+  p.SendMsg(fmt.Sprintf("Flow: %d", p.GetFlo()))
+  p.SendMsg(fmt.Sprintf("Ingenuity: %d", p.GetIng()))
+  p.SendMsg(fmt.Sprintf("Knowledge: %d", p.GetKno()))
+  p.SendMsg(fmt.Sprintf("Sagacity: %d", p.GetSag()))
   p.SendMsg(strings.Repeat("~", utf8.RuneCountInString(header)))
 }
 
@@ -154,10 +154,8 @@ func (p *Player) AttackNP(npName string) {
   attack := func(p *Player, np interfaces.NPI) {
 		p.SendMsg(fmt.Sprintf("You attack %s!", np.GetName()))
 		ci := &CombatInstance{
-      p: p,
-      np: np,
-      pc: p.Character,
-      npc: np.GetCharacter(),
+      pc: p,
+      npc: np,
     }
 
 		go ci.Start()
@@ -245,8 +243,7 @@ func (p *Player) EnterRoom(room interfaces.RoomI) {
 }
 
 func (p *Player) LoseCombat(npc interfaces.CharI) {
-  pc := p.Character
-  spawn := pc.GetSpawn()
+  spawn := p.GetSpawn()
 
   deathNotice := fmt.Sprintf("%s was defeated by %s. Their body dissipates.", p.GetName(), npc.GetName())
   p.LeaveRoom(deathNotice)
@@ -254,7 +251,7 @@ func (p *Player) LoseCombat(npc interfaces.CharI) {
   p.SendMsg(fmt.Sprintf("You were defeated by %s.", npc.GetName()))
   time.Sleep(1500 * time.Millisecond)
   p.EnterRoom(spawn)
-  pc.Heal()
+  p.Heal()
   p.SendMsg(fmt.Sprintf("You find yourself back in a familiar place: %s", spawn.GetName()))
   time.Sleep(1500 * time.Millisecond)
   p.SendMsg("")
@@ -263,22 +260,14 @@ func (p *Player) LoseCombat(npc interfaces.CharI) {
 
 func (p *Player) WinCombat(loser interfaces.CharI) {
   expGained := loser.GetExpGiven()
-  leveledUp := p.Character.GainExp(expGained)
+  leveledUp := p.GainExp(expGained)
 
   if leveledUp {
     p.SendMsg(fmt.Sprintf("You gained %d experience and leveled up!", expGained))
-    p.SendMsg(fmt.Sprintf("You're now level %d!", p.Character.GetLevel()))
+    p.SendMsg(fmt.Sprintf("You're now level %d!", p.GetLevel()))
   } else {
-    p.SendMsg(fmt.Sprintf("You gained %d experience! You need %d more experience to level up.", expGained, p.Character.ExpToLvl()))
+    p.SendMsg(fmt.Sprintf("You gained %d experience! You need %d more experience to level up.", expGained, p.ExpToLvl()))
   }
-}
-
-func (p *Player) GetName() string {
-  return p.Character.GetName()
-}
-
-func (p *Player) SetName(name string) {
-  p.Character.SetName(name)
 }
 
 func (p *Player) GetRoom() interfaces.RoomI {
@@ -294,5 +283,5 @@ func (p *Player) SetCombatCmd(cmd []string) {
 }
 
 func (p *Player) Spawn() {
-  p.EnterRoom(p.Character.GetSpawn())
+  p.EnterRoom(p.GetSpawn())
 }

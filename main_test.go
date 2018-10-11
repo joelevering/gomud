@@ -59,17 +59,15 @@ func Test_InitializingNPs(t *testing.T) {
   }
 
   room := rooms[0]
-  np := room.GetNPs()[0]
+  npc := room.GetNPs()[0]
 
-  if np.GetName() != "King Slime" {
-    t.Errorf("Expected NP to have name 'King Slime' but got %v", np.GetName())
+  if npc.GetName() != "King Slime" {
+    t.Errorf("Expected NP to have name 'King Slime' but got %v", npc.GetName())
   }
 
-  if np.GetDesc() != "A massive pile of gelatinous goo adorned with two huge eyes" {
-    t.Errorf("Expected NP to have desc 'A massive pile of gelatinous goo adorned with two huge eyes' but got %v", np.GetDesc())
+  if npc.GetDesc() != "A massive pile of gelatinous goo adorned with two huge eyes" {
+    t.Errorf("Expected NP to have desc 'A massive pile of gelatinous goo adorned with two huge eyes' but got %v", npc.GetDesc())
   }
-
-  npc := np.GetCharacter()
 
   if npc.GetDet() != 999990 || npc.GetMaxDet() != 999990 {
     t.Errorf("Expected NP to have determination and max determination of 999990 but got %d det and %d max det", npc.GetDet(), npc.GetMaxDet())
@@ -87,8 +85,8 @@ func Test_InitializingNPs(t *testing.T) {
     t.Errorf("Expected NP to have def of 9990 but got %d", npc.GetDef())
   }
 
-  if room.GetNPs()[0].GetName() != np.GetName() {
-    t.Errorf("Expected %v to be in %v", np.GetName(), room.GetName())
+  if room.GetNPs()[0].GetName() != npc.GetName() {
+    t.Errorf("Expected %v to be in %v", npc.GetName(), room.GetName())
   }
 
   if len(queue.Chans["pc-enters-1"]) != 1 {

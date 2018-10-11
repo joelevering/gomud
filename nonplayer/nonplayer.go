@@ -11,13 +11,13 @@ import (
 )
 
 type NonPlayer struct {
-  Id        int                  `json:"id"`
-  Character *character.Character `json:"character"`
-  Desc      string               `json:"description"`
-  AtkStats  []stats.Stat         `json:"attack_stats"`
-  DefStats  []stats.Stat         `json:"defense_stats"`
-  Behaviors []*Behavior          `json:"ooc_behavior"`
+  *character.Character   `json:"character"`
 
+  Id        int          `json:"id"`
+  Desc      string       `json:"description"`
+  AtkStats  []stats.Stat `json:"attack_stats"`
+  DefStats  []stats.Stat `json:"defense_stats"`
+  Behaviors []*Behavior  `json:"ooc_behavior"`
   Alive     bool
   SpawnRoom interfaces.RoomI
   Room      interfaces.RoomI
@@ -31,18 +31,10 @@ type Behavior struct {
 
 func (n *NonPlayer) Init(room interfaces.RoomI, queue interfaces.QueueI) {
   n.SetSpawn(room)
-  n.Character.SetClass()
-  n.Character.ResetStats()
+  n.SetClass()
+  n.ResetStats()
   n.Spawn()
   n.SetBehavior(queue)
-}
-
-func (n *NonPlayer) GetCharacter() interfaces.CharI {
-  return n.Character
-}
-
-func (n *NonPlayer) GetName() string {
-  return n.Character.GetName()
 }
 
 func (n *NonPlayer) GetDesc() string {
@@ -71,7 +63,7 @@ func (n *NonPlayer) LoseCombat(winner interfaces.CharI) {
 
   go func() {
     time.Sleep(10 * time.Second)
-    n.Character.Heal()
+    n.Heal()
     n.Alive = true
   }()
 }

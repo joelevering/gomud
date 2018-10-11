@@ -34,11 +34,9 @@ type ExitI interface {
 }
 
 type NPI interface {
+  CharI
   Init(RoomI, QueueI)
-  GetCharacter() CharI
-	GetName() string
 	GetDesc() string
-  SetSpawn(RoomI)
   Spawn()
   Say(string)
   Emote(string)
@@ -48,9 +46,8 @@ type NPI interface {
 }
 
 type PlI interface {
+  CharI
 	StartWriter(net.Conn)
-  GetName() string
-  SetName(string)
 	GetRoom() RoomI
   GetCombatCmd() []string
   SetCombatCmd([]string)
