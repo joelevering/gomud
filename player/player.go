@@ -240,6 +240,9 @@ func (p *Player) LoadClass(class *classes.Class) {
   p.Class = class
   p.Level = stats.Lvl
   p.MaxDet = stats.MaxDet
+  if p.GetDet() > p.MaxDet {
+    p.SetDet(p.MaxDet)
+  }
   p.Exp = stats.Exp
   p.NextLvlExp = stats.NextLvlExp
 }
