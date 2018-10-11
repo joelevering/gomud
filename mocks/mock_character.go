@@ -57,7 +57,8 @@ func (m *MockCharacter) SetSag(sag int) {}
 func (m *MockCharacter) GetAtk() int { return m.Atk }
 func (m *MockCharacter) GetDef() int { return m.Def }
 func (m *MockCharacter) GetLevel() int { return 2 }
-func (m *MockCharacter) GetExp() int { return 2 }
+func (m *MockCharacter) GetExp() int { return 0 }
+func (m *MockCharacter) GetExpGiven() int { return 2 }
 func (m *MockCharacter) GetNextLvlExp() int { return 1000 }
 func (m *MockCharacter) GetSpawn() interfaces.RoomI { return m.Spawn }
 func (m *MockCharacter) SetSpawn(spawn interfaces.RoomI) {}

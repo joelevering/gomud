@@ -16,7 +16,6 @@ type NPC struct {
   Desc      string               `json:"description"`
   AtkStats  []stats.Stat         `json:"attack_stats"`
   DefStats  []stats.Stat         `json:"defense_stats"`
-  Exp       int                  `json:"experience"`
   Behaviors []*Behavior          `json:"ooc_behavior"`
 
   Alive     bool
@@ -48,10 +47,6 @@ func (n *NPC) GetName() string {
 
 func (n *NPC) GetDesc() string {
   return n.Desc
-}
-
-func (n *NPC) GetExp() int {
-  return n.Exp
 }
 
 func (n *NPC) SetSpawn(room interfaces.RoomI) {

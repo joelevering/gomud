@@ -33,7 +33,7 @@
           "name": "King Slime",
           "class": "Slime King",
           "level": 10,
-          "experience": 999999
+          "exp_given": 999999
         },
         "ooc_behavior": [
           {
@@ -108,7 +108,7 @@
           "name": "Tornado",
           "class": "Dog God",
           "level": 10,
-          "experience": 1000000
+          "exp_given": 1000000
         }
       }
     ]
@@ -132,7 +132,7 @@
           "name": "Guard Slime",
           "class": "Slime Guard",
           "level": 10,
-          "experience": 777777
+          "exp_given": 777777
         }
       }
     ]
@@ -168,7 +168,7 @@
           "name": "Chef Slime",
           "class": "Slime Chef",
           "level": 10,
-          "experience": 888888
+          "exp_given": 888888
         }
       }
     ]
@@ -192,7 +192,7 @@
           "name": "Baby Slime",
           "class": "Slime Baby",
           "level": 10,
-          "experience": 666666
+          "exp_given": 666666
         }
       }
     ]
@@ -216,7 +216,7 @@
           "name": "Crab",
           "class": "Crab",
           "level": 5,
-          "experience": 10
+          "exp_given": 10
         },
         "ooc_behavior": [
           {

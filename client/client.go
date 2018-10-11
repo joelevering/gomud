@@ -262,7 +262,7 @@ func (cli *Client) LoseCombat(npc interfaces.CharI) {
 }
 
 func (cli *Client) WinCombat(loser interfaces.CharI) {
-  expGained := loser.GetExp()
+  expGained := loser.GetExpGiven()
   leveledUp := cli.Character.GainExp(expGained)
 
   if leveledUp {
