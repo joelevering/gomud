@@ -7,8 +7,16 @@ import (
 )
 
 type MockPlayer struct {
+  *MockCharacter
+
   Defeated  interfaces.CharI
   DefeatedBy  interfaces.CharI
+}
+
+func NewMockPlayer() *MockPlayer {
+  return &MockPlayer{
+    MockCharacter: &MockCharacter{},
+  }
 }
 
 func (m *MockPlayer) StartWriter(conn net.Conn) {}

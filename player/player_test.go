@@ -14,7 +14,7 @@ func Test_CmdSetsCombatCmdInCombat(t *testing.T) {
   ch := make(chan string)
   q := &mocks.MockQueue{}
   p := NewPlayer(ch, q)
-  p.Character.EnterCombat()
+  p.EnterCombat()
   p.Cmd("smite")
 
   if len(p.CombatCmd) != 1 || p.CombatCmd[0] != "smite" {
@@ -310,15 +310,15 @@ func Test_LoseCombat(t *testing.T) {
 
 	go func (ch chan string) {
     defer close(ch)
-    p.LoseCombat(p.Room.GetNPs()[0].GetCharacter())
+    p.LoseCombat(p.Room.GetNPs()[0])
   }(ch)
 
 	res := <-ch
 
   time.Sleep(1600 * time.Millisecond) // matches sleep in code
 
-	if !strings.Contains(res, "You were defeated by mock char name") {
-    t.Errorf("Expected 'You were defeated by mock char name' on death, but got '%s'", res)
+	if !strings.Contains(res, "You were defeated by mock np name") {
+    t.Errorf("Expected 'You were defeated by mock np name' on death, but got '%s'", res)
 	}
 
   if strings.Contains(res, "was defeated by mock char name") {
@@ -341,10 +341,9 @@ func Test_WinCombatEndsCombatAndGivesExp(t *testing.T) {
 
   room := &mocks.MockRoom{}
   p.Room = room
-  pc := p.Character
 
 	go func (ch chan string) {
-    p.WinCombat(p.Room.GetNPs()[0].GetCharacter())
+    p.WinCombat(p.Room.GetNPs()[0])
   }(ch)
 
 	res := <-ch
@@ -352,13 +351,13 @@ func Test_WinCombatEndsCombatAndGivesExp(t *testing.T) {
 	if !strings.Contains(res, "You gained 2 experience!") { // hardcoded mock char exp
 		t.Errorf("Expected 'You gained 2 experience' on defeating, but got '%s'", res)
 	}
-  if pc.GetExp() != 2 {
-    t.Errorf("Expected exp to be 2 but got %d", pc.GetExp())
+  if p.GetExp() != 2 {
+    t.Errorf("Expected exp to be 2 but got %d", p.GetExp())
   }
 	if !strings.Contains(res, "You need 8 more experience to level up.") {
     t.Errorf("Expected 'You need 8 more experience to level up' on defeating, but got '%s'", res)
 	}
-  if pc.Level != 1 {
+  if p.Level != 1 {
     t.Error("Expected PC not to level up, but it did")
   }
 }
@@ -368,13 +367,12 @@ func Test_WinCombatLevelsUpPC(t *testing.T) {
 	p := NewPlayer(ch, &mocks.MockQueue{})
   rm := &mocks.MockRoom{}
   p.Room = rm
-  pc := p.Character
-  pc.GainExp(pc.NextLvlExp - 1)
+  p.GainExp(p.NextLvlExp - 1)
 
 
 	go func (ch chan string) {
     defer close(ch)
-    p.WinCombat(p.Room.GetNPs()[0].GetCharacter())
+    p.WinCombat(p.Room.GetNPs()[0])
   }(ch)
 
 	res := <-ch // Exp gain

@@ -7,17 +7,19 @@ import (
 )
 
 func Test_LoopDealsDamage(t *testing.T) {
-  pc := &mocks.MockCharacter{
-    Atk: 50,
-    Def: 50,
+  pc := &mocks.MockPlayer{
+    MockCharacter: &mocks.MockCharacter{
+      Atk: 50,
+      Def: 50,
+    },
   }
-  npc := &mocks.MockCharacter{
-    Atk: 25,
-    Def: 25,
+  npc := &mocks.MockNP{
+    MockCharacter: &mocks.MockCharacter{
+      Atk: 25,
+      Def: 25,
+    },
   }
   ci := CombatInstance{
-    p: &Player{},
-    np: &mocks.MockNP{},
     pc: pc,
     npc: npc,
   }
@@ -33,19 +35,18 @@ func Test_LoopDealsDamage(t *testing.T) {
 }
 
 func Test_PCDefeat(t *testing.T) {
-  p := &mocks.MockPlayer{}
-  pc := &mocks.MockCharacter{ ShouldDie: true }
-  npc := &mocks.MockCharacter{}
+  pc := &mocks.MockPlayer{
+    MockCharacter: &mocks.MockCharacter{ ShouldDie: true },
+  }
+  npc := mocks.NewMockNP()
   ci := CombatInstance{
-    p: p,
-    np: &mocks.MockNP{},
     pc: pc,
     npc: npc,
   }
 
   ci.Loop(false)
 
-  if p.DefeatedBy != npc {
+  if pc.DefeatedBy != npc {
     t.Error("Expected PC to be defeated by NPC, but it wasn't")
   }
 
@@ -55,25 +56,23 @@ func Test_PCDefeat(t *testing.T) {
 }
 
 func Test_NPCDefeat(t *testing.T) {
-  p := &mocks.MockPlayer{}
-  np := &mocks.MockNP{}
-  pc := &mocks.MockCharacter{}
-  npc := &mocks.MockCharacter{ ShouldDie: true }
+  pc := mocks.NewMockPlayer()
+  npc := &mocks.MockNP{
+    MockCharacter: &mocks.MockCharacter{ ShouldDie: true },
+  }
 
   ci := CombatInstance{
-    p: p,
-    np: np,
     pc: pc,
     npc: npc,
   }
 
   ci.Loop(false)
 
-  if np.DefeatedBy != pc {
+  if npc.DefeatedBy != pc {
     t.Error("Expected NPC to be defeated by PC, but it wasn't")
   }
 
-  if p.Defeated != npc {
+  if pc.Defeated != npc {
     t.Error("Expected PC to defeat NPC, but it didn't")
   }
 

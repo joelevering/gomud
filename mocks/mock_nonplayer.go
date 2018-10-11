@@ -3,12 +3,19 @@ package mocks
 import "github.com/joelevering/gomud/interfaces"
 
 type MockNP struct {
+  *MockCharacter
+
   IsDead bool
   DefeatedBy interfaces.CharI
 }
 
+func NewMockNP() *MockNP {
+  return &MockNP{
+    MockCharacter: &MockCharacter{},
+  }
+}
+
 func (m *MockNP) Init(room interfaces.RoomI, queue interfaces.QueueI) {}
-func (m *MockNP) GetCharacter() interfaces.CharI { return &MockCharacter{} }
 
 func (m *MockNP) GetName() string { return "mock np name" }
 func (m *MockNP) GetDesc() string { return "mock np desc" }
