@@ -1,4 +1,4 @@
-package client
+package player
 
 import (
 	"fmt"
@@ -19,7 +19,7 @@ type CombatResults struct {
 }
 
 type CombatInstance struct {
-	cli  interfaces.CliI
+  p    interfaces.PlI
   npc  interfaces.NPCI
   pc   interfaces.CharI
 	npcC interfaces.CharI
@@ -50,14 +50,14 @@ func (ci *CombatInstance) Loop(report bool) (combatOver bool) {
 
   if ci.pcIsDead() {
     ci.pc.LeaveCombat()
-    ci.cli.LoseCombat(ci.npcC)
+    ci.p.LoseCombat(ci.npcC)
     return true
   }
 
   if ci.npcIsDead() {
     ci.pc.LeaveCombat()
     ci.npc.LoseCombat(ci.pc)
-    ci.cli.WinCombat(ci.npcC)
+    ci.p.WinCombat(ci.npcC)
     return true
   }
 
@@ -66,7 +66,7 @@ func (ci *CombatInstance) Loop(report bool) (combatOver bool) {
 
 func (ci *CombatInstance) getPCResults() *CombatResults {
   res := &CombatResults{}
-  combatCmd := ci.cli.GetCombatCmd()
+  combatCmd := ci.p.GetCombatCmd()
 
   if len(combatCmd) == 0 {
     res.npcDmg = CalcAtkDmg(ci.pc.GetAtk(), ci.npcC.GetDef())
@@ -125,9 +125,9 @@ func (ci *CombatInstance) npcIsDead() bool {
 }
 
 func (ci *CombatInstance) report(npcDmg, pcDmg int) {
-  ci.cli.SendMsg(fmt.Sprintf("%s took %d damage!", ci.npcC.GetName(), npcDmg))
-  ci.cli.SendMsg(fmt.Sprintf("You took %d damage!", pcDmg))
-  ci.cli.SendMsg("")
+  ci.p.SendMsg(fmt.Sprintf("%s took %d damage!", ci.npcC.GetName(), npcDmg))
+  ci.p.SendMsg(fmt.Sprintf("You took %d damage!", pcDmg))
+  ci.p.SendMsg("")
 
   if ci.pcIsDead() {
     return // handled in Start()
@@ -141,5 +141,5 @@ func (ci *CombatInstance) report(npcDmg, pcDmg int) {
     npcMsg = fmt.Sprintf("%s has %d/%d", ci.npcC.GetName(), ci.npcC.GetDet(), ci.npcC.GetMaxDet())
   }
 
-  ci.cli.SendMsg(fmt.Sprintf("You have %d/%d health left. %s", ci.pc.GetDet(), ci.pc.GetMaxDet(), npcMsg))
+  ci.p.SendMsg(fmt.Sprintf("You have %d/%d health left. %s", ci.pc.GetDet(), ci.pc.GetMaxDet(), npcMsg))
 }

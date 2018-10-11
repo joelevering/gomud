@@ -13,7 +13,7 @@ type Room struct {
 	ExitIs  []interfaces.ExitI
 	Npcs    []*npc.NPC `json:"npcs"`
 	NpcIs   []interfaces.NPCI
-	Clients []interfaces.CliI
+	Players []interfaces.PlI
 }
 
 type Exit struct {
@@ -24,17 +24,17 @@ type Exit struct {
 }
 
 func (room Room) Message(msg string) {
-	for _, client := range room.Clients {
-		client.SendMsg(msg)
+	for _, player := range room.Players {
+		player.SendMsg(msg)
 	}
 }
 
-func (room *Room) RemoveCli(cli interfaces.CliI, msg string) {
-	for i, client := range room.Clients {
-		if client.GetName() == cli.GetName() {
-			room.Clients[i] = room.Clients[len(room.Clients)-1]
-			room.Clients[len(room.Clients)-1] = nil
-			room.Clients = room.Clients[:len(room.Clients)-1]
+func (room *Room) RemovePlayer(player interfaces.PlI, msg string) {
+	for i, player := range room.Players {
+		if player.GetName() == player.GetName() {
+			room.Players[i] = room.Players[len(room.Players)-1]
+			room.Players[len(room.Players)-1] = nil
+			room.Players = room.Players[:len(room.Players)-1]
       break
 		}
 	}
@@ -42,9 +42,9 @@ func (room *Room) RemoveCli(cli interfaces.CliI, msg string) {
 	room.Message(msg)
 }
 
-func (room *Room) AddCli(cli interfaces.CliI) {
-	room.Message(cli.GetName() + " has entered the room!")
-	room.Clients = append(room.Clients, cli)
+func (room *Room) AddPlayer(player interfaces.PlI) {
+	room.Message(player.GetName() + " has entered the room!")
+	room.Players = append(room.Players, player)
 }
 
 func (room *Room) GetExits() []interfaces.ExitI {
@@ -65,8 +65,8 @@ func (room *Room) GetNpcs() []interfaces.NPCI {
 	return room.NpcIs
 }
 
-func (room *Room) GetClients() []interfaces.CliI {
-	return room.Clients
+func (room *Room) GetPlayers() []interfaces.PlI {
+	return room.Players
 }
 
 func (room *Room) GetName() string {

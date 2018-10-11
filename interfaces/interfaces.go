@@ -15,11 +15,11 @@ type QueueI interface {
 
 type RoomI interface {
 	Message(string)
-	AddCli(CliI)
-	RemoveCli(CliI, string)
+	AddPlayer(PlI)
+	RemovePlayer(PlI, string)
 	GetExits() []ExitI
 	GetNpcs() []NPCI
-	GetClients() []CliI
+	GetPlayers() []PlI
 	GetName() string
 	GetDesc() string
 	GetID() int
@@ -47,7 +47,7 @@ type NPCI interface {
   SetBehavior(QueueI)
 }
 
-type CliI interface {
+type PlI interface {
 	StartWriter(net.Conn)
   GetName() string
   SetName(string)

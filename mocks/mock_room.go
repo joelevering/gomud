@@ -4,10 +4,10 @@ import "github.com/joelevering/gomud/interfaces"
 
 type MockRoom struct {
   Messages   []string
-  Clients    []interfaces.CliI
+  Players    []interfaces.PlI
   Exits      []interfaces.ExitI
-  AddedCli   interfaces.CliI
-  RemovedCli interfaces.CliI
+  AddedPlayer   interfaces.PlI
+  RemovedPlayer interfaces.PlI
   NPCs       []interfaces.NPCI
   Name       string
 }
@@ -16,12 +16,12 @@ func (m *MockRoom) Message(msg string) {
   m.Messages = append(m.Messages, msg)
 }
 
-func (m *MockRoom) AddCli(cli interfaces.CliI) {
-  m.AddedCli = cli
+func (m *MockRoom) AddPlayer(player interfaces.PlI) {
+  m.AddedPlayer = player
 }
 
-func (m *MockRoom) RemoveCli(cli interfaces.CliI, msg string) {
-  m.RemovedCli = cli
+func (m *MockRoom) RemovePlayer(player interfaces.PlI, msg string) {
+  m.RemovedPlayer = player
 }
 
 func (m *MockRoom) GetExits() []interfaces.ExitI {
@@ -48,8 +48,8 @@ func (m *MockRoom) GetNpcs() []interfaces.NPCI {
   }
 }
 
-func (m *MockRoom) GetClients() []interfaces.CliI {
-  return m.Clients
+func (m *MockRoom) GetPlayers() []interfaces.PlI {
+  return m.Players
 }
 
 func (m *MockRoom) GetName() string {

@@ -6,34 +6,34 @@ import (
  "github.com/joelevering/gomud/interfaces"
 )
 
-type MockClient struct {
+type MockPlayer struct {
   Defeated  interfaces.CharI
   DefeatedBy  interfaces.CharI
 }
 
-func (m *MockClient) StartWriter(conn net.Conn) {}
-func (m *MockClient) List() {}
-func (m *MockClient) Look() {}
-func (m *MockClient) LookNPC(string) {}
-func (m *MockClient) Status() {}
-func (m *MockClient) AttackNPC(string) {}
-func (m *MockClient) Move(string) {}
-func (m *MockClient) Say(string) {}
-func (m *MockClient) Yell(string) {}
-func (m *MockClient) SendMsg(...string) {}
-func (m *MockClient) LeaveRoom(string) {}
-func (m *MockClient) EnterRoom(interfaces.RoomI) {}
-func (m *MockClient) GetName() string { return "mock client" }
-func (m *MockClient) SetName(name string) {}
-func (m *MockClient) GetRoom() interfaces.RoomI { return nil }
+func (m *MockPlayer) StartWriter(conn net.Conn) {}
+func (m *MockPlayer) List() {}
+func (m *MockPlayer) Look() {}
+func (m *MockPlayer) LookNPC(string) {}
+func (m *MockPlayer) Status() {}
+func (m *MockPlayer) AttackNPC(string) {}
+func (m *MockPlayer) Move(string) {}
+func (m *MockPlayer) Say(string) {}
+func (m *MockPlayer) Yell(string) {}
+func (m *MockPlayer) SendMsg(...string) {}
+func (m *MockPlayer) LeaveRoom(string) {}
+func (m *MockPlayer) EnterRoom(interfaces.RoomI) {}
+func (m *MockPlayer) GetName() string { return "mock player" }
+func (m *MockPlayer) SetName(name string) {}
+func (m *MockPlayer) GetRoom() interfaces.RoomI { return nil }
 
-func (m *MockClient) GetCombatCmd() []string { return []string{} }
-func (m *MockClient) SetCombatCmd(cmd []string) {}
+func (m *MockPlayer) GetCombatCmd() []string { return []string{} }
+func (m *MockPlayer) SetCombatCmd(cmd []string) {}
 
-func (m *MockClient) LoseCombat(npc interfaces.CharI) {
+func (m *MockPlayer) LoseCombat(npc interfaces.CharI) {
   m.DefeatedBy = npc
 }
 
-func (m *MockClient) WinCombat(npc interfaces.CharI) {
+func (m *MockPlayer) WinCombat(npc interfaces.CharI) {
   m.Defeated = npc
 }
