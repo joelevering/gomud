@@ -2,18 +2,18 @@ package room
 
 import (
 	"github.com/joelevering/gomud/interfaces"
-	"github.com/joelevering/gomud/npc"
+	"github.com/joelevering/gomud/nonplayer"
 )
 
 type Room struct {
-	Id      int     `json:"id"`
-	Name    string  `json:"name"`
-	Desc    string  `json:"description"`
-	Exits   []*Exit `json:"exits"`
+	Id      int                    `json:"id"`
+	Name    string                 `json:"name"`
+	Desc    string                 `json:"description"`
+	Exits   []*Exit                `json:"exits"`
 	ExitIs  []interfaces.ExitI
-	Npcs    []*npc.NPC `json:"npcs"`
-	NpcIs   []interfaces.NPCI
-	Clients []interfaces.CliI
+	NPs     []*nonplayer.NonPlayer `json:"npcs"`
+	NPIs    []interfaces.NPI
+	Players []interfaces.PlI
 }
 
 type Exit struct {
@@ -24,17 +24,17 @@ type Exit struct {
 }
 
 func (room Room) Message(msg string) {
-	for _, client := range room.Clients {
-		client.SendMsg(msg)
+	for _, player := range room.Players {
+		player.SendMsg(msg)
 	}
 }
 
-func (room *Room) RemoveCli(cli interfaces.CliI, msg string) {
-	for i, client := range room.Clients {
-		if client.GetName() == cli.GetName() {
-			room.Clients[i] = room.Clients[len(room.Clients)-1]
-			room.Clients[len(room.Clients)-1] = nil
-			room.Clients = room.Clients[:len(room.Clients)-1]
+func (room *Room) RemovePlayer(player interfaces.PlI, msg string) {
+	for i, player := range room.Players {
+		if player.GetName() == player.GetName() {
+			room.Players[i] = room.Players[len(room.Players)-1]
+			room.Players[len(room.Players)-1] = nil
+			room.Players = room.Players[:len(room.Players)-1]
       break
 		}
 	}
@@ -42,9 +42,9 @@ func (room *Room) RemoveCli(cli interfaces.CliI, msg string) {
 	room.Message(msg)
 }
 
-func (room *Room) AddCli(cli interfaces.CliI) {
-	room.Message(cli.GetName() + " has entered the room!")
-	room.Clients = append(room.Clients, cli)
+func (room *Room) AddPlayer(player interfaces.PlI) {
+	room.Message(player.GetName() + " has entered the room!")
+	room.Players = append(room.Players, player)
 }
 
 func (room *Room) GetExits() []interfaces.ExitI {
@@ -56,17 +56,17 @@ func (room *Room) GetExits() []interfaces.ExitI {
 	return room.ExitIs
 }
 
-func (room *Room) GetNpcs() []interfaces.NPCI {
-	if room.NpcIs == nil {
-		for _, npc := range room.Npcs {
-			room.NpcIs = append(room.NpcIs, interfaces.NPCI(npc))
+func (room *Room) GetNPs() []interfaces.NPI {
+	if room.NPIs == nil {
+		for _, np := range room.NPs {
+			room.NPIs = append(room.NPIs, interfaces.NPI(np))
 		}
 	}
-	return room.NpcIs
+	return room.NPIs
 }
 
-func (room *Room) GetClients() []interfaces.CliI {
-	return room.Clients
+func (room *Room) GetPlayers() []interfaces.PlI {
+	return room.Players
 }
 
 func (room *Room) GetName() string {

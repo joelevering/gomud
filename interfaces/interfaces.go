@@ -15,11 +15,11 @@ type QueueI interface {
 
 type RoomI interface {
 	Message(string)
-	AddCli(CliI)
-	RemoveCli(CliI, string)
+	AddPlayer(PlI)
+	RemovePlayer(PlI, string)
 	GetExits() []ExitI
-	GetNpcs() []NPCI
-	GetClients() []CliI
+	GetNPs() []NPI
+	GetPlayers() []PlI
 	GetName() string
 	GetDesc() string
 	GetID() int
@@ -33,7 +33,7 @@ type ExitI interface {
 	GetDesc() string
 }
 
-type NPCI interface {
+type NPI interface {
   Init(RoomI, QueueI)
   GetCharacter() CharI
 	GetName() string
@@ -47,7 +47,7 @@ type NPCI interface {
   SetBehavior(QueueI)
 }
 
-type CliI interface {
+type PlI interface {
 	StartWriter(net.Conn)
   GetName() string
   SetName(string)
@@ -56,9 +56,9 @@ type CliI interface {
   SetCombatCmd([]string)
 	List()
 	Look()
-	LookNPC(string)
+	LookNP(string)
   Status()
-	AttackNPC(string)
+	AttackNP(string)
 	Move(string)
 	Say(string)
 	Yell(string)
