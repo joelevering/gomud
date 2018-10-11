@@ -6,6 +6,7 @@ import (
   "time"
 
   "github.com/joelevering/gomud/character"
+  "github.com/joelevering/gomud/classes"
   "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/stats"
 )
@@ -15,6 +16,7 @@ type NonPlayer struct {
 
   Id        int          `json:"id"`
   Desc      string       `json:"description"`
+  ClassName string       `json:"class"`
   AtkStats  []stats.Stat `json:"attack_stats"`
   DefStats  []stats.Stat `json:"defense_stats"`
   Behaviors []*Behavior  `json:"ooc_behavior"`
@@ -35,6 +37,22 @@ func (n *NonPlayer) Init(room interfaces.RoomI, queue interfaces.QueueI) {
   n.ResetStats()
   n.Spawn()
   n.SetBehavior(queue)
+}
+
+func (n *NonPlayer) SetClass() {
+  n.Class = classes.ByName[n.ClassName]
+}
+
+func (n *NonPlayer) ResetStats() {
+  lvl := n.Level
+  exp := n.Exp
+
+  n.Level = 0
+  for i := 0; i < lvl; i++ {
+    n.LevelUp()
+  }
+
+  n.Exp = exp
 }
 
 func (n *NonPlayer) GetDesc() string {

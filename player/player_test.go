@@ -5,6 +5,7 @@ import (
   "testing"
   "time"
 
+  "github.com/joelevering/gomud/classes"
   "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/mocks"
   "github.com/joelevering/gomud/room"
@@ -384,4 +385,15 @@ func Test_WinCombatLevelsUpPC(t *testing.T) {
   if !strings.Contains(res, "You're now level 2!") {
     t.Errorf("Expected 'You're now level 2!'' on defeating, but got '%s'", res)
 	}
+}
+
+func Test_LoadClass(t *testing.T) {
+	ch := make(chan string)
+	p := NewPlayer(ch, &mocks.MockQueue{})
+
+  p.LoadClass(classes.Athlete)
+
+  if p.GetClassName() != classes.Athlete.GetName() {
+    t.Errorf("Expected class name to be Athlete on change, but it's %s", p.GetClassName())
+  }
 }

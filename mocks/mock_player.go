@@ -20,6 +20,7 @@ func NewMockPlayer() *MockPlayer {
 }
 
 func (m *MockPlayer) StartWriter(conn net.Conn) {}
+func (m *MockPlayer) Init() {}
 func (m *MockPlayer) List() {}
 func (m *MockPlayer) Look() {}
 func (m *MockPlayer) LookNP(string) {}
@@ -33,6 +34,7 @@ func (m *MockPlayer) LeaveRoom(string) {}
 func (m *MockPlayer) EnterRoom(interfaces.RoomI) {}
 func (m *MockPlayer) GetName() string { return "mock player" }
 func (m *MockPlayer) SetName(name string) {}
+func (m *MockPlayer) GetID() string { return "mock ID" }
 func (m *MockPlayer) GetRoom() interfaces.RoomI { return nil }
 
 func (m *MockPlayer) GetCombatCmd() []string { return []string{} }

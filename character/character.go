@@ -10,7 +10,6 @@ import (
 
 type Character struct {
   Name       string            `json:"name"`
-  ClassName  string            `json:"class"`
   Class      interfaces.ClassI
   Level      int               `json:"level"`
   ExpGiven   int               `json:"exp_given"`
@@ -48,22 +47,6 @@ func NewCharacter() *Character {
     Kno:        10,
     Sag:        10,
   }
-}
-
-func (ch *Character) ResetStats() {
-  lvl := ch.Level
-  exp := ch.Exp
-
-  ch.Level = 0
-  for i := 0; i < lvl; i++ {
-    ch.levelUp()
-  }
-
-  ch.Exp = exp
-}
-
-func (ch *Character) SetClass() {
-  ch.Class = classes.ByName[ch.ClassName]
 }
 
 func (ch *Character) GetClassName() string {
@@ -254,14 +237,14 @@ func (ch *Character) GainExp(exp int) (leveledUp bool) {
   ch.Exp += exp
 
   if ch.Exp >= ch.NextLvlExp {
-    ch.levelUp()
+    ch.LevelUp()
     return true
   }
 
   return false
 }
 
-func (ch *Character) levelUp() {
+func (ch *Character) LevelUp() {
   // Increase stats based on Class
   statGrowth := ch.Class.GetStatGrowth()
   ch.SetMaxDet(ch.MaxDet + statGrowth.Det)

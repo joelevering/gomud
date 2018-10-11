@@ -16,6 +16,8 @@ func NewMockNP() *MockNP {
 }
 
 func (m *MockNP) Init(room interfaces.RoomI, queue interfaces.QueueI) {}
+func (m *MockCharacter) SetClass() {}
+func (m *MockCharacter) ResetStats() {}
 
 func (m *MockNP) GetName() string { return "mock np name" }
 func (m *MockNP) GetDesc() string { return "mock np desc" }

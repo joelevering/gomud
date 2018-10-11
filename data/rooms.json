@@ -29,9 +29,9 @@
       {
         "id": 1,
         "description": "A massive pile of gelatinous goo adorned with two huge eyes",
+        "class": "Slime King",
         "character": {
           "name": "King Slime",
-          "class": "Slime King",
           "level": 10,
           "exp_given": 999999
         },
@@ -104,9 +104,9 @@
       {
         "id": 5,
         "description": "A playful Dalmatian",
+        "class": "Dog God",
         "character": {
           "name": "Tornado",
-          "class": "Dog God",
           "level": 10,
           "exp_given": 1000000
         }
@@ -128,9 +128,9 @@
       {
         "id": 3,
         "description": "Looks kinda intimidating with that oversized helmet",
+        "class": "Slime Guard",
         "character": {
           "name": "Guard Slime",
-          "class": "Slime Guard",
           "level": 10,
           "exp_given": 777777
         }
@@ -164,9 +164,9 @@
       {
         "id": 2,
         "description": "Chef slime best slime",
+        "class": "Slime Chef",
         "character": {
           "name": "Chef Slime",
-          "class": "Slime Chef",
           "level": 10,
           "exp_given": 888888
         }
@@ -188,9 +188,9 @@
       {
         "id": 4,
         "description": "Fast asleep amidst a haypile",
+        "class": "Slime Baby",
         "character": {
           "name": "Baby Slime",
-          "class": "Slime Baby",
           "level": 10,
           "exp_given": 666666
         }
@@ -212,9 +212,9 @@
       {
         "id": 6,
         "description": "This crab looks like it's prepared for battle",
+        "class": "Crab",
         "character": {
           "name": "Crab",
-          "class": "Crab",
           "level": 5,
           "exp_given": 10
         },
