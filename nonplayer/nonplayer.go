@@ -1,4 +1,4 @@
-package npc
+package nonplayer
 
 import (
   "fmt"
@@ -10,7 +10,7 @@ import (
   "github.com/joelevering/gomud/stats"
 )
 
-type NPC struct {
+type NonPlayer struct {
   Id        int                  `json:"id"`
   Character *character.Character `json:"character"`
   Desc      string               `json:"description"`
@@ -29,7 +29,7 @@ type Behavior struct {
   Chance  float64    `json:"chance"`
 }
 
-func (n *NPC) Init(room interfaces.RoomI, queue interfaces.QueueI) {
+func (n *NonPlayer) Init(room interfaces.RoomI, queue interfaces.QueueI) {
   n.SetSpawn(room)
   n.Character.SetClass()
   n.Character.ResetStats()
@@ -37,36 +37,36 @@ func (n *NPC) Init(room interfaces.RoomI, queue interfaces.QueueI) {
   n.SetBehavior(queue)
 }
 
-func (n *NPC) GetCharacter() interfaces.CharI {
+func (n *NonPlayer) GetCharacter() interfaces.CharI {
   return n.Character
 }
 
-func (n *NPC) GetName() string {
+func (n *NonPlayer) GetName() string {
   return n.Character.GetName()
 }
 
-func (n *NPC) GetDesc() string {
+func (n *NonPlayer) GetDesc() string {
   return n.Desc
 }
 
-func (n *NPC) SetSpawn(room interfaces.RoomI) {
+func (n *NonPlayer) SetSpawn(room interfaces.RoomI) {
   n.SpawnRoom = room
 }
 
-func (n *NPC) Spawn() {
+func (n *NonPlayer) Spawn() {
   n.Room = n.SpawnRoom
   n.Alive = true
 }
 
-func (n *NPC) Say(msg string) {
+func (n *NonPlayer) Say(msg string) {
   n.Room.Message(fmt.Sprintf("%s says \"%s\"", n.GetName(), msg))
 }
 
-func (n *NPC) Emote(emote string) {
+func (n *NonPlayer) Emote(emote string) {
   n.Room.Message(fmt.Sprintf("%s %s", n.GetName(), emote))
 }
 
-func (n *NPC) LoseCombat(winner interfaces.CharI) {
+func (n *NonPlayer) LoseCombat(winner interfaces.CharI) {
   n.Alive = false
 
   go func() {
@@ -76,15 +76,15 @@ func (n *NPC) LoseCombat(winner interfaces.CharI) {
   }()
 }
 
-func (n *NPC) IsAlive() bool {
+func (n *NonPlayer) IsAlive() bool {
   return n.Alive
 }
 
-func (n *NPC) SetBehavior(queue interfaces.QueueI) {
+func (n *NonPlayer) SetBehavior(queue interfaces.QueueI) {
   for _, b := range n.Behaviors {
     topic := fmt.Sprintf("%s-%d", b.Trigger, n.Room.GetID())
     ch := queue.Sub(topic)
-    go func(n interfaces.NPCI, ch chan bool, chance float64, actions [][]string) {
+    go func(n interfaces.NPI, ch chan bool, chance float64, actions [][]string) {
       for range ch {
         if (rand.Float64() <= chance) {
           time.Sleep(100 * time.Millisecond) // Otherwise triggers on enter happen during room desc

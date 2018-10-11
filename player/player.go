@@ -61,7 +61,7 @@ func (p *Player) Cmd(cmd string) {
 		if len(words) == 1 {
 			p.Look()
 		} else if len(words) > 1 {
-			p.LookNPC(words[1])
+			p.LookNP(words[1])
 		}
   case "m", "move":
 		if len(words) > 1 {
@@ -76,7 +76,7 @@ func (p *Player) Cmd(cmd string) {
   case "y", "yell":
 		p.Yell(strings.Join(words[1:], " "))
   case "a", "attack":
-		p.AttackNPC(words[1])
+		p.AttackNP(words[1])
   case "st", "status":
 		p.Status()
   case "c", "change":
@@ -95,9 +95,9 @@ func (p Player) List() {
 		}
   }
 
-  for _, npc := range p.Room.GetNpcs() {
-    if npc.IsAlive() {
-		  names = append(names, fmt.Sprintf("%s (NPC)", npc.GetName()))
+  for _, np := range p.Room.GetNPs() {
+    if np.IsAlive() {
+		  names = append(names, fmt.Sprintf("%s (NPC)", np.GetName()))
     }
   }
 
@@ -120,14 +120,14 @@ func (p Player) Look() {
   p.List()
 }
 
-func (p Player) LookNPC(npcName string) {
-  look := func(p *Player, npc interfaces.NPCI) {
+func (p Player) LookNP(npName string) {
+  look := func(p *Player, np interfaces.NPI) {
 		p.SendMsg(
-			fmt.Sprintf("You look at %s and see:", npc.GetName()),
-			npc.GetDesc(),
+			fmt.Sprintf("You look at %s and see:", np.GetName()),
+			np.GetDesc(),
 		)
   }
-  p.findNpcAndExecute(npcName, "Who are you looking at??", look)
+  p.findNPAndExecute(npName, "Who are you looking at??", look)
 }
 
 func (p *Player) Status() {
@@ -150,26 +150,26 @@ func (p *Player) Status() {
   p.SendMsg(strings.Repeat("~", utf8.RuneCountInString(header)))
 }
 
-func (p *Player) AttackNPC(npcName string) {
-  attack := func(p *Player, npc interfaces.NPCI) {
-		p.SendMsg(fmt.Sprintf("You attack %s!", npc.GetName()))
+func (p *Player) AttackNP(npName string) {
+  attack := func(p *Player, np interfaces.NPI) {
+		p.SendMsg(fmt.Sprintf("You attack %s!", np.GetName()))
 		ci := &CombatInstance{
       p: p,
-      npc: npc,
+      np: np,
       pc: p.Character,
-      npcC: npc.GetCharacter(),
+      npc: np.GetCharacter(),
     }
 
 		go ci.Start()
   }
 
-  p.findNpcAndExecute(npcName, "Who are you attacking??", attack)
+  p.findNPAndExecute(npName, "Who are you attacking??", attack)
 }
 
-func (p *Player) findNpcAndExecute(npcName, notFound string, function func(*Player, interfaces.NPCI)) {
-  for _, npc := range p.Room.GetNpcs() {
-    if npc.IsAlive() && strings.Contains(strings.ToUpper(npc.GetName()), strings.ToUpper(npcName)) {
-			function(p, npc)
+func (p *Player) findNPAndExecute(npName, notFound string, function func(*Player, interfaces.NPI)) {
+  for _, np := range p.Room.GetNPs() {
+    if np.IsAlive() && strings.Contains(strings.ToUpper(np.GetName()), strings.ToUpper(npName)) {
+			function(p, np)
 			return
 		}
   }

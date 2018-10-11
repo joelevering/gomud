@@ -18,7 +18,7 @@ type RoomI interface {
 	AddPlayer(PlI)
 	RemovePlayer(PlI, string)
 	GetExits() []ExitI
-	GetNpcs() []NPCI
+	GetNPs() []NPI
 	GetPlayers() []PlI
 	GetName() string
 	GetDesc() string
@@ -33,7 +33,7 @@ type ExitI interface {
 	GetDesc() string
 }
 
-type NPCI interface {
+type NPI interface {
   Init(RoomI, QueueI)
   GetCharacter() CharI
 	GetName() string
@@ -56,9 +56,9 @@ type PlI interface {
   SetCombatCmd([]string)
 	List()
 	Look()
-	LookNPC(string)
+	LookNP(string)
   Status()
-	AttackNPC(string)
+	AttackNP(string)
 	Move(string)
 	Say(string)
 	Yell(string)

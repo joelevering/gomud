@@ -2,17 +2,17 @@ package room
 
 import (
 	"github.com/joelevering/gomud/interfaces"
-	"github.com/joelevering/gomud/npc"
+	"github.com/joelevering/gomud/nonplayer"
 )
 
 type Room struct {
-	Id      int     `json:"id"`
-	Name    string  `json:"name"`
-	Desc    string  `json:"description"`
-	Exits   []*Exit `json:"exits"`
+	Id      int                    `json:"id"`
+	Name    string                 `json:"name"`
+	Desc    string                 `json:"description"`
+	Exits   []*Exit                `json:"exits"`
 	ExitIs  []interfaces.ExitI
-	Npcs    []*npc.NPC `json:"npcs"`
-	NpcIs   []interfaces.NPCI
+	NPs     []*nonplayer.NonPlayer `json:"npcs"`
+	NPIs    []interfaces.NPI
 	Players []interfaces.PlI
 }
 
@@ -56,13 +56,13 @@ func (room *Room) GetExits() []interfaces.ExitI {
 	return room.ExitIs
 }
 
-func (room *Room) GetNpcs() []interfaces.NPCI {
-	if room.NpcIs == nil {
-		for _, npc := range room.Npcs {
-			room.NpcIs = append(room.NpcIs, interfaces.NPCI(npc))
+func (room *Room) GetNPs() []interfaces.NPI {
+	if room.NPIs == nil {
+		for _, np := range room.NPs {
+			room.NPIs = append(room.NPIs, interfaces.NPI(np))
 		}
 	}
-	return room.NpcIs
+	return room.NPIs
 }
 
 func (room *Room) GetPlayers() []interfaces.PlI {

@@ -108,8 +108,8 @@ func Test_List(t *testing.T) {
   }
 
   // Lists NPCs
-  if !strings.Contains(res, "mock npc name (NPC)") {
-		t.Errorf("Expected List to send 'mock npc name (NPC)' to the player, but it sent %s", res)
+  if !strings.Contains(res, "mock np name (NPC)") {
+		t.Errorf("Expected List to send 'mock np name (NPC)' to the player, but it sent %s", res)
   }
 
   // Lists other players
@@ -172,33 +172,33 @@ func Test_Look(t *testing.T) {
   }
 }
 
-func Test_LookNPCWithNPCName(t *testing.T) {
+func Test_LookNPWithNPName(t *testing.T) {
   ch := make(chan string)
   defer close(ch)
   p := NewPlayer(ch, &mocks.MockQueue{})
   room := &mocks.MockRoom{}
   p.Room = room
 
-  go p.LookNPC("mock npc")
+  go p.LookNP("mock np")
 
   res := <-ch
-  if !strings.Contains(res, "You look at mock npc name and see:") {
-		t.Errorf("Expected 'You look at mock npc name and see:' but got unexpected LookNPC result '%s'", res)
+  if !strings.Contains(res, "You look at mock np name and see:") {
+		t.Errorf("Expected 'You look at mock np name and see:' but got unexpected LookNPC result '%s'", res)
   }
   res = <-ch
-  if !strings.Contains(res, "mock npc desc") {
-		t.Errorf("Expected 'mock npc desc' but got unexpected LookNPC result '%s'", res)
+  if !strings.Contains(res, "mock np desc") {
+		t.Errorf("Expected 'mock np desc' but got unexpected LookNPC result '%s'", res)
   }
 }
 
-func Test_LookNPCWithNoNPC(t *testing.T) {
+func Test_LookNPWithNoNP(t *testing.T) {
   ch := make(chan string)
   defer close(ch)
   p := NewPlayer(ch, &mocks.MockQueue{})
   room := &mocks.MockRoom{}
   p.Room = room
 
-  go p.LookNPC("missingno")
+  go p.LookNP("missingno")
 
   res := <-ch
   if !strings.Contains(res, "Who are you looking at??") {
@@ -310,7 +310,7 @@ func Test_LoseCombat(t *testing.T) {
 
 	go func (ch chan string) {
     defer close(ch)
-    p.LoseCombat(p.Room.GetNpcs()[0].GetCharacter())
+    p.LoseCombat(p.Room.GetNPs()[0].GetCharacter())
   }(ch)
 
 	res := <-ch
@@ -344,7 +344,7 @@ func Test_WinCombatEndsCombatAndGivesExp(t *testing.T) {
   pc := p.Character
 
 	go func (ch chan string) {
-    p.WinCombat(p.Room.GetNpcs()[0].GetCharacter())
+    p.WinCombat(p.Room.GetNPs()[0].GetCharacter())
   }(ch)
 
 	res := <-ch
@@ -374,7 +374,7 @@ func Test_WinCombatLevelsUpPC(t *testing.T) {
 
 	go func (ch chan string) {
     defer close(ch)
-    p.WinCombat(p.Room.GetNpcs()[0].GetCharacter())
+    p.WinCombat(p.Room.GetNPs()[0].GetCharacter())
   }(ch)
 
 	res := <-ch // Exp gain

@@ -8,7 +8,7 @@ type MockRoom struct {
   Exits      []interfaces.ExitI
   AddedPlayer   interfaces.PlI
   RemovedPlayer interfaces.PlI
-  NPCs       []interfaces.NPCI
+  NPs       []interfaces.NPI
   Name       string
 }
 
@@ -28,23 +28,13 @@ func (m *MockRoom) GetExits() []interfaces.ExitI {
   return m.Exits
 }
 
-func (m *MockRoom) GetNpcs() []interfaces.NPCI {
-  if (len(m.NPCs) != 0) {
-    return m.NPCs
+func (m *MockRoom) GetNPs() []interfaces.NPI {
+  if (len(m.NPs) != 0) {
+    return m.NPs
   }
 
-  return []interfaces.NPCI{
-    &MockNPC{
-      // Id:     1,
-      // Desc:   "Holding a purple crayon",
-      // Name:   "Harold",
-      // MaxDet: 100,
-      // Det:    99,
-      // Str:    98,
-      // Flo:    97,
-      // Exp:    2,
-      // Alive:  true,
-    },
+  return []interfaces.NPI{
+    &MockNP{},
   }
 }
 

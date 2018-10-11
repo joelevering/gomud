@@ -14,9 +14,9 @@ type MockPlayer struct {
 func (m *MockPlayer) StartWriter(conn net.Conn) {}
 func (m *MockPlayer) List() {}
 func (m *MockPlayer) Look() {}
-func (m *MockPlayer) LookNPC(string) {}
+func (m *MockPlayer) LookNP(string) {}
 func (m *MockPlayer) Status() {}
-func (m *MockPlayer) AttackNPC(string) {}
+func (m *MockPlayer) AttackNP(string) {}
 func (m *MockPlayer) Move(string) {}
 func (m *MockPlayer) Say(string) {}
 func (m *MockPlayer) Yell(string) {}

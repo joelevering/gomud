@@ -50,45 +50,45 @@ func Test_LoadingRooms(t *testing.T) {
   }
 }
 
-func Test_InitializingNPCs(t *testing.T) {
+func Test_InitializingNPs(t *testing.T) {
   rooms, err := LoadRooms("data/rooms.json")
   queue := pubsub.NewQueue()
-  err = InitNPCs(rooms, queue)
+  err = InitNPs(rooms, queue)
   if err != nil {
-    t.Errorf("Error initializing NPCs: %s", err)
+    t.Errorf("Error initializing NPs: %s", err)
   }
 
   room := rooms[0]
-  npc := room.GetNpcs()[0]
+  np := room.GetNPs()[0]
 
-  if npc.GetName() != "King Slime" {
-    t.Errorf("Expected NPC to have name 'King Slime' but got %v", npc.GetName())
+  if np.GetName() != "King Slime" {
+    t.Errorf("Expected NP to have name 'King Slime' but got %v", np.GetName())
   }
 
-  if npc.GetDesc() != "A massive pile of gelatinous goo adorned with two huge eyes" {
-    t.Errorf("Expected NPC to have desc 'A massive pile of gelatinous goo adorned with two huge eyes' but got %v", npc.GetDesc())
+  if np.GetDesc() != "A massive pile of gelatinous goo adorned with two huge eyes" {
+    t.Errorf("Expected NP to have desc 'A massive pile of gelatinous goo adorned with two huge eyes' but got %v", np.GetDesc())
   }
 
-  npcC := npc.GetCharacter()
+  npc := np.GetCharacter()
 
-  if npcC.GetDet() != 999990 || npcC.GetMaxDet() != 999990 {
-    t.Errorf("Expected NPC to have determination and max determination of 999990 but got %d det and %d max det", npcC.GetDet(), npcC.GetMaxDet())
+  if npc.GetDet() != 999990 || npc.GetMaxDet() != 999990 {
+    t.Errorf("Expected NP to have determination and max determination of 999990 but got %d det and %d max det", npc.GetDet(), npc.GetMaxDet())
   }
 
-  if npcC.GetStr() != 9990 {
-    t.Errorf("Expected NPC to have str of 9990 but got %d", npcC.GetStr())
+  if npc.GetStr() != 9990 {
+    t.Errorf("Expected NP to have str of 9990 but got %d", npc.GetStr())
   }
 
-  if npcC.GetAtk() != 9990 {
-    t.Errorf("Expected NPC to have atk of 9990 but got %d", npcC.GetAtk())
+  if npc.GetAtk() != 9990 {
+    t.Errorf("Expected NP to have atk of 9990 but got %d", npc.GetAtk())
   }
 
-  if npcC.GetDef() != 9990 {
-    t.Errorf("Expected NPC to have def of 9990 but got %d", npcC.GetDef())
+  if npc.GetDef() != 9990 {
+    t.Errorf("Expected NP to have def of 9990 but got %d", npc.GetDef())
   }
 
-  if room.GetNpcs()[0].GetName() != npc.GetName() {
-    t.Errorf("Expected %v to be in %v", npc.GetName(), room.GetName())
+  if room.GetNPs()[0].GetName() != np.GetName() {
+    t.Errorf("Expected %v to be in %v", np.GetName(), room.GetName())
   }
 
   if len(queue.Chans["pc-enters-1"]) != 1 {

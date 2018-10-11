@@ -20,9 +20,9 @@ type CombatResults struct {
 
 type CombatInstance struct {
   p    interfaces.PlI
-  npc  interfaces.NPCI
+  np  interfaces.NPI
   pc   interfaces.CharI
-	npcC interfaces.CharI
+	npc interfaces.CharI
 }
 
 func (ci *CombatInstance) Start() {
@@ -50,14 +50,14 @@ func (ci *CombatInstance) Loop(report bool) (combatOver bool) {
 
   if ci.pcIsDead() {
     ci.pc.LeaveCombat()
-    ci.p.LoseCombat(ci.npcC)
+    ci.p.LoseCombat(ci.npc)
     return true
   }
 
   if ci.npcIsDead() {
     ci.pc.LeaveCombat()
-    ci.npc.LoseCombat(ci.pc)
-    ci.p.WinCombat(ci.npcC)
+    ci.np.LoseCombat(ci.pc)
+    ci.p.WinCombat(ci.npc)
     return true
   }
 
@@ -69,7 +69,7 @@ func (ci *CombatInstance) getPCResults() *CombatResults {
   combatCmd := ci.p.GetCombatCmd()
 
   if len(combatCmd) == 0 {
-    res.npcDmg = CalcAtkDmg(ci.pc.GetAtk(), ci.npcC.GetDef())
+    res.npcDmg = CalcAtkDmg(ci.pc.GetAtk(), ci.npc.GetDef())
     return res
   }
 
@@ -77,9 +77,9 @@ func (ci *CombatInstance) getPCResults() *CombatResults {
 	switch combatCmd[0] {
 	case "bash":
     smiteStr := int(float64(ci.pc.GetAtk()) * 1.1)
-    res.npcDmg = CalcAtkDmg(smiteStr, ci.npcC.GetDef())
+    res.npcDmg = CalcAtkDmg(smiteStr, ci.npc.GetDef())
   default: // attack
-    res.npcDmg = CalcAtkDmg(ci.pc.GetAtk(), ci.npcC.GetDef())
+    res.npcDmg = CalcAtkDmg(ci.pc.GetAtk(), ci.npc.GetDef())
   }
 
   return res
@@ -87,7 +87,7 @@ func (ci *CombatInstance) getPCResults() *CombatResults {
 
 func (ci *CombatInstance) getNPCResults() *CombatResults {
   return &CombatResults{
-    pcDmg: CalcAtkDmg(ci.npcC.GetAtk(), ci.pc.GetDef()),
+    pcDmg: CalcAtkDmg(ci.npc.GetAtk(), ci.pc.GetDef()),
   }
 }
 
@@ -100,7 +100,7 @@ func CalcAtkDmg(atkStr int, defEnd int) int {
 }
 
 func (ci *CombatInstance) applyDamage(npcDmg, pcDmg int) {
-  npcDet := ci.npcC.GetDet()
+  npcDet := ci.npc.GetDet()
   pcDet := ci.pc.GetDet()
 
   if pcDet-pcDmg < 0 {
@@ -110,9 +110,9 @@ func (ci *CombatInstance) applyDamage(npcDmg, pcDmg int) {
   }
 
   if npcDet-npcDmg < 0 {
-    ci.npcC.SetDet(0)
+    ci.npc.SetDet(0)
   } else {
-    ci.npcC.SetDet(npcDet - npcDmg)
+    ci.npc.SetDet(npcDet - npcDmg)
   }
 }
 
@@ -121,11 +121,11 @@ func (ci *CombatInstance) pcIsDead() bool {
 }
 
 func (ci *CombatInstance) npcIsDead() bool {
-  return ci.npcC.GetDet() <= 0
+  return ci.npc.GetDet() <= 0
 }
 
 func (ci *CombatInstance) report(npcDmg, pcDmg int) {
-  ci.p.SendMsg(fmt.Sprintf("%s took %d damage!", ci.npcC.GetName(), npcDmg))
+  ci.p.SendMsg(fmt.Sprintf("%s took %d damage!", ci.npc.GetName(), npcDmg))
   ci.p.SendMsg(fmt.Sprintf("You took %d damage!", pcDmg))
   ci.p.SendMsg("")
 
@@ -136,9 +136,9 @@ func (ci *CombatInstance) report(npcDmg, pcDmg int) {
   var npcMsg string
 
   if ci.npcIsDead() {
-    npcMsg = fmt.Sprintf("%s is defeated!", ci.npcC.GetName())
+    npcMsg = fmt.Sprintf("%s is defeated!", ci.npc.GetName())
   } else {
-    npcMsg = fmt.Sprintf("%s has %d/%d", ci.npcC.GetName(), ci.npcC.GetDet(), ci.npcC.GetMaxDet())
+    npcMsg = fmt.Sprintf("%s has %d/%d", ci.npc.GetName(), ci.npc.GetDet(), ci.npc.GetMaxDet())
   }
 
   ci.p.SendMsg(fmt.Sprintf("You have %d/%d health left. %s", ci.pc.GetDet(), ci.pc.GetMaxDet(), npcMsg))

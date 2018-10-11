@@ -69,7 +69,7 @@ func initGameState() *GameState {
 	if err != nil {
 		panic("Error loading rooms")
 	}
-  err = InitNPCs(rooms, state.Queue)
+  err = InitNPs(rooms, state.Queue)
 	if err != nil {
     panic("Error loading npcs")
 	}
