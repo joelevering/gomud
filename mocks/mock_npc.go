@@ -12,7 +12,6 @@ func (m *MockNPC) GetCharacter() interfaces.CharI { return &MockCharacter{} }
 
 func (m *MockNPC) GetName() string { return "mock npc name" }
 func (m *MockNPC) GetDesc() string { return "mock npc desc" }
-func (m *MockNPC) GetExp() int { return 10 }
 
 func (m *MockNPC) SetSpawn(spawn interfaces.RoomI) {}
 func (m *MockNPC) SetBehavior(interfaces.QueueI) {}

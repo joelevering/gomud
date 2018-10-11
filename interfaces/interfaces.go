@@ -38,7 +38,6 @@ type NPCI interface {
   GetCharacter() CharI
 	GetName() string
 	GetDesc() string
-  GetExp() int
   SetSpawn(RoomI)
   Spawn()
   Say(string)
@@ -102,6 +101,7 @@ type CharI interface {
   GetDef() int
   GetLevel() int
   GetExp() int
+  GetExpGiven() int
   GetNextLvlExp() int
   GetSpawn() RoomI
   SetSpawn(RoomI)

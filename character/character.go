@@ -13,7 +13,8 @@ type Character struct {
   ClassName  string            `json:"class"`
   Class      interfaces.ClassI
   Level      int               `json:"level"`
-  Exp        int               `json:"experience"`
+  ExpGiven   int               `json:"exp_given"`
+  Exp        int
   NextLvlExp int
   MaxDet     int               `json:"max_health"`
   Det        int               `json:"health"`
@@ -83,6 +84,10 @@ func (ch *Character) GetLevel() int {
 
 func (ch *Character) GetExp() int {
   return ch.Exp
+}
+
+func (ch *Character) GetExpGiven() int {
+  return ch.ExpGiven
 }
 
 func (ch *Character) GetNextLvlExp() int {
