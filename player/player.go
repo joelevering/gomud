@@ -32,13 +32,15 @@ type Player struct {
   Queue     interfaces.QueueI
   Room      interfaces.RoomI
   CombatCmd []string
+  Store     interfaces.StorageI
 }
 
-func NewPlayer(ch chan string, q interfaces.QueueI) *Player {
+func NewPlayer(ch chan string, q interfaces.QueueI, s interfaces.StorageI) *Player {
   return &Player{
     Character: character.NewCharacter(),
     Channel:   ch,
     Queue:     q,
+    Store:     s,
   }
 }
 
@@ -49,12 +51,25 @@ func (p Player) StartWriter(conn net.Conn) {
 }
 
 func (p *Player) Init() {
-  if !storage.StoreExists(p.GetID()) {
-    storage.CreateStore(p.GetID())
+  if !p.Store.StoreExists(p.GetID()) {
+    p.Store.InitStats(p.GetID())
     for _, class := range classes.PlayerClasses {
-      storage.PersistClass(p, class.GetName())
+      p.PersistClass(class.GetName())
     }
+  } else {
+    p.LoadClass(classes.Conscript)
   }
+}
+
+func (p *Player) PersistClass(className string) {
+  stats := storage.ClassStats{
+    Lvl: p.GetLevel(),
+    MaxDet: p.GetMaxDet(),
+    Exp: p.GetExp(),
+    NextLvlExp: p.GetNextLvlExp(),
+  }
+
+  p.Store.PersistClass(p.GetID(), className, stats)
 }
 
 func (p *Player) Cmd(cmd string) {
@@ -219,25 +234,25 @@ func (p *Player) Yell(msg string) {
 func (p *Player) ChangeClass(class string) {
   switch strings.ToLower(class) {
   case "conscript":
-    storage.PersistClass(p, p.GetClassName())
+    p.PersistClass(p.GetClassName())
     p.LoadClass(classes.Conscript)
   case "athlete":
-    storage.PersistClass(p, p.GetClassName())
+    p.PersistClass(p.GetClassName())
     p.LoadClass(classes.Athlete)
   case "charmer":
-    storage.PersistClass(p, p.GetClassName())
+    p.PersistClass(p.GetClassName())
     p.LoadClass(classes.Charmer)
   case "augur":
-    storage.PersistClass(p, p.GetClassName())
+    p.PersistClass(p.GetClassName())
     p.LoadClass(classes.Augur)
   case "sophist":
-    storage.PersistClass(p, p.GetClassName())
+    p.PersistClass(p.GetClassName())
     p.LoadClass(classes.Sophist)
   }
 }
 
 func (p *Player) LoadClass(class *classes.Class) {
-  stats := storage.LoadStats(p.GetID(), class.GetName())
+  stats := p.Store.LoadStats(p.GetID(), class.GetName())
 
   p.Class = class
   p.Level = stats.Lvl

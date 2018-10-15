@@ -7,6 +7,7 @@ import (
 	"github.com/joelevering/gomud/player"
 	"github.com/joelevering/gomud/interfaces"
 	"github.com/joelevering/gomud/pubsub"
+	"github.com/joelevering/gomud/storage"
 )
 
 const port = "1919"
@@ -16,6 +17,7 @@ type GameState struct {
 	Rooms       []interfaces.RoomI
 	DefaultRoom interfaces.RoomI
   Queue       interfaces.QueueI
+  Store       *storage.Storage
 }
 
 func main() {
@@ -61,6 +63,7 @@ func main() {
 func initGameState() *GameState {
 	var state = GameState{
     Queue: pubsub.NewQueue(),
+    Store: storage.LoadStore("data/store.json"),
   }
 
 	state.Players = make(map[string]*player.Player)

@@ -5,12 +5,21 @@ import (
 
   "github.com/joelevering/gomud/classes"
   "github.com/joelevering/gomud/stats"
+  "github.com/joelevering/gomud/storage"
 )
 
 type QueueI interface {
   Sub(string) chan bool
   Unsub(string, chan bool)
   Pub(string)
+}
+
+type StorageI interface {
+  StoreExists(string) bool
+  InitStats(string)
+  PersistClass(string, string, storage.ClassStats)
+  LoadStats(string, string) storage.ClassStats
+  PersistStore(string)
 }
 
 type RoomI interface {
