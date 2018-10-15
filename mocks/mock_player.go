@@ -21,6 +21,7 @@ func NewMockPlayer() *MockPlayer {
 
 func (m *MockPlayer) StartWriter(conn net.Conn) {}
 func (m *MockPlayer) Init() {}
+func (m *MockPlayer) Save() {}
 func (m *MockPlayer) List() {}
 func (m *MockPlayer) Look() {}
 func (m *MockPlayer) LookNP(string) {}
