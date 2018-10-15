@@ -20,6 +20,10 @@ type Storage struct {
   PlayersClasses map[string]map[string]ClassStats
 }
 
+func StoreExists(pID string) bool {
+  return store.PlayersClasses[pID] != nil
+}
+
 func CreateStore(pID string) {
   if store.PlayersClasses[pID] == nil {
     store.PlayersClasses[pID] = make(map[string]ClassStats)
