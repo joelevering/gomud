@@ -21,6 +21,10 @@ Available commands:
 'look <npc name>' to see more details about an NPC
 'list' to see who is currently in your room
 'help' to repeat this message
+'status' to see details about your character
+'attack <npc name>' to start combat
+'change <class name>' to change your class
+'exit' or 'quit' to log out
 
 Most commands have their first letter as a shortcut
 `
