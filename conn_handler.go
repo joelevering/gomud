@@ -34,7 +34,8 @@ func (handler *ConnHandler) Handle(conn net.Conn) {
       player.SendMsg("Are you sure you want to quit? ('Y' to confirm)")
       input.Scan()
       if strings.ToUpper(input.Text()) == "Y" {
-        player.SendMsg("See you next time!")
+        player.Save()
+        player.SendMsg("Your progress has been saved. See you next time!")
         break
       }
 

@@ -58,22 +58,15 @@ func (p *Player) Init() {
   if !p.Store.StoreExists(p.GetID()) {
     p.Store.InitStats(p.GetID())
     for _, class := range classes.PlayerClasses {
-      p.PersistClass(class.GetName())
+      p.persistClass(class.GetName())
     }
   } else {
-    p.LoadClass(classes.Conscript)
+    p.loadClass(classes.Conscript)
   }
 }
 
-func (p *Player) PersistClass(className string) {
-  stats := storage.ClassStats{
-    Lvl: p.GetLevel(),
-    MaxDet: p.GetMaxDet(),
-    Exp: p.GetExp(),
-    NextLvlExp: p.GetNextLvlExp(),
-  }
-
-  p.Store.PersistClass(p.GetID(), className, stats)
+func (p *Player) Save() {
+  p.persistClass(p.GetClassName())
 }
 
 func (p *Player) Cmd(cmd string) {
@@ -238,35 +231,23 @@ func (p *Player) Yell(msg string) {
 func (p *Player) ChangeClass(class string) {
   switch strings.ToLower(class) {
   case "conscript":
-    p.PersistClass(p.GetClassName())
-    p.LoadClass(classes.Conscript)
+    p.persistClass(p.GetClassName())
+    p.loadClass(classes.Conscript)
   case "athlete":
-    p.PersistClass(p.GetClassName())
-    p.LoadClass(classes.Athlete)
+    p.persistClass(p.GetClassName())
+    p.loadClass(classes.Athlete)
   case "charmer":
-    p.PersistClass(p.GetClassName())
-    p.LoadClass(classes.Charmer)
+    p.persistClass(p.GetClassName())
+    p.loadClass(classes.Charmer)
   case "augur":
-    p.PersistClass(p.GetClassName())
-    p.LoadClass(classes.Augur)
+    p.persistClass(p.GetClassName())
+    p.loadClass(classes.Augur)
   case "sophist":
-    p.PersistClass(p.GetClassName())
-    p.LoadClass(classes.Sophist)
+    p.persistClass(p.GetClassName())
+    p.loadClass(classes.Sophist)
   }
 }
 
-func (p *Player) LoadClass(class *classes.Class) {
-  stats := p.Store.LoadStats(p.GetID(), class.GetName())
-
-  p.Class = class
-  p.Level = stats.Lvl
-  p.MaxDet = stats.MaxDet
-  if p.GetDet() > p.MaxDet {
-    p.SetDet(p.MaxDet)
-  }
-  p.Exp = stats.Exp
-  p.NextLvlExp = stats.NextLvlExp
-}
 
 func (p *Player) SendMsg(msgs ...string) {
   for _, msg := range msgs {
@@ -338,4 +319,30 @@ func (p *Player) GetCombatCmd() []string {
 
 func (p *Player) SetCombatCmd(cmd []string) {
   p.CombatCmd = cmd
+}
+
+// Private
+
+func (p *Player) persistClass(className string) {
+  stats := storage.ClassStats{
+    Lvl: p.GetLevel(),
+    MaxDet: p.GetMaxDet(),
+    Exp: p.GetExp(),
+    NextLvlExp: p.GetNextLvlExp(),
+  }
+
+  p.Store.PersistClass(p.GetID(), className, stats)
+}
+
+func (p *Player) loadClass(class *classes.Class) {
+  stats := p.Store.LoadStats(p.GetID(), class.GetName())
+
+  p.Class = class
+  p.Level = stats.Lvl
+  p.MaxDet = stats.MaxDet
+  if p.GetDet() > p.MaxDet {
+    p.SetDet(p.MaxDet)
+  }
+  p.Exp = stats.Exp
+  p.NextLvlExp = stats.NextLvlExp
 }

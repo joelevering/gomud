@@ -60,6 +60,7 @@ type PlI interface {
   CharI
   StartWriter(net.Conn)
   Init()
+  Save()
   GetID() string
   GetRoom() RoomI
   GetCombatCmd() []string
