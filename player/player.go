@@ -49,9 +49,11 @@ func (p Player) StartWriter(conn net.Conn) {
 }
 
 func (p *Player) Init() {
-  storage.CreateStore(p.GetID())
-  for _, class := range classes.PlayerClasses {
-    storage.PersistClass(p, class.GetName())
+  if !storage.StoreExists(p.GetID()) {
+    storage.CreateStore(p.GetID())
+    for _, class := range classes.PlayerClasses {
+      storage.PersistClass(p, class.GetName())
+    }
   }
 }
 

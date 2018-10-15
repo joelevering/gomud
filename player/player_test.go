@@ -429,20 +429,23 @@ func Test_ChangeClassKeepsDet(t *testing.T) {
   }
 }
 
-// func Test_ClassSavesPersistAcrossLikeNames(t *testing.T) {
-// 	ch := make(chan string)
-// 	p := NewPlayer(ch, &mocks.MockQueue{})
-//   p.Init()
-//   p.ChangeClass("athlete")
-//   p.LevelUp()
-//   p.ChangeClass("conscript") // to persist athlete
-//
-// 	ch = make(chan string)
-// 	p2 := NewPlayer(ch, &mocks.MockQueue{})
-//   p2.Init()
-//   p2.ChangeClass("athlete")
-//
-//   if p2.Level != 2 {
-//     t.Errorf("Expected player class level to persist across like-named characters, but level is %d", p2.GetLevel())
-//   }
-// }
+func Test_ClassSavesPersistAcrossLikeNames(t *testing.T) {
+  name := "name"
+	ch := make(chan string)
+	p := NewPlayer(ch, &mocks.MockQueue{})
+  p.SetName(name)
+  p.Init()
+  p.ChangeClass("athlete")
+  p.GainExp(p.NextLvlExp)
+  p.ChangeClass("conscript") // to persist athlete
+
+	ch = make(chan string)
+	p2 := NewPlayer(ch, &mocks.MockQueue{})
+  p2.SetName(name)
+  p2.Init()
+  p2.ChangeClass("athlete")
+
+  if p2.Level != 2 {
+    t.Errorf("Expected player class level to persist across like-named characters, but level is %d", p2.GetLevel())
+  }
+}
