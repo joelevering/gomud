@@ -231,19 +231,19 @@ func (p *Player) Yell(msg string) {
 func (p *Player) ChangeClass(class string) {
   switch strings.ToLower(class) {
   case "conscript":
-    p.persistClass(p.GetClassName())
+    p.Save()
     p.loadClass(classes.Conscript)
   case "athlete":
-    p.persistClass(p.GetClassName())
+    p.Save()
     p.loadClass(classes.Athlete)
   case "charmer":
-    p.persistClass(p.GetClassName())
+    p.Save()
     p.loadClass(classes.Charmer)
   case "augur":
-    p.persistClass(p.GetClassName())
+    p.Save()
     p.loadClass(classes.Augur)
   case "sophist":
-    p.persistClass(p.GetClassName())
+    p.Save()
     p.loadClass(classes.Sophist)
   }
 }
