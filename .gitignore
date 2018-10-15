@@ -6,6 +6,7 @@
 # Folders
 _obj
 _test
+data/store.json
 
 # Architecture specific extensions/prefixes
 *.[568vq]

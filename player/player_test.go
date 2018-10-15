@@ -9,12 +9,20 @@ import (
   "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/mocks"
   "github.com/joelevering/gomud/room"
+  "github.com/joelevering/gomud/storage"
 )
 
-func Test_CmdSetsCombatCmdInCombat(t *testing.T) {
+var s = storage.LoadStore("../test_data.test")
+
+func NewTestPlayer() (*Player, chan string, *mocks.MockQueue) {
   ch := make(chan string)
   q := &mocks.MockQueue{}
-  p := NewPlayer(ch, q)
+  return NewPlayer(ch, q, s), ch, q
+}
+
+func Test_CmdSetsCombatCmdInCombat(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
   p.EnterCombat()
   p.Cmd("smite")
 
@@ -24,9 +32,8 @@ func Test_CmdSetsCombatCmdInCombat(t *testing.T) {
 }
 
 func Test_EnterRoom(t *testing.T) {
-  ch := make(chan string)
-  q := &mocks.MockQueue{}
-  p := NewPlayer(ch, q)
+  p, ch, q := NewTestPlayer()
+  defer close(ch)
 
   oldRoom := room.Room{Id: 99, Players: []interfaces.PlI{p}}
   p.Room = &oldRoom
@@ -52,9 +59,8 @@ func Test_EnterRoom(t *testing.T) {
 }
 
 func Test_LeaveRoom(t *testing.T) {
-  ch := make(chan string)
-  q := &mocks.MockQueue{}
-  p := NewPlayer(ch, q)
+  p, ch, q := NewTestPlayer()
+  defer close(ch)
 
   oldRoom := room.Room{Id: 666, Players: []interfaces.PlI{p}}
   p.Room = &oldRoom
@@ -71,8 +77,8 @@ func Test_LeaveRoom(t *testing.T) {
 }
 
 func Test_SendMsg(t *testing.T) {
-  ch := make(chan string)
-  p := NewPlayer(ch, &mocks.MockQueue{})
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
 
   go p.SendMsg("testing SendMsg")
 
@@ -84,9 +90,8 @@ func Test_SendMsg(t *testing.T) {
 }
 
 func Test_List(t *testing.T) {
-  ch := make(chan string)
+  p, ch, _ := NewTestPlayer()
   defer close(ch)
-  p := NewPlayer(ch, &mocks.MockQueue{})
   room := &mocks.MockRoom{
     Players: []interfaces.PlI{
       &mocks.MockPlayer{},
@@ -120,9 +125,8 @@ func Test_List(t *testing.T) {
 }
 
 func Test_Look(t *testing.T) {
-  ch := make(chan string)
+  p, ch, _ := NewTestPlayer()
   defer close(ch)
-  p := NewPlayer(ch, &mocks.MockQueue{})
   room := &mocks.MockRoom{
     Name: "Name",
     Exits: []interfaces.ExitI{
@@ -174,9 +178,8 @@ func Test_Look(t *testing.T) {
 }
 
 func Test_LookNPWithNPName(t *testing.T) {
-  ch := make(chan string)
+  p, ch, _ := NewTestPlayer()
   defer close(ch)
-  p := NewPlayer(ch, &mocks.MockQueue{})
   room := &mocks.MockRoom{}
   p.Room = room
 
@@ -193,9 +196,8 @@ func Test_LookNPWithNPName(t *testing.T) {
 }
 
 func Test_LookNPWithNoNP(t *testing.T) {
-  ch := make(chan string)
+  p, ch, _ := NewTestPlayer()
   defer close(ch)
-  p := NewPlayer(ch, &mocks.MockQueue{})
   room := &mocks.MockRoom{}
   p.Room = room
 
@@ -208,98 +210,93 @@ func Test_LookNPWithNoNP(t *testing.T) {
 }
 
 func Test_Say(t *testing.T) {
-	ch := make(chan string)
-	defer close(ch)
-	p := NewPlayer(ch, &mocks.MockQueue{})
-	room := &mocks.MockRoom{}
-	p.Room = room
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  room := &mocks.MockRoom{}
+  p.Room = room
 
-	p.Say("testing Say")
+  p.Say("testing Say")
 
-	if !strings.Contains(room.Messages[0], "testing Say") {
+  if !strings.Contains(room.Messages[0], "testing Say") {
 		t.Error("Expected Say to send 'testing Say' to the room, but it didn't")
-	}
+  }
 }
 
 func Test_Yell(t *testing.T) {
-	ch := make(chan string)
-	defer close(ch)
-	p := NewPlayer(ch, &mocks.MockQueue{})
-	adjacentRoom := &mocks.MockRoom{}
-	room := &mocks.MockRoom{
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  adjacentRoom := &mocks.MockRoom{}
+  room := &mocks.MockRoom{
 		Exits: []interfaces.ExitI{
 			&room.Exit{
 				Room: adjacentRoom,
 			},
 		},
-	}
-	p.Room = room
+  }
+  p.Room = room
 
-	p.Yell("TESTING YELL")
+  p.Yell("TESTING YELL")
 
-	if !strings.Contains(adjacentRoom.Messages[0], "TESTING YELL") {
+  if !strings.Contains(adjacentRoom.Messages[0], "TESTING YELL") {
 		t.Error("Expected Yell to send 'TESTING YELL' to adjacent rooms, but it didn't")
-	}
+  }
 }
 
 func Test_MoveWithAccurateExitKey(t *testing.T) {
-	ch := make(chan string)
-	defer close(ch)
-	p := NewPlayer(ch, &mocks.MockQueue{})
-	adjacentRoom := &mocks.MockRoom{
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  adjacentRoom := &mocks.MockRoom{
 		Name: "Adjacent Room",
-	}
-	room := &mocks.MockRoom{
+  }
+  room := &mocks.MockRoom{
 		Exits: []interfaces.ExitI{
 			&room.Exit{
 				Room: adjacentRoom,
 				Key:  "o",
 			},
 		},
-	}
-	p.Room = room
+  }
+  p.Room = room
 
-	go p.Move("o")
+  go p.Move("o")
 
-	res := <-ch
+  res := <-ch
 
-	if room.RemovedPlayer != p {
+  if room.RemovedPlayer != p {
 		t.Error("Expected player to be removed from initial room, but it was not")
-	}
+  }
 
-	if adjacentRoom.AddedPlayer != p {
+  if adjacentRoom.AddedPlayer != p {
 		t.Error("Expected player to be added to adjacent room, but it was not")
-	}
+  }
 
-	if !strings.Contains(res, "~~Adjacent Room~~") {
+  if !strings.Contains(res, "~~Adjacent Room~~") {
 		t.Errorf("Expected room name 'Name' but got %s", res)
-	}
+  }
 
-	// If the above test passes, assume it's 'Look'-ing and clear the channel before closing
-	for i := 0; i < 5; i++ {
+  // If the above test passes, assume it's 'Look'-ing and clear the channel before closing
+  for i := 0; i < 5; i++ {
 		res = <-ch
-	}
+  }
 }
 
 func Test_MoveWithInaccurateExitKey(t *testing.T) {
-	ch := make(chan string)
-	defer close(ch)
-	p := NewPlayer(ch, &mocks.MockQueue{})
-	room := &mocks.MockRoom{}
-	p.Room = room
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  room := &mocks.MockRoom{}
+  p.Room = room
 
-	go p.Move("o")
+  go p.Move("o")
 
-	res := <-ch
+  res := <-ch
 
-	if !strings.Contains(res, "Where are you trying to go??") {
+  if !strings.Contains(res, "Where are you trying to go??") {
 		t.Errorf("Expected 'Where are you trying to go??' with unknown move key, but got '%s'", res)
-	}
+  }
 }
 
 func Test_LoseCombat(t *testing.T) {
-	ch := make(chan string)
-	p := NewPlayer(ch, &mocks.MockQueue{})
+  p, ch, _ := NewTestPlayer()
 
   origRoom := &mocks.MockRoom{ Name: "origin" }
   p.Room = origRoom
@@ -309,18 +306,18 @@ func Test_LoseCombat(t *testing.T) {
   pc.SetSpawn(spawn)
   pc.SetDet(1)
 
-	go func (ch chan string) {
+  go func (ch chan string) {
     defer close(ch)
     p.LoseCombat(p.Room.GetNPs()[0])
   }(ch)
 
-	res := <-ch
+  res := <-ch
 
   time.Sleep(1600 * time.Millisecond) // matches sleep in code
 
-	if !strings.Contains(res, "You were defeated by mock np name") {
+  if !strings.Contains(res, "You were defeated by mock np name") {
     t.Errorf("Expected 'You were defeated by mock np name' on death, but got '%s'", res)
-	}
+  }
 
   if strings.Contains(res, "was defeated by mock char name") {
     t.Error("Expected player to not receive death notice to room, but it did")
@@ -336,60 +333,58 @@ func Test_LoseCombat(t *testing.T) {
 }
 
 func Test_WinCombatEndsCombatAndGivesExp(t *testing.T) {
-	ch := make(chan string)
+  p, ch, _ := NewTestPlayer()
   defer close(ch)
-	p := NewPlayer(ch, &mocks.MockQueue{})
 
   room := &mocks.MockRoom{}
   p.Room = room
 
-	go func (ch chan string) {
+  go func (ch chan string) {
     p.WinCombat(p.Room.GetNPs()[0])
   }(ch)
 
-	res := <-ch
+  res := <-ch
 
-	if !strings.Contains(res, "You gained 2 experience!") { // hardcoded mock char exp
-		t.Errorf("Expected 'You gained 2 experience' on defeating, but got '%s'", res)
-	}
+  if !strings.Contains(res, "You gained 2 experience!") { // hardcoded mock char exp
+    t.Errorf("Expected 'You gained 2 experience' on defeating, but got '%s'", res)
+  }
   if p.GetExp() != 2 {
     t.Errorf("Expected exp to be 2 but got %d", p.GetExp())
   }
-	if !strings.Contains(res, "You need 8 more experience to level up.") {
+  if !strings.Contains(res, "You need 8 more experience to level up.") {
     t.Errorf("Expected 'You need 8 more experience to level up' on defeating, but got '%s'", res)
-	}
+  }
   if p.Level != 1 {
     t.Error("Expected PC not to level up, but it did")
   }
 }
 
 func Test_WinCombatLevelsUpPC(t *testing.T) {
-	ch := make(chan string)
-	p := NewPlayer(ch, &mocks.MockQueue{})
+  p, ch, _ := NewTestPlayer()
   rm := &mocks.MockRoom{}
   p.Room = rm
   p.GainExp(p.NextLvlExp - 1)
 
 
-	go func (ch chan string) {
+  go func (ch chan string) {
     defer close(ch)
     p.WinCombat(p.Room.GetNPs()[0])
   }(ch)
 
-	res := <-ch // Exp gain
+  res := <-ch // Exp gain
   if !strings.Contains(res, "leveled up!") {
     t.Errorf("Expected 'leveled up!'' on defeating, but got '%s'", res)
-	}
+  }
 
-	res = <-ch // Level up
+  res = <-ch // Level up
   if !strings.Contains(res, "You're now level 2!") {
     t.Errorf("Expected 'You're now level 2!'' on defeating, but got '%s'", res)
-	}
+  }
 }
 
 func Test_ChangeClassResetsStats(t *testing.T) {
-	ch := make(chan string)
-	p := NewPlayer(ch, &mocks.MockQueue{})
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
   p.Init()
   p.GainExp(p.NextLvlExp + 1)
 
@@ -417,8 +412,8 @@ func Test_ChangeClassResetsStats(t *testing.T) {
 }
 
 func Test_ChangeClassKeepsDet(t *testing.T) {
-	ch := make(chan string)
-	p := NewPlayer(ch, &mocks.MockQueue{})
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
   p.Init()
   p.SetDet(33)
 
@@ -430,17 +425,17 @@ func Test_ChangeClassKeepsDet(t *testing.T) {
 }
 
 func Test_ClassSavesPersistAcrossLikeNames(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
   name := "name"
-	ch := make(chan string)
-	p := NewPlayer(ch, &mocks.MockQueue{})
   p.SetName(name)
   p.Init()
   p.ChangeClass("athlete")
   p.GainExp(p.NextLvlExp)
   p.ChangeClass("conscript") // to persist athlete
 
-	ch = make(chan string)
-	p2 := NewPlayer(ch, &mocks.MockQueue{})
+  p2, ch, _ := NewTestPlayer()
+  defer close(ch)
   p2.SetName(name)
   p2.Init()
   p2.ChangeClass("athlete")

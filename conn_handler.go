@@ -19,7 +19,7 @@ func (handler *ConnHandler) Handle(conn net.Conn) {
 	defer conn.Close()
 
 	ch := make(chan string)
-	player := player.NewPlayer(ch, handler.state.Queue)
+	player := player.NewPlayer(ch, handler.state.Queue, handler.state.Store)
 	go player.StartWriter(conn)
 
 	player.SetName(confirmName(player, conn))
