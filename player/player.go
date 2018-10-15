@@ -56,6 +56,8 @@ func (p *Player) Init() {
     for _, class := range classes.PlayerClasses {
       p.PersistClass(class.GetName())
     }
+  } else {
+    p.LoadClass(classes.Conscript)
   }
 }
 

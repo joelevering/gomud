@@ -1,6 +1,10 @@
 package player
 
 import (
+  "fmt"
+  "os"
+  "math/rand"
+  "strconv"
   "strings"
   "testing"
   "time"
@@ -12,11 +16,17 @@ import (
   "github.com/joelevering/gomud/storage"
 )
 
-var s = storage.LoadStore("../test_data.test")
+func TestMain(m *testing.M) {
+  os.Mkdir("../test", 0755)
+  r := m.Run()
+  os.RemoveAll("../test/")
+  os.Exit(r)
+}
 
 func NewTestPlayer() (*Player, chan string, *mocks.MockQueue) {
   ch := make(chan string)
   q := &mocks.MockQueue{}
+  s := storage.LoadStore(fmt.Sprintf("../test/%s.json", strconv.Itoa(rand.Intn(999999))))
   return NewPlayer(ch, q, s), ch, q
 }
 
@@ -430,15 +440,14 @@ func Test_ClassSavesPersistAcrossLikeNames(t *testing.T) {
   name := "name"
   p.SetName(name)
   p.Init()
-  p.ChangeClass("athlete")
   p.GainExp(p.NextLvlExp)
-  p.ChangeClass("conscript") // to persist athlete
+  p.ChangeClass("athlete") // to persist conscript
 
-  p2, ch, _ := NewTestPlayer()
+  ch = make(chan string)
+  p2 := NewPlayer(ch, p.Queue, p.Store)
   defer close(ch)
   p2.SetName(name)
   p2.Init()
-  p2.ChangeClass("athlete")
 
   if p2.Level != 2 {
     t.Errorf("Expected player class level to persist across like-named characters, but level is %d", p2.GetLevel())
