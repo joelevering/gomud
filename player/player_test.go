@@ -5,6 +5,7 @@ import (
   "testing"
   "time"
 
+  "github.com/joelevering/gomud/classes"
   "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/mocks"
   "github.com/joelevering/gomud/room"
@@ -384,4 +385,67 @@ func Test_WinCombatLevelsUpPC(t *testing.T) {
   if !strings.Contains(res, "You're now level 2!") {
     t.Errorf("Expected 'You're now level 2!'' on defeating, but got '%s'", res)
 	}
+}
+
+func Test_ChangeClassResetsStats(t *testing.T) {
+	ch := make(chan string)
+	p := NewPlayer(ch, &mocks.MockQueue{})
+  p.Init()
+  p.GainExp(p.NextLvlExp + 1)
+
+  p.ChangeClass("athlete")
+
+  if p.GetClassName() != classes.Athlete.GetName() {
+    t.Errorf("Expected class name to be Athlete on change, but it's %s", p.GetClassName())
+  }
+
+  if p.GetLevel() != 1 {
+    t.Errorf("Expected player level to be 1 after class change, but got %d", p.GetLevel())
+  }
+
+  if p.GetMaxDet() != 200  {
+    t.Errorf("Expected Max Determination to reset to 200 on class change, but it's %d", p.GetMaxDet())
+  }
+
+  if p.GetDet() != 200 {
+    t.Errorf("Expected Determination to lower to new max on class change, but it's %d", p.GetDet())
+  }
+
+  if p.GetExp() != 0 || p.GetNextLvlExp() != 10 {
+    t.Errorf("Expected exp to reset to 0/10 on class change, but it's %d/%d", p.GetExp(), p.GetNextLvlExp())
+  }
+}
+
+func Test_ChangeClassKeepsDet(t *testing.T) {
+	ch := make(chan string)
+	p := NewPlayer(ch, &mocks.MockQueue{})
+  p.Init()
+  p.SetDet(33)
+
+  p.ChangeClass("athlete")
+
+  if p.GetDet() != 33 {
+    t.Errorf("Expected determination to remain 33 on class change, but it's %d", p.GetDet())
+  }
+}
+
+func Test_ClassSavesPersistAcrossLikeNames(t *testing.T) {
+  name := "name"
+	ch := make(chan string)
+	p := NewPlayer(ch, &mocks.MockQueue{})
+  p.SetName(name)
+  p.Init()
+  p.ChangeClass("athlete")
+  p.GainExp(p.NextLvlExp)
+  p.ChangeClass("conscript") // to persist athlete
+
+	ch = make(chan string)
+	p2 := NewPlayer(ch, &mocks.MockQueue{})
+  p2.SetName(name)
+  p2.Init()
+  p2.ChangeClass("athlete")
+
+  if p2.Level != 2 {
+    t.Errorf("Expected player class level to persist across like-named characters, but level is %d", p2.GetLevel())
+  }
 }

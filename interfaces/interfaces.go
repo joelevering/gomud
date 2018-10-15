@@ -36,7 +36,9 @@ type ExitI interface {
 type NPI interface {
   CharI
   Init(RoomI, QueueI)
-	GetDesc() string
+  SetClass()
+  ResetStats()
+  GetDesc() string
   Spawn()
   Say(string)
   Emote(string)
@@ -47,28 +49,28 @@ type NPI interface {
 
 type PlI interface {
   CharI
-	StartWriter(net.Conn)
-	GetRoom() RoomI
+  StartWriter(net.Conn)
+  Init()
+  GetID() string
+  GetRoom() RoomI
   GetCombatCmd() []string
   SetCombatCmd([]string)
-	List()
-	Look()
-	LookNP(string)
+  List()
+  Look()
+  LookNP(string)
   Status()
-	AttackNP(string)
-	Move(string)
-	Say(string)
-	Yell(string)
-	SendMsg(...string)
-	LeaveRoom(string)
-	EnterRoom(RoomI)
+  AttackNP(string)
+  Move(string)
+  Say(string)
+  Yell(string)
+  SendMsg(...string)
+  LeaveRoom(string)
+  EnterRoom(RoomI)
   LoseCombat(CharI)
   WinCombat(CharI)
 }
 
 type CharI interface {
-  SetClass()
-  ResetStats()
   GetClassName() string
   GetName() string
   SetName(string)

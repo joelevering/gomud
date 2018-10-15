@@ -2,6 +2,14 @@ package classes
 
 import "github.com/joelevering/gomud/stats"
 
+var PlayerClasses = []*Class{
+  Conscript,
+  Athlete,
+  Charmer,
+  Augur,
+  Sophist,
+}
+
 var ByName = map[string]*Class{
   "Conscript":   Conscript,
   "Athlete":     Athlete,

@@ -23,6 +23,7 @@ func (handler *ConnHandler) Handle(conn net.Conn) {
 	go player.StartWriter(conn)
 
 	player.SetName(confirmName(player, conn))
+  player.Init()
 
 	handler.entering <- player
 
