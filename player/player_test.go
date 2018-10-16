@@ -30,14 +30,15 @@ func NewTestPlayer() (*Player, chan string, *mocks.MockQueue) {
   return NewPlayer(ch, q, s), ch, q
 }
 
-func Test_CmdSetsCombatCmdInCombat(t *testing.T) {
+func Test_CmdSetsCombatEffectWithSkillName(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   defer close(ch)
   p.EnterCombat()
-  p.Cmd("smite")
+  p.Cmd("bash")
+  sk := p.GetCmbSkill()
 
-  if len(p.CombatCmd) != 1 || p.CombatCmd[0] != "smite" {
-    t.Errorf("Expected CombatCmd to be 'smite' when sent as Cmd while InCombat, but got %v", p.CombatCmd)
+  if sk == nil || sk.Name != "bash" {
+    t.Errorf("Expected to get combat skill 'bash' after commanding 'bash', but got %v", sk)
   }
 }
 

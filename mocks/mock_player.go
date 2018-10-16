@@ -38,9 +38,6 @@ func (m *MockPlayer) SetName(name string) {}
 func (m *MockPlayer) GetID() string { return "mock ID" }
 func (m *MockPlayer) GetRoom() interfaces.RoomI { return nil }
 
-func (m *MockPlayer) GetCombatCmd() []string { return []string{} }
-func (m *MockPlayer) SetCombatCmd(cmd []string) {}
-
 func (m *MockPlayer) LoseCombat(npc interfaces.CharI) {
   m.DefeatedBy = npc
 }

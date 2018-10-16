@@ -32,11 +32,10 @@ Most commands have their first letter as a shortcut
 type Player struct {
   *character.Character
 
-  Channel   chan string
-  Queue     interfaces.QueueI
-  Room      interfaces.RoomI
-  CombatCmd []string
-  Store     interfaces.StorageI
+  Channel chan string
+  Queue   interfaces.QueueI
+  Room    interfaces.RoomI
+  Store   interfaces.StorageI
 }
 
 func NewPlayer(ch chan string, q interfaces.QueueI, s interfaces.StorageI) *Player {
@@ -73,8 +72,12 @@ func (p *Player) Cmd(cmd string) {
   words := strings.Split(cmd, " ")
 
   if p.IsInCombat() {
-    p.SetCombatCmd(words)
-    return
+    sk := p.Class.GetSkill(words[0])
+    if sk != nil {
+      p.CmbSkill = sk
+      p.SendMsg(fmt.Sprintf("Preparing %s", sk.Name))
+      return
+    }
   }
 
   switch strings.ToLower(words[0]) {
@@ -311,14 +314,6 @@ func (p *Player) GetID() string {
 
 func (p *Player) GetRoom() interfaces.RoomI {
   return p.Room
-}
-
-func (p *Player) GetCombatCmd() []string {
-  return p.CombatCmd
-}
-
-func (p *Player) SetCombatCmd(cmd []string) {
-  p.CombatCmd = cmd
 }
 
 // Private

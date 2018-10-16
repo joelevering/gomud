@@ -1,10 +1,10 @@
 package player
 
 import (
-	"fmt"
-	"time"
+  "fmt"
+  "time"
 
-	"github.com/joelevering/gomud/interfaces"
+  "github.com/joelevering/gomud/interfaces"
 )
 
 const tick = 1500 * time.Millisecond
@@ -19,19 +19,19 @@ type CombatResults struct {
 }
 
 type CombatInstance struct {
-  pc    interfaces.PlI
-  npc  interfaces.NPI
+  pc  interfaces.PlI
+  npc interfaces.NPI
 }
 
 func (ci *CombatInstance) Start() {
   ci.pc.EnterCombat()
 
-	for true {
+  for true {
     combatOver := ci.Loop(true)
     if combatOver { break }
 
-		time.Sleep(tick)
-	}
+    time.Sleep(tick)
+  }
 }
 
 func (ci *CombatInstance) Loop(report bool) (combatOver bool) {
@@ -72,8 +72,8 @@ func (ci *CombatInstance) getPCResults() *CombatResults {
   }
 
   // TODO turn this into a map loaded once on app load and accessible by any CI
-	switch combatCmd[0] {
-	case "bash":
+  switch combatCmd[0] {
+  case "bash":
     smiteStr := int(float64(ci.pc.GetAtk()) * 1.1)
     res.npcDmg = CalcAtkDmg(smiteStr, ci.npc.GetDef())
   default: // attack
@@ -91,10 +91,10 @@ func (ci *CombatInstance) getNPCResults() *CombatResults {
 
 // Block 1/1000th of the damage per point of Endurance
 func CalcAtkDmg(atkStr int, defEnd int) int {
-	endPercentDamageBlocked := float64(defEnd) * 0.001
-	dmg := (1.0 - endPercentDamageBlocked) * float64(atkStr)
+  endPercentDamageBlocked := float64(defEnd) * 0.001
+  dmg := (1.0 - endPercentDamageBlocked) * float64(atkStr)
 
-	return int(dmg)
+  return int(dmg)
 }
 
 func (ci *CombatInstance) applyDamage(npcDmg, pcDmg int) {

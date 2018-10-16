@@ -1,6 +1,9 @@
 package mocks
 
-import "github.com/joelevering/gomud/interfaces"
+import (
+  "github.com/joelevering/gomud/interfaces"
+  "github.com/joelevering/gomud/skills"
+)
 
 type MockCharacter struct {
   Spawn      interfaces.RoomI
@@ -8,6 +11,7 @@ type MockCharacter struct {
 
   Atk           int
   Def           int
+  CmbSkill      *skills.Skill
   SetDetArg     int
   SetMaxDetArg  int
   SetStrArg     int
@@ -54,6 +58,7 @@ func (m *MockCharacter) GetSag() int { return 50 }
 func (m *MockCharacter) SetSag(sag int) {}
 func (m *MockCharacter) GetAtk() int { return m.Atk }
 func (m *MockCharacter) GetDef() int { return m.Def }
+func (m *MockCharacter) GetCmbSkill() *skills.Skill { return m.CmbSkill }
 func (m *MockCharacter) GetLevel() int { return 2 }
 func (m *MockCharacter) GetExp() int { return 0 }
 func (m *MockCharacter) GetExpGiven() int { return 2 }

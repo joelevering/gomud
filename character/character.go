@@ -5,6 +5,7 @@ import (
 
   "github.com/joelevering/gomud/classes"
   "github.com/joelevering/gomud/interfaces"
+  "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/stats"
 )
 
@@ -27,6 +28,7 @@ type Character struct {
   Kno        int               `json:"knowledge"`
   Sag        int               `json:"sagacity"`
   InCombat   bool
+  CmbSkill   *skills.Skill
   Spawn      interfaces.RoomI
 }
 
@@ -207,6 +209,10 @@ func (ch *Character) GetDef() int {
   }
 
   return def
+}
+
+func (ch *Character) GetCmbSkill() *skills.Skill {
+  return ch.CmbSkill
 }
 
 func (ch *Character) GetSpawn() interfaces.RoomI {
