@@ -108,6 +108,10 @@ type CharI interface {
   GetAtk() int
   GetDef() int
   GetCmbSkill() *skills.Skill
+  SetCmbSkill(*skills.Skill)
+  ClearCmbSkill()
+  LockCmbSkill()
+  UnlockCmbSkill()
   GetLevel() int
   GetExp() int
   GetExpGiven() int

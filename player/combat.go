@@ -37,9 +37,27 @@ func (ci *CombatInstance) Start() {
   }
 }
 
+func (ci *CombatInstance) getSkills() (pcSk, npcSk *skills.Skill) {
+  ci.pc.LockCmbSkill()
+  ci.npc.LockCmbSkill()
+
+  return ci.pc.GetCmbSkill(), ci.npc.GetCmbSkill()
+}
+
+func (ci *CombatInstance) clearSkills() {
+  ci.pc.UnlockCmbSkill()
+  ci.pc.ClearCmbSkill() // Low probability race condition
+
+  ci.npc.UnlockCmbSkill()
+  ci.npc.ClearCmbSkill()
+}
+
 func (ci *CombatInstance) Loop(report bool) (combatOver bool) {
-  pcResults := ci.getPCResults()
-  npcResults := ci.getNPCResults()
+  pcSk, npcSk := ci.getSkills()
+  defer ci.clearSkills()
+
+  pcResults := ci.getPCResults(pcSk)
+  npcResults := ci.getNPCResults(npcSk)
 
   npcDmg := pcResults.npcDmg + npcResults.npcDmg
   pcDmg := pcResults.pcDmg + npcResults.pcDmg
@@ -65,9 +83,8 @@ func (ci *CombatInstance) Loop(report bool) (combatOver bool) {
   return false
 }
 
-func (ci *CombatInstance) getPCResults() *CombatResults {
+func (ci *CombatInstance) getPCResults(sk *skills.Skill) *CombatResults {
   res := &CombatResults{}
-  sk := ci.pc.GetCmbSkill()
 
   if sk == nil {
     res.npcDmg = CalcAtkDmg(ci.pc.GetAtk(), ci.npc.GetDef())
@@ -93,7 +110,7 @@ func (ci *CombatInstance) getPCResults() *CombatResults {
   return res
 }
 
-func (ci *CombatInstance) getNPCResults() *CombatResults {
+func (ci *CombatInstance) getNPCResults(_ *skills.Skill) *CombatResults {
   return &CombatResults{
     pcDmg: CalcAtkDmg(ci.npc.GetAtk(), ci.pc.GetDef()),
   }

@@ -9,20 +9,23 @@ type MockCharacter struct {
   Spawn      interfaces.RoomI
   InCombat   bool
 
-  Atk           int
-  Def           int
-  CmbSkill      *skills.Skill
-  SetDetArg     int
-  SetMaxDetArg  int
-  SetStrArg     int
-  SetFloArg     int
-  LeveledUp     bool
-  LeftCombat    bool
-  EnteredCombat bool
-  Healed        bool
-  ExpGained     int
-  ShouldLevelUp bool
-  ShouldDie     bool
+  Atk              int
+  Def              int
+  CmbSkill         *skills.Skill
+  SetDetArg        int
+  SetMaxDetArg     int
+  SetStrArg        int
+  SetFloArg        int
+  LeveledUp        bool
+  LeftCombat       bool
+  EnteredCombat    bool
+  Healed           bool
+  ExpGained        int
+  ShouldLevelUp    bool
+  ShouldDie        bool
+  ClearedCmbSkill  bool
+  LockedCmbSkill   bool
+  UnlockedCmbSkill bool
 }
 
 func (m *MockCharacter) GetClassName() string { return "Superstar" }
@@ -59,6 +62,10 @@ func (m *MockCharacter) SetSag(sag int) {}
 func (m *MockCharacter) GetAtk() int { return m.Atk }
 func (m *MockCharacter) GetDef() int { return m.Def }
 func (m *MockCharacter) GetCmbSkill() *skills.Skill { return m.CmbSkill }
+func (m *MockCharacter) SetCmbSkill(*skills.Skill) {}
+func (m *MockCharacter) ClearCmbSkill() { m.ClearedCmbSkill = true }
+func (m *MockCharacter) LockCmbSkill() { m.LockedCmbSkill = true }
+func (m *MockCharacter) UnlockCmbSkill() { m.UnlockedCmbSkill = true }
 func (m *MockCharacter) GetLevel() int { return 2 }
 func (m *MockCharacter) GetExp() int { return 0 }
 func (m *MockCharacter) GetExpGiven() int { return 2 }
