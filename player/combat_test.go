@@ -4,6 +4,7 @@ import (
   "testing"
 
   "github.com/joelevering/gomud/mocks"
+  "github.com/joelevering/gomud/skills"
 )
 
 func Test_LoopDealsDamage(t *testing.T) {
@@ -97,5 +98,32 @@ func Test_NPCDefeat(t *testing.T) {
 
   if !pc.ClearedCmbSkill || !npc.ClearedCmbSkill {
     t.Error("Expected both PC and NPC combat skills to be cleared on NPC defeat, but they weren't")
+  }
+}
+
+func Test_StunNegatesDamage(t *testing.T) {
+  pc := &mocks.MockPlayer{
+    MockCharacter: &mocks.MockCharacter{
+      Atk: 50,
+      Def: 50,
+      CmbSkill: skills.Stun,
+    },
+  }
+  npc := &mocks.MockNP{
+    MockCharacter: &mocks.MockCharacter{
+      Atk: 25,
+      Def: 25,
+    },
+  }
+
+  ci := CombatInstance{
+    pc: pc,
+    npc: npc,
+  }
+
+  ci.Loop(false)
+
+  if pc.SetDetArg != pc.GetDet() {
+    t.Errorf("Expected PC health to stay static when NPC is stunned, but health was set to %d (from %d)", pc.SetDetArg, pc.GetDet())
   }
 }
