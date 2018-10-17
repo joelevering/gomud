@@ -38,6 +38,9 @@ func (ci *CombatInstance) Start() {
 }
 
 func (ci *CombatInstance) Loop(report bool) (combatOver bool) {
+  defer ci.pc.ClearCmbSkill()
+  defer ci.npc.ClearCmbSkill()
+
   pcResults := ci.getPCResults()
   npcResults := ci.getNPCResults()
 

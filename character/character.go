@@ -215,6 +215,10 @@ func (ch *Character) GetCmbSkill() *skills.Skill {
   return ch.CmbSkill
 }
 
+func (ch *Character) ClearCmbSkill() {
+  ch.CmbSkill = nil
+}
+
 func (ch *Character) GetSpawn() interfaces.RoomI {
   return ch.Spawn
 }

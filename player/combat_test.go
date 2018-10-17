@@ -32,6 +32,9 @@ func Test_LoopDealsDamage(t *testing.T) {
   if npc.SetDetArg != 102 {
     t.Errorf("Expected npc to go down from 150 to 102 damage but it went down to %d", npc.SetDetArg)
   }
+  if !pc.ClearedCmbSkill || !npc.ClearedCmbSkill {
+    t.Error("Expected both PC and NPC combat skills to be cleared on loop, but they weren't")
+  }
 }
 
 func Test_PCDefeat(t *testing.T) {
@@ -52,6 +55,10 @@ func Test_PCDefeat(t *testing.T) {
 
   if !pc.LeftCombat {
     t.Error("Expected PC to leave combat on defeat, but it did not")
+  }
+
+  if !pc.ClearedCmbSkill || !npc.ClearedCmbSkill {
+    t.Error("Expected both PC and NPC combat skills to be cleared on PC defeat, but they weren't")
   }
 }
 
@@ -78,5 +85,9 @@ func Test_NPCDefeat(t *testing.T) {
 
   if !pc.LeftCombat {
     t.Error("Expected PC to leave combat on win, but it didn't")
+  }
+
+  if !pc.ClearedCmbSkill || !npc.ClearedCmbSkill {
+    t.Error("Expected both PC and NPC combat skills to be cleared on NPC defeat, but they weren't")
   }
 }
