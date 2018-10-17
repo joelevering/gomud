@@ -97,6 +97,9 @@ func (ch *Character) calcCmbFx(sk *skills.Skill, rep *structs.CmbRep) structs.Cm
       res.Dmg = int(float64(ch.GetAtk()) * e.Value.(float64))
     case skills.FlatDmg:
       res.Dmg = ch.GetAtk() + e.Value.(int)
+    case skills.PctHeal:
+      healAmt := float64(ch.GetMaxDet()) * e.Value.(float64)
+      res.Heal = int(healAmt)
     case skills.OppFx:
       v := e.Value.(statfx.SEInst)
       if (util.RandF() <= v.Chance) {
