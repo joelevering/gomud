@@ -26,6 +26,20 @@ const(
 )
 
 var(
+  Stun = &Skill{
+    Name: "stun",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: OppFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Stun,
+          Chance: 1,
+        },
+      },
+    },
+  }
   Bash = &Skill{
     Name: "bash",
     CostType: stats.Stm,

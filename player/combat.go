@@ -2,12 +2,13 @@ package player
 
 import (
   "fmt"
-  "math/rand"
+  "log"
   "time"
 
   "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/statfx"
+  "github.com/joelevering/gomud/util"
 )
 
 const tick = 1500 * time.Millisecond
@@ -59,6 +60,8 @@ func (ci *CombatInstance) Loop(report bool) (combatOver bool) {
   pcResults := ci.getPCResults(pcSk)
   npcResults := ci.getNPCResults(npcSk)
 
+  ci.applySFX(pcResults, npcResults)
+
   npcDmg := pcResults.npcDmg + npcResults.npcDmg
   pcDmg := pcResults.pcDmg + npcResults.pcDmg
 
@@ -101,7 +104,7 @@ func (ci *CombatInstance) getPCResults(sk *skills.Skill) *CombatResults {
       res.npcDmg = baseDmg + e.Value.(int)
     case skills.OppFx:
       v := e.Value.(statfx.SEInst)
-      if (rand.Float64() <= v.Chance) {
+      if (util.RandF() <= v.Chance) {
         res.npcEffects = append(res.npcEffects, v.Effect)
       }
     }
@@ -113,6 +116,26 @@ func (ci *CombatInstance) getPCResults(sk *skills.Skill) *CombatResults {
 func (ci *CombatInstance) getNPCResults(_ *skills.Skill) *CombatResults {
   return &CombatResults{
     pcDmg: CalcAtkDmg(ci.npc.GetAtk(), ci.pc.GetDef()),
+  }
+}
+
+func (ci *CombatInstance) applySFX(pcRes, npcRes *CombatResults) {
+  for _, pcFx := range [][]statfx.StatusEffect{pcRes.pcEffects, npcRes.pcEffects} {
+    for _, e := range pcFx {
+      if e == statfx.Stun {
+        pcRes.pcDmg = 0
+        pcRes.npcDmg = 0
+      }
+    }
+  }
+
+  for _, npcFx := range [][]statfx.StatusEffect{pcRes.npcEffects, npcRes.npcEffects} {
+    for _, e := range npcFx {
+      if e == statfx.Stun {
+        npcRes.pcDmg = 0
+        npcRes.npcDmg = 0
+      }
+    }
   }
 }
 

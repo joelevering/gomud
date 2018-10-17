@@ -2,13 +2,13 @@ package nonplayer
 
 import (
   "fmt"
-  "math/rand"
   "time"
 
   "github.com/joelevering/gomud/character"
   "github.com/joelevering/gomud/classes"
   "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/stats"
+  "github.com/joelevering/gomud/util"
 )
 
 type NonPlayer struct {
@@ -96,7 +96,7 @@ func (n *NonPlayer) SetBehavior(queue interfaces.QueueI) {
     ch := queue.Sub(topic)
     go func(n interfaces.NPI, ch chan bool, chance float64, actions [][]string) {
       for range ch {
-        if (rand.Float64() <= chance) {
+        if (util.RandF() <= chance) {
           time.Sleep(100 * time.Millisecond) // Otherwise triggers on enter happen during room desc
           for _, action := range actions {
             switch action[0] {
