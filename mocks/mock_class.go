@@ -3,6 +3,7 @@ package mocks
 import (
   "github.com/joelevering/gomud/classes"
   "github.com/joelevering/gomud/interfaces"
+  "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/stats"
 )
 
@@ -26,4 +27,8 @@ func (m *MockClass) GetAtkStats() []stats.Stat {
 
 func (m *MockClass) GetDefStats() []stats.Stat {
   return []stats.Stat{stats.Flo}
+}
+
+func (m *MockClass) GetSkill(string) *skills.Skill {
+  return skills.Bash
 }
