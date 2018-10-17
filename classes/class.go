@@ -1,6 +1,9 @@
 package classes
 
-import "github.com/joelevering/gomud/stats"
+import (
+  "github.com/joelevering/gomud/skills"
+  "github.com/joelevering/gomud/stats"
+)
 
 type StatGrowth struct {
   Det int
@@ -19,6 +22,8 @@ type Class struct {
   growth   StatGrowth
   atkStats []stats.Stat
   defStats []stats.Stat
+  skills   []*skills.Skill
+  skillMap map[string]*skills.Skill
 }
 
 func (c *Class) GetName() string {
@@ -35,4 +40,20 @@ func (c *Class) GetAtkStats() []stats.Stat {
 
 func (c *Class) GetDefStats() []stats.Stat {
   return c.defStats
+}
+
+func (c *Class) GetSkill(s string) *skills.Skill {
+  if c.skillMap == nil {
+    c.GenerateSkillMap()
+  }
+
+  return c.skillMap[s]
+}
+
+func (c *Class) GenerateSkillMap() {
+  c.skillMap = make(map[string]*skills.Skill)
+
+  for _, s := range c.skills {
+    c.skillMap[s.Name] = s
+  }
 }

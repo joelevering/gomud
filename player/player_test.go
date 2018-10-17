@@ -30,14 +30,22 @@ func NewTestPlayer() (*Player, chan string, *mocks.MockQueue) {
   return NewPlayer(ch, q, s), ch, q
 }
 
-func Test_CmdSetsCombatCmdInCombat(t *testing.T) {
+func Test_CmdSetsCombatEffectWithSkillName(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   defer close(ch)
   p.EnterCombat()
-  p.Cmd("smite")
 
-  if len(p.CombatCmd) != 1 || p.CombatCmd[0] != "smite" {
-    t.Errorf("Expected CombatCmd to be 'smite' when sent as Cmd while InCombat, but got %v", p.CombatCmd)
+  go p.Cmd("bash")
+  res := <-ch
+
+  if !strings.Contains(res, "Preparing bash") {
+    t.Errorf("Expected player to receive 'Preparing bash', but got %s", res)
+  }
+
+  sk := p.GetCmbSkill()
+
+  if sk == nil || sk.Name != "bash" {
+    t.Errorf("Expected to get combat skill 'bash' after commanding 'bash', but got %v", sk)
   }
 }
 
@@ -52,15 +60,15 @@ func Test_EnterRoom(t *testing.T) {
   p.EnterRoom(&room)
 
   if p.GetRoom().GetID() != 101 {
-		t.Errorf("Expected player room to be set as %d but it was set as %d", room.GetID(), p.GetRoom().GetID())
+    t.Errorf("Expected player room to be set as %d but it was set as %d", room.GetID(), p.GetRoom().GetID())
   }
 
   if room.Players[0] != p {
-		t.Errorf("Expected player to be the first of the room's pents")
+    t.Errorf("Expected player to be the first of the room's pents")
   }
 
   if len(room.Players) != 1 {
-		t.Errorf("Expected room to only have one player, but it has %d", len(room.Players))
+    t.Errorf("Expected room to only have one player, but it has %d", len(room.Players))
   }
 
   if len(q.Pubs) != 1 || q.Pubs[0] != "pc-enters-101" {
@@ -78,7 +86,7 @@ func Test_LeaveRoom(t *testing.T) {
   p.LeaveRoom("")
 
   if len(oldRoom.Players) != 0 {
-		t.Errorf("Expected oldRoom to have no players, but it has %d", len(oldRoom.Players))
+    t.Errorf("Expected oldRoom to have no players, but it has %d", len(oldRoom.Players))
   }
 
   if len(q.Pubs) != 1 || q.Pubs[0] != "pc-leaves-666" {
@@ -95,7 +103,7 @@ func Test_SendMsg(t *testing.T) {
   res := <-ch
 
   if !strings.Contains(res, "testing SendMsg") {
-		t.Error("Expected SendMsg to send 'testing SendMsg' to channel, but it didn't")
+    t.Error("Expected SendMsg to send 'testing SendMsg' to channel, but it didn't")
   }
 }
 

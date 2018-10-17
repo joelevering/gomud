@@ -1,6 +1,9 @@
 package classes
 
-import "github.com/joelevering/gomud/stats"
+import (
+  "github.com/joelevering/gomud/skills"
+  "github.com/joelevering/gomud/stats"
+)
 
 var PlayerClasses = []*Class{
   Conscript,
@@ -33,6 +36,9 @@ var Conscript = &Class{
   },
   atkStats: []stats.Stat{stats.Str},
   defStats: []stats.Stat{stats.Str},
+  skills: []*skills.Skill{
+    skills.Bash,
+  },
 }
 
 var Athlete = &Class{

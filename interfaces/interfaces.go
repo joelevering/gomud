@@ -4,6 +4,7 @@ import (
   "net"
 
   "github.com/joelevering/gomud/classes"
+  "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/stats"
   "github.com/joelevering/gomud/storage"
 )
@@ -63,8 +64,6 @@ type PlI interface {
   Save()
   GetID() string
   GetRoom() RoomI
-  GetCombatCmd() []string
-  SetCombatCmd([]string)
   List()
   Look()
   LookNP(string)
@@ -108,6 +107,7 @@ type CharI interface {
   SetSag(int)
   GetAtk() int
   GetDef() int
+  GetCmbSkill() *skills.Skill
   GetLevel() int
   GetExp() int
   GetExpGiven() int
@@ -128,4 +128,5 @@ type ClassI interface {
   GetStatGrowth() classes.StatGrowth
   GetAtkStats() []stats.Stat
   GetDefStats() []stats.Stat
+  GetSkill(string) *skills.Skill
 }
