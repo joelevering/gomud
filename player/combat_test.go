@@ -35,6 +35,14 @@ func Test_LoopDealsDamage(t *testing.T) {
   if !pc.ClearedCmbSkill || !npc.ClearedCmbSkill {
     t.Error("Expected both PC and NPC combat skills to be cleared on loop, but they weren't")
   }
+
+  if !pc.LockedCmbSkill || !pc.UnlockedCmbSkill {
+    t.Error("Expected PC combat skills to be locked and then unlocked in a CI loop")
+  }
+
+  if !npc.LockedCmbSkill || !npc.UnlockedCmbSkill {
+    t.Error("Expected NPC combat skills to be locked and then unlocked in a CI loop")
+  }
 }
 
 func Test_PCDefeat(t *testing.T) {

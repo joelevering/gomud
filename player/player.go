@@ -74,7 +74,7 @@ func (p *Player) Cmd(cmd string) {
   if p.IsInCombat() {
     sk := p.Class.GetSkill(words[0])
     if sk != nil {
-      p.CmbSkill = sk
+      p.SetCmbSkill(sk)
       p.SendMsg(fmt.Sprintf("Preparing %s", sk.Name))
       return
     }

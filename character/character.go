@@ -2,6 +2,7 @@ package character
 
 import (
   "math"
+  "sync"
 
   "github.com/joelevering/gomud/classes"
   "github.com/joelevering/gomud/interfaces"
@@ -29,6 +30,7 @@ type Character struct {
   Sag        int               `json:"sagacity"`
   InCombat   bool
   CmbSkill   *skills.Skill
+  CmbSkillMu sync.Mutex
   Spawn      interfaces.RoomI
 }
 
@@ -215,8 +217,22 @@ func (ch *Character) GetCmbSkill() *skills.Skill {
   return ch.CmbSkill
 }
 
+func (ch *Character) LockCmbSkill() {
+  ch.CmbSkillMu.Lock()
+}
+
+func (ch *Character) UnlockCmbSkill() {
+  ch.CmbSkillMu.Unlock()
+}
+
+func (ch *Character) SetCmbSkill(sk *skills.Skill) {
+  ch.CmbSkillMu.Lock()
+  ch.CmbSkill = sk
+  ch.CmbSkillMu.Unlock()
+}
+
 func (ch *Character) ClearCmbSkill() {
-  ch.CmbSkill = nil
+  ch.SetCmbSkill(nil)
 }
 
 func (ch *Character) GetSpawn() interfaces.RoomI {
