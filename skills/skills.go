@@ -20,9 +20,9 @@ type Effect struct {
 type EffectType string
 
 const(
-  pctDmg = EffectType("pctDmg") // % Damage
-  flatDmg = EffectType("flatDmg") // Flat Damage
-  oppFx = EffectType("oppFx") // Status Effect on Opponent
+  PctDmg = EffectType("pctDmg") // % Damage
+  FlatDmg = EffectType("flatDmg") // Flat Damage
+  OppFx = EffectType("oppFx") // Status Effect on Opponent
 )
 
 var(
@@ -32,11 +32,11 @@ var(
     CostAmt: 10,
     Effects: []Effect{
       Effect{
-        Type: pctDmg,
+        Type: PctDmg,
         Value: 1.25,
       },
       Effect{
-        Type: oppFx,
+        Type: OppFx,
         Value: statfx.SEInst{
           Effect: statfx.Stun,
           Chance: 0.25,

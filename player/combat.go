@@ -2,20 +2,23 @@ package player
 
 import (
   "fmt"
+  "math/rand"
   "time"
 
   "github.com/joelevering/gomud/interfaces"
+  "github.com/joelevering/gomud/skills"
+  "github.com/joelevering/gomud/statfx"
 )
 
 const tick = 1500 * time.Millisecond
 
 type CombatResults struct {
-  pcDmg     int
-  npcDmg    int
-  pcHeal    int
-  npcHeal   int
-  pcEffect  string
-  npcEffect string
+  pcDmg      int
+  npcDmg     int
+  pcHeal     int
+  npcHeal    int
+  pcEffects  []statfx.StatusEffect
+  npcEffects []statfx.StatusEffect
 }
 
 type CombatInstance struct {
@@ -64,20 +67,27 @@ func (ci *CombatInstance) Loop(report bool) (combatOver bool) {
 
 func (ci *CombatInstance) getPCResults() *CombatResults {
   res := &CombatResults{}
-  combatCmd := ci.pc.GetCombatCmd()
+  sk := ci.pc.GetCmbSkill()
 
-  if len(combatCmd) == 0 {
+  if sk == nil {
     res.npcDmg = CalcAtkDmg(ci.pc.GetAtk(), ci.npc.GetDef())
     return res
   }
 
-  // TODO turn this into a map loaded once on app load and accessible by any CI
-  switch combatCmd[0] {
-  case "bash":
-    smiteStr := int(float64(ci.pc.GetAtk()) * 1.1)
-    res.npcDmg = CalcAtkDmg(smiteStr, ci.npc.GetDef())
-  default: // attack
-    res.npcDmg = CalcAtkDmg(ci.pc.GetAtk(), ci.npc.GetDef())
+  for _, e := range sk.Effects {
+    switch e.Type {
+    case skills.PctDmg:
+      baseDmg := CalcAtkDmg(ci.pc.GetAtk(), ci.npc.GetDef())
+      res.npcDmg = int(float64(baseDmg) * e.Value.(float64))
+    case skills.FlatDmg:
+      baseDmg := CalcAtkDmg(ci.pc.GetAtk(), ci.npc.GetDef())
+      res.npcDmg = baseDmg + e.Value.(int)
+    case skills.OppFx:
+      v := e.Value.(statfx.SEInst)
+      if (rand.Float64() <= v.Chance) {
+        res.npcEffects = append(res.npcEffects, v.Effect)
+      }
+    }
   }
 
   return res
