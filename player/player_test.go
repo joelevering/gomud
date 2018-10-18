@@ -30,7 +30,7 @@ func NewTestPlayer() (*Player, chan string, *mocks.MockQueue) {
   return NewPlayer(ch, q, s), ch, q
 }
 
-func Test_CmdSetsCombatEffectWithSkillName(t *testing.T) {
+func Test_CmdSetsCombatSkillWithSkillName(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   defer close(ch)
   go p.EnterCombat(&mocks.MockNP{})
@@ -47,6 +47,25 @@ func Test_CmdSetsCombatEffectWithSkillName(t *testing.T) {
 
   if sk == nil || sk.Name != "bash" {
     t.Errorf("Expected to get combat skill 'bash' after commanding 'bash', but got %v", sk)
+  }
+}
+
+func Test_CmdDoesNotSetOOCRestrictedSkillInCombat(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  p.EnterCombat()
+
+  go p.Cmd("charge")
+  res := <-ch
+
+  if !strings.Contains(res, "You cannot use 'charge' in combat!") {
+    t.Errorf("Expected player to receive 'You cannot use 'charge' in combat!', but got %s", res)
+  }
+
+  sk := p.GetCmbSkill()
+
+  if sk != nil {
+    t.Errorf("Expected no skill to be set when trying to use restricted skill in combat, but got %s", sk.Name)
   }
 }
 

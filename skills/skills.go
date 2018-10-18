@@ -10,6 +10,7 @@ type Skill struct {
   Effects  []Effect
   CostType stats.Stat
   CostAmt  int
+  Rstcn    Rstcn
 }
 
 type Effect struct {
@@ -24,6 +25,12 @@ const(
   FlatDmg = EffectType("flatDmg") // Flat Damage
   PctHeal = EffectType("pctHeal") // % Healing
   OppFx = EffectType("oppFx") // Status Effect on Opponent
+)
+
+type Rstcn string // Restriction
+
+const(
+  OOCOnly = Rstcn("OOCOnly") // skill can only be used Out Of Combat
 )
 
 var(
@@ -69,5 +76,17 @@ var(
         Value: 0.1,
       },
     },
+  }
+  Charge = &Skill{
+    Name: "charge",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: PctDmg,
+        Value: 2.0,
+      },
+    },
+    Rstcn: OOCOnly,
   }
 )

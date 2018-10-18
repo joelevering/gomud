@@ -39,6 +39,7 @@ var Conscript = &Class{
   skills: []*skills.Skill{
     skills.Bash,
     skills.PowerNap,
+    skills.Charge,
   },
 }
 

@@ -12,6 +12,7 @@ import (
   "github.com/joelevering/gomud/combat"
   "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/statfx"
+  "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/storage"
   "github.com/joelevering/gomud/structs"
 )
@@ -77,6 +78,11 @@ func (p *Player) Cmd(cmd string) {
   if p.IsInCombat() {
     sk := p.Class.GetSkill(words[0])
     if sk != nil {
+      if sk.Rstcn == skills.OOCOnly {
+        p.SendMsg(fmt.Sprintf("You cannot use '%s' in combat!", sk.Name))
+        return
+      }
+
       p.SetCmbSkill(sk)
       p.SendMsg(fmt.Sprintf("Preparing %s", sk.Name))
       return
