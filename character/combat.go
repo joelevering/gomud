@@ -1,6 +1,8 @@
 package character
 
 import (
+  "math/rand"
+
   "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/statfx"
   "github.com/joelevering/gomud/structs"
@@ -68,6 +70,16 @@ func (ch *Character) ApplyDef(fx structs.CmbFx, rep *structs.CmbRep) {
       case statfx.Stun:
         // add to report
         ch.Stunned = true
+      case statfx.Surprise:
+        // report all this
+        n := rand.Intn(3)
+        if n == 0 { // stun
+          ch.Stunned = true
+        } else if n == 1 { // lower atk
+          // TODO add char effect
+        } else if n == 2 { // lower def
+          // TODO add char effect
+        }
       }
     }
 

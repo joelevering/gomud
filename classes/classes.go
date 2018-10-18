@@ -38,6 +38,7 @@ var Conscript = &Class{
   defStats: []stats.Stat{stats.Str},
   skills: []*skills.Skill{
     skills.Bash,
+    skills.Shove,
     skills.PowerNap,
     skills.Charge,
   },

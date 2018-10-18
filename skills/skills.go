@@ -48,6 +48,20 @@ var(
       },
     },
   }
+  Surprise = &Skill{
+    Name: "surprise",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: OppFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Surprise,
+          Chance: 1,
+        },
+      },
+    },
+  }
   Bash = &Skill{
     Name: "bash",
     CostType: stats.Stm,
@@ -62,6 +76,24 @@ var(
         Value: statfx.SEInst{
           Effect: statfx.Stun,
           Chance: 0.25,
+        },
+      },
+    },
+  }
+  Shove = &Skill{
+    Name: "shove",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: PctDmg,
+        Value: 0.75,
+      },
+      Effect{
+        Type: OppFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Surprise,
+          Chance: 0.5,
         },
       },
     },

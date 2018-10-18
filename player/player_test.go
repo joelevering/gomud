@@ -53,7 +53,8 @@ func Test_CmdSetsCombatSkillWithSkillName(t *testing.T) {
 func Test_CmdDoesNotSetOOCRestrictedSkillInCombat(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   defer close(ch)
-  p.EnterCombat()
+  go p.EnterCombat(&mocks.MockNP{})
+  <-ch // "You attack %s!"
 
   go p.Cmd("charge")
   res := <-ch
@@ -62,7 +63,7 @@ func Test_CmdDoesNotSetOOCRestrictedSkillInCombat(t *testing.T) {
     t.Errorf("Expected player to receive 'You cannot use 'charge' in combat!', but got %s", res)
   }
 
-  sk := p.GetCmbSkill()
+  sk := p.CmbSkill
 
   if sk != nil {
     t.Errorf("Expected no skill to be set when trying to use restricted skill in combat, but got %s", sk.Name)

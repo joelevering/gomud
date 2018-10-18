@@ -171,3 +171,8 @@ func Test_ApplyAtkDoesNotApplyDmgOrStatfx(t *testing.T) {
     t.Errorf("Expected character to not lose health with ApplyAtk, but they're at %d/%d", ch.GetDet(), ch.GetMaxDet())
   }
 }
+
+
+// TODO test surprise
+// Not sure how to test due to randomness (Surprise could do one of three things)
+// Maybe make stun/lower atk/lower def testable methods and then just call them
