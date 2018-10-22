@@ -1,12 +1,15 @@
 package mocks
 
-import "github.com/joelevering/gomud/interfaces"
+import (
+  "github.com/joelevering/gomud/interfaces"
+  "github.com/joelevering/gomud/structs"
+)
 
 type MockNP struct {
   *MockCharacter
 
   IsDead bool
-  DefeatedBy interfaces.CharI
+  DefeatedBy interfaces.Combatant
 }
 
 func NewMockNP() *MockNP {
@@ -31,7 +34,19 @@ func (m *MockNP) IsAlive() bool { return !m.IsDead }
 func (m *MockNP) Say(string) {}
 func (m *MockNP) Emote(string) {}
 
-func (m *MockNP) LoseCombat(ch interfaces.CharI) {
-  m.IsDead = true
-  m.DefeatedBy = ch
+func (m *MockNP) EnterCombat(opp interfaces.Combatant) { m.EnteredCombat = true }
+func (m *MockNP) AtkFx() structs.CmbFx {
+  return structs.CmbFx{}
 }
+func (m *MockNP) ResistAtk(fx structs.CmbFx) structs.CmbFx {
+  return fx
+}
+func (m *MockNP) IsDefeated() bool { return false }
+func (m *MockNP) ReportAtk(opp interfaces.Combatant, fx structs.CmbFx) {}
+func (m *MockNP) ReportDef(opp interfaces.Combatant, fx structs.CmbFx) {}
+func (m *MockNP) LoseCombat(opp interfaces.Combatant) {
+  m.IsDead = true
+  m.DefeatedBy = opp
+}
+func (m *MockNP) WinCombat(opp interfaces.Combatant) {}
+

@@ -5,6 +5,7 @@ import (
 
   "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/statfx"
+  "github.com/joelevering/gomud/structs"
 )
 
 func Test_CharAttacksByDefault(t *testing.T) {
@@ -30,7 +31,7 @@ func Test_StunAppliesStun(t *testing.T) {
 
 func Test_ResistAtkLowersDmg(t *testing.T) {
   ch := NewCharacter()
-  fx := CombatEffects{Dmg: 100}
+  fx := structs.CmbFx{Dmg: 100}
 
   res := ch.ResistAtk(fx)
 
@@ -41,7 +42,7 @@ func Test_ResistAtkLowersDmg(t *testing.T) {
 
 func Test_ResistAtkKeepsStatusEffects(t *testing.T) {
   ch := NewCharacter()
-  fx := CombatEffects{
+  fx := structs.CmbFx{
     SFx: []statfx.StatusEffect{
       statfx.Stun,
     },

@@ -3,43 +3,43 @@ package character
 import (
   "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/statfx"
+  "github.com/joelevering/gomud/structs"
   "github.com/joelevering/gomud/util"
 )
 
-type CombatEffects struct {
-  Dmg int
-  Heal int
-  SFx []statfx.StatusEffect
-  SelfSFx []statfx.StatusEffect
-}
-
 // Character needs to hold all Status Effects related to it
 
-func (ch *Character) AtkFx() CombatEffects {
+func (ch *Character) AtkFx() structs.CmbFx {
   // Based on current combat skill, locks/retrieves/clears skill and figures out what the effects are (taking status effects into account)
-  // Returns a CombatEffects obj with summary of intended effects on target
+  // Returns a structs.CmbFx obj with summary of intended effects on target
 
   sk := ch.getAndClearCmbSkill()
   cFx := ch.calcCmbFx(sk)
   return cFx
 }
 
-func (ch *Character) ResistAtk(fx CombatEffects) CombatEffects {
+func (ch *Character) ResistAtk(fx structs.CmbFx) structs.CmbFx {
   // Called when a character is being attacked. Applies damage reduction/status effect resistances etc.
   // Calculates damage and effects after factoring in resistances
-  // Returns another CombatEffects obj with updated summary of damage
+  // Returns another structs.CmbFx obj with updated summary of damage
 
   dmg := ch.calcDmg(fx.Dmg)
   sfx := ch.calcSFx(fx.SFx)
 
-  return CombatEffects{
+  return structs.CmbFx{
     Dmg: dmg,
     SFx: sfx,
   }
 }
 
-func (ch *Character) calcCmbFx(sk *skills.Skill) CombatEffects {
-  res := CombatEffects{}
+func (ch *Character) calcCmbFx(sk *skills.Skill) structs.CmbFx {
+  res := structs.CmbFx{}
+  if ch.Stunned {
+    ch.Stunned = false
+    // Figure out a way to report the influence of a SE on an attack so we can report "you were stunned!"
+    return res
+  }
+
   if sk == nil {
     res.Dmg = ch.GetAtk()
     return res
@@ -77,7 +77,7 @@ func (ch *Character) EnterCombat(opp *Character) {
   ch.InCombat = true
 }
 
-func (ch *Character) leaveCombat() {
+func (ch *Character) LeaveCombat() {
   ch.InCombat = false
 }
 

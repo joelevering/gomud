@@ -32,6 +32,7 @@ type Character struct {
   CmbSkill   *skills.Skill
   CmbSkillMu sync.Mutex
   Spawn      interfaces.RoomI
+  Stunned    bool
 }
 
 func NewCharacter() *Character {
@@ -282,4 +283,8 @@ func (ch *Character) LevelUp() {
 
 func (ch *Character) ExpToLvl() int {
   return ch.NextLvlExp - ch.Exp
+}
+
+func (ch *Character) Stun() {
+  ch.Stunned = true
 }

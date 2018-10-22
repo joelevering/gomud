@@ -7,6 +7,7 @@ import (
   "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/stats"
   "github.com/joelevering/gomud/storage"
+  "github.com/joelevering/gomud/structs"
 )
 
 type QueueI interface {
@@ -52,9 +53,13 @@ type NPI interface {
   Spawn()
   Say(string)
   Emote(string)
-  LoseCombat(CharI)
   IsAlive() bool
   SetBehavior(QueueI)
+  EnterCombat(Combatant)
+  ReportAtk(Combatant, structs.CmbFx)
+  ReportDef(Combatant, structs.CmbFx)
+  WinCombat(Combatant)
+  LoseCombat(Combatant)
 }
 
 type PlI interface {
@@ -75,8 +80,27 @@ type PlI interface {
   SendMsg(...string)
   LeaveRoom(string)
   EnterRoom(RoomI)
-  LoseCombat(CharI)
-  WinCombat(CharI)
+  EnterCombat(Combatant)
+  ReportAtk(Combatant, structs.CmbFx)
+  ReportDef(Combatant, structs.CmbFx)
+  WinCombat(Combatant)
+  LoseCombat(Combatant)
+}
+
+type Combatant interface {
+  EnterCombat(Combatant)
+  AtkFx() structs.CmbFx
+  ResistAtk(structs.CmbFx) structs.CmbFx
+  ReportAtk(Combatant, structs.CmbFx)
+  ReportDef(Combatant, structs.CmbFx)
+  IsDefeated() bool
+  WinCombat(Combatant)
+  LoseCombat(Combatant)
+
+  GetName() string
+  GetExpGiven() int
+  GetDet() int
+  GetMaxDet() int
 }
 
 type CharI interface {
@@ -107,11 +131,7 @@ type CharI interface {
   SetSag(int)
   GetAtk() int
   GetDef() int
-  GetCmbSkill() *skills.Skill
   SetCmbSkill(*skills.Skill)
-  ClearCmbSkill()
-  LockCmbSkill()
-  UnlockCmbSkill()
   GetLevel() int
   GetExp() int
   GetExpGiven() int
@@ -120,10 +140,13 @@ type CharI interface {
   SetSpawn(RoomI)
 
   Heal()
-  EnterCombat()
-  IsInCombat() bool
   GainExp(int) bool
   ExpToLvl() int
+
+  IsInCombat() bool
+  AtkFx() structs.CmbFx
+  ResistAtk(structs.CmbFx) structs.CmbFx
+  IsDefeated() bool
 }
 
 type ClassI interface {
