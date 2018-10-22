@@ -121,7 +121,6 @@ type CharI interface {
 
   Heal()
   EnterCombat()
-  LeaveCombat()
   IsInCombat() bool
   GainExp(int) bool
   ExpToLvl() int

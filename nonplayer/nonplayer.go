@@ -76,6 +76,29 @@ func (n *NonPlayer) Emote(emote string) {
   n.Room.Message(fmt.Sprintf("%s %s", n.GetName(), emote))
 }
 
+func (n *NonPlayer) ReportAtk(fx CombatEffects) {
+  if fx.Heal > 0 {
+    // heal
+  }
+}
+
+func (n *NonPlayer) ReportDef(fx CombatEffects) {
+  if fx.Dmg > 0 {
+    n.SetDet(n.GetDet - fx.Dmg)
+  }
+
+  if len(fx.SFx) > 0 {
+    for _, e := range fx.SFx {
+      switch e {
+      case statfx.Stun:
+        // stun yourself
+      }
+    }
+  }
+}
+
+func (n *NonPlayer) WinCombat(loser interfaces.CharI) {}
+
 func (n *NonPlayer) LoseCombat(winner interfaces.CharI) {
   n.Alive = false
 

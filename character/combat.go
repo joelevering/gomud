@@ -14,9 +14,8 @@ type CombatEffects struct {
 }
 
 // Character needs to hold all Status Effects related to it
-// These tick down on CmbTick
 
-func (ch *Character) CmbTick() CombatEffects {
+func (ch *Character) AtkFx() CombatEffects {
   // Based on current combat skill, locks/retrieves/clears skill and figures out what the effects are (taking status effects into account)
   // Returns a CombatEffects obj with summary of intended effects on target
 
@@ -25,16 +24,18 @@ func (ch *Character) CmbTick() CombatEffects {
   return cFx
 }
 
-func (ch *Character) ProcessCmbFx(fx CombatEffects) CombatEffects {
+func (ch *Character) ResistAtk(fx CombatEffects) CombatEffects {
   // Called when a character is being attacked. Applies damage reduction/status effect resistances etc.
-  // Applies damage and effects after factoring in resistances
+  // Calculates damage and effects after factoring in resistances
   // Returns another CombatEffects obj with updated summary of damage
 
-  res := &CombatEffects{}
-  // ch.applyDamage(fx.dmg, res)
-  // ch.applySFX(fx.sFx, res)
+  dmg := ch.calcDmg(fx.Dmg)
+  sfx := ch.calcSFx(fx.SFx)
 
-  return *res
+  return CombatEffects{
+    Dmg: dmg,
+    SFx: sfx,
+  }
 }
 
 func (ch *Character) calcCmbFx(sk *skills.Skill) CombatEffects {
@@ -59,4 +60,27 @@ func (ch *Character) calcCmbFx(sk *skills.Skill) CombatEffects {
   }
 
   return res
+}
+
+func (ch *Character) calcDmg(dmg int) int {
+  pctDmgBlocked := float64(ch.GetDef()) * 0.001
+  adjDmg := (1.0 - pctDmgBlocked) * float64(dmg)
+
+  return int(adjDmg)
+}
+
+func (ch *Character) calcSFx(sfx []statfx.StatusEffect) []statfx.StatusEffect {
+  return sfx
+}
+
+func (ch *Character) EnterCombat(opp *Character) {
+  ch.InCombat = true
+}
+
+func (ch *Character) leaveCombat() {
+  ch.InCombat = false
+}
+
+func (ch *Character) IsInCombat() bool {
+  return ch.InCombat
 }

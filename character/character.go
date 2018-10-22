@@ -240,16 +240,12 @@ func (ch *Character) Heal() {
   ch.Det = ch.MaxDet
 }
 
-func (ch *Character) EnterCombat() {
-  ch.InCombat = true
-}
+func (ch *Character) IsDefeated() bool {
+  if ch.GetDet() <= 0 {
+    return true
+  }
 
-func (ch *Character) LeaveCombat() {
-  ch.InCombat = false
-}
-
-func (ch *Character) IsInCombat() bool {
-  return ch.InCombat
+  return false
 }
 
 func (ch *Character) GainExp(exp int) (leveledUp bool) {

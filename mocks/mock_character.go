@@ -74,7 +74,6 @@ func (m *MockCharacter) GetSpawn() interfaces.RoomI { return m.Spawn }
 func (m *MockCharacter) SetSpawn(spawn interfaces.RoomI) {}
 
 func (m *MockCharacter) EnterCombat() { m.EnteredCombat = true }
-func (m *MockCharacter) LeaveCombat() { m.LeftCombat = true }
 func (m *MockCharacter) IsInCombat() bool { return false }
 func (m *MockCharacter) ExpToLvl() int { return 100 }
 

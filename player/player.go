@@ -178,7 +178,6 @@ func (p *Player) Status() {
 
 func (p *Player) AttackNP(npName string) {
   attack := func(p *Player, np interfaces.NPI) {
-    p.SendMsg(fmt.Sprintf("You attack %s!", np.GetName()))
     ci := &CombatInstance{
       pc: p,
       npc: np,
@@ -188,6 +187,11 @@ func (p *Player) AttackNP(npName string) {
   }
 
   p.findNPAndExecute(npName, "Who are you attacking??", attack)
+}
+
+func (p *Player) EnterCombat(opp *Character) {
+  p.InCombat = true
+  p.SendMsg(fmt.Sprintf("You attack %s!", opp.GetName()))
 }
 
 func (p *Player) findNPAndExecute(npName, notFound string, function func(*Player, interfaces.NPI)) {
@@ -274,7 +278,47 @@ func (p *Player) EnterRoom(room interfaces.RoomI) {
   p.Queue.Pub(fmt.Sprintf("pc-enters-%d", room.GetID()))
 }
 
+func (p *Player) ReportAtk(ch *Character, fx CombatEffects) {
+  if fx.Heal > 0 {
+    p.SendMsg(fmt.Sprintf("You healed %d damage!", fx.Heal))
+  }
+  if fx.Dmg > 0 {
+    p.SendMsg(fmt.Sprintf("%s took %d damage!", ch.GetName(), fx.Dmg))
+  }
+  if len(fx.SFx) > 0 {
+    for _, e := range fx.SFx {
+      switch e {
+      case statfx.Stun:
+        p.SendMsg(fmt.Sprintf("%s was stunned!", ch.GetName()))
+      }
+    }
+  }
+}
+
+func (p *Player) ReportDef(ch *Character, fx CombatEffects) {
+  if fx.Heal > 0 {
+    p.SendMsg(fmt.Sprintf("%s healed %d damage!", ch.GetName(), fx.Heal))
+  }
+
+  if fx.Dmg > 0 {
+    // take damage
+    p.SendMsg(fmt.Sprintf("You took %d damage!", fx.Dmg))
+  }
+
+  if len(fx.SFx) > 0 {
+    for _, e := range fx.SFx {
+      switch e {
+      case statfx.Stun:
+        // stun yourself
+        p.SendMsg("You were stunned!")
+      }
+    }
+  }
+}
+
 func (p *Player) LoseCombat(npc interfaces.CharI) {
+  p.leaveCombat()
+
   spawn := p.GetSpawn()
 
   deathNotice := fmt.Sprintf("%s was defeated by %s. Their body dissipates.", p.GetName(), npc.GetName())
@@ -291,6 +335,8 @@ func (p *Player) LoseCombat(npc interfaces.CharI) {
 }
 
 func (p *Player) WinCombat(loser interfaces.CharI) {
+  p.leaveCombat()
+
   expGained := loser.GetExpGiven()
   leveledUp := p.GainExp(expGained)
 
