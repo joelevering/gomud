@@ -213,26 +213,19 @@ func (ch *Character) GetDef() int {
   return def
 }
 
-func (ch *Character) GetCmbSkill() *skills.Skill {
-  return ch.CmbSkill
-}
-
-func (ch *Character) LockCmbSkill() {
-  ch.CmbSkillMu.Lock()
-}
-
-func (ch *Character) UnlockCmbSkill() {
-  ch.CmbSkillMu.Unlock()
-}
-
 func (ch *Character) SetCmbSkill(sk *skills.Skill) {
   ch.CmbSkillMu.Lock()
   ch.CmbSkill = sk
   ch.CmbSkillMu.Unlock()
 }
 
-func (ch *Character) ClearCmbSkill() {
-  ch.SetCmbSkill(nil)
+func (ch *Character) getAndClearCmbSkill() *skills.Skill {
+  ch.CmbSkillMu.Lock()
+  defer ch.CmbSkillMu.Unlock()
+  sk := ch.CmbSkill
+  ch.CmbSkill = nil
+
+  return sk
 }
 
 func (ch *Character) GetSpawn() interfaces.RoomI {
