@@ -49,13 +49,5 @@ func (m *MockPlayer) WinCombat(loser interfaces.Combatant) {
   m.Defeated = loser
 }
 
-func (m *MockPlayer) AtkFx() structs.CmbFx {
-  return structs.CmbFx{}
-}
-
-func (m *MockPlayer) ResistAtk(fx structs.CmbFx) structs.CmbFx {
-  return fx
-}
-
 func (m *MockPlayer) ReportAtk(_ interfaces.Combatant, _ structs.CmbRep) {}
 func (m *MockPlayer) ReportDef(_ interfaces.Combatant, _ structs.CmbRep) {}

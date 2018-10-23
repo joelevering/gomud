@@ -1,7 +1,6 @@
 package combat
 
 import (
-  "log"
   "time"
 
   "github.com/joelevering/gomud/interfaces"
@@ -26,11 +25,11 @@ func Start(pc interfaces.Combatant, npc interfaces.Combatant) {
 }
 
 func TickCombat(agg, def interfaces.Combatant) (combatOver bool) {
-  aggFx := agg.AtkFx()
-  log.Printf("%s fx: %v", agg.GetName(), aggFx)
+  report := &structs.CmbRep{}
+
+  aggFx := agg.AtkFx(report)
   resFx := def.ResistAtk(aggFx)
 
-  report := &structs.CmbRep{}
   agg.ApplyAtk(resFx, report)
   def.ApplyDef(resFx, report)
 

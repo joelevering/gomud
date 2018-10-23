@@ -10,11 +10,41 @@ import (
 
 func Test_CharAttacksByDefault(t *testing.T) {
   ch := NewCharacter()
+  rep := &structs.CmbRep{}
 
-  cFx := ch.AtkFx()
+  cFx := ch.AtkFx(rep)
 
   if cFx.Dmg != ch.GetAtk() {
     t.Errorf("Expected default combat action to apply damage equal to attack, but dmg was %d (and atk is %d)", cFx.Dmg, ch.GetAtk())
+  }
+}
+
+func Test_StunnedCharsDoNotAttack(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+  ch.Stunned = true
+
+  cFx := ch.AtkFx(rep)
+
+  if cFx.Dmg != 0 {
+    t.Errorf("Expected stunned character to return cmb fx with no dmg, but got %d", cFx.Dmg)
+  }
+
+  if !rep.Stunned {
+    t.Error("Expected report from AtkFx of stunned character to be stunned: true, but it wasn't")
+  }
+}
+
+func Test_StunnedCharsDoNotUseSkills(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+  ch.CmbSkill = skills.Stun
+  ch.Stunned = true
+
+  cFx := ch.AtkFx(rep)
+
+  if len(cFx.SFx) != 0 {
+    t.Errorf("Expected stunned character to return cmb fx with no sfx, but got %v", cFx.SFx)
   }
 }
 
@@ -65,7 +95,7 @@ func Test_ApplyDefAppliesStatfx(t *testing.T) {
   rep := &structs.CmbRep{}
   ch.SetCmbSkill(skills.Stun)
 
-  cFx := ch.AtkFx()
+  cFx := ch.AtkFx(rep)
   ch.ApplyDef(cFx, rep)
 
   if !ch.Stunned {
@@ -129,7 +159,7 @@ func Test_ApplyAtkDoesNotApplyDmgOrStatfx(t *testing.T) {
   rep := &structs.CmbRep{}
   ch.SetCmbSkill(skills.Stun)
 
-  cFx := ch.AtkFx()
+  cFx := ch.AtkFx(rep)
   cFx.Dmg = 10
   ch.ApplyAtk(cFx, rep)
 
