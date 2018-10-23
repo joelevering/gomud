@@ -90,7 +90,7 @@ type PlI interface {
 type Combatant interface {
   EnterCombat(Combatant)
   AtkFx(*structs.CmbRep) structs.CmbFx
-  ResistAtk(structs.CmbFx) structs.CmbFx
+  ResistAtk(structs.CmbFx, *structs.CmbRep) structs.CmbFx
   ApplyAtk(structs.CmbFx, *structs.CmbRep)
   ApplyDef(structs.CmbFx, *structs.CmbRep)
   ReportAtk(Combatant, structs.CmbRep)
@@ -147,7 +147,7 @@ type CharI interface {
 
   IsInCombat() bool
   AtkFx(*structs.CmbRep) structs.CmbFx
-  ResistAtk(structs.CmbFx) structs.CmbFx
+  ResistAtk(structs.CmbFx, *structs.CmbRep) structs.CmbFx
   ApplyAtk(structs.CmbFx, *structs.CmbRep)
   ApplyDef(structs.CmbFx, *structs.CmbRep)
   IsDefeated() bool

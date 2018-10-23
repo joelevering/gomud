@@ -50,9 +50,10 @@ func Test_StunnedCharsDoNotUseSkills(t *testing.T) {
 
 func Test_ResistAtkLowersDmg(t *testing.T) {
   ch := NewCharacter()
+  rep := &structs.CmbRep{}
   fx := structs.CmbFx{Dmg: 100}
 
-  res := ch.ResistAtk(fx)
+  res := ch.ResistAtk(fx, rep)
 
   if res.Dmg >= 100 {
     t.Errorf("Expected applying an attack to report lowered damage, but reported %d -> %d", fx.Dmg, res.Dmg)
@@ -61,13 +62,14 @@ func Test_ResistAtkLowersDmg(t *testing.T) {
 
 func Test_ResistAtkKeepsStatusEffects(t *testing.T) {
   ch := NewCharacter()
+  rep := &structs.CmbRep{}
   fx := structs.CmbFx{
     SFx: []statfx.StatusEffect{
       statfx.Stun,
     },
   }
 
-  res := ch.ResistAtk(fx)
+  res := ch.ResistAtk(fx, rep)
 
   if len(res.SFx) != 1 || res.SFx[0] != statfx.Stun {
     t.Errorf("Expected status effects to remain the same on resist, but got %v", res.SFx)

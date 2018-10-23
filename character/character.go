@@ -33,6 +33,8 @@ type Character struct {
   CmbSkillMu sync.Mutex
   Spawn      interfaces.RoomI
   Stunned    bool
+  LoweredAtk bool
+  LoweredDef bool
 }
 
 func NewCharacter() *Character {

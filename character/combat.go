@@ -26,15 +26,26 @@ func (ch *Character) IsInCombat() bool {
 func (ch *Character) AtkFx(rep *structs.CmbRep) structs.CmbFx {
   sk := ch.getAndClearCmbSkill()
   cFx := ch.calcCmbFx(sk, rep)
+  if ch.LoweredAtk {
+    cFx.Dmg /= 2
+    ch.LoweredAtk = false
+    rep.LoweredAtk = true
+  }
   return cFx
 }
 
 // Called when a character is being attacked. Applies damage reduction/status effect resistances etc.
 // Calculates damage and effects after factoring in resistances
 // Returns another structs.CmbFx obj with updated summary of damage
-func (ch *Character) ResistAtk(fx structs.CmbFx) structs.CmbFx {
+func (ch *Character) ResistAtk(fx structs.CmbFx, rep *structs.CmbRep) structs.CmbFx {
   dmg := ch.calcDmg(fx.Dmg)
   sfx := ch.calcSFx(fx.SFx)
+
+  if ch.LoweredDef {
+    dmg *= 2
+    ch.LoweredDef = false
+    rep.LoweredDef = true
+  }
 
   return structs.CmbFx{
     Dmg: dmg,
@@ -68,17 +79,18 @@ func (ch *Character) ApplyDef(fx structs.CmbFx, rep *structs.CmbRep) {
     for _, e := range fx.SFx {
       switch e {
       case statfx.Stun:
-        // add to report
         ch.Stunned = true
       case statfx.Surprise:
-        // report all this
         n := rand.Intn(3)
-        if n == 0 { // stun
+        if n == 0 {
           ch.Stunned = true
-        } else if n == 1 { // lower atk
-          // TODO add char effect
-        } else if n == 2 { // lower def
-          // TODO add char effect
+          rep.Surprised = structs.SurpriseRep{Stunned: true}
+        } else if n == 1 {
+          ch.LoweredAtk = true
+          rep.Surprised = structs.SurpriseRep{LowerAtk: true}
+        } else if n == 2 {
+          ch.LoweredDef = true
+          rep.Surprised = structs.SurpriseRep{LowerDef: true}
         }
       }
     }

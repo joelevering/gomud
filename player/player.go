@@ -289,12 +289,36 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
     p.SendMsg(fmt.Sprintf("You used %s!", rep.SkName))
   }
 
+  if rep.Surprised != (structs.SurpriseRep{}) {
+    if rep.Surprised.Stunned {
+      p.SendMsg(fmt.Sprintf("You surprised %s! They're stunned!", opp.GetName()))
+    }
+    if rep.Surprised.LowerAtk {
+      p.SendMsg(fmt.Sprintf("You surprised %s! They're off-balance!", opp.GetName()))
+    }
+    if rep.Surprised.LowerDef {
+      p.SendMsg(fmt.Sprintf("You surprised %s! They're vulnerable!", opp.GetName()))
+    }
+  }
+
   if rep.Heal > 0 {
     p.SendMsg(fmt.Sprintf("You healed %d damage!", rep.Heal))
   }
 
+  if rep.LoweredAtk {
+    p.SendMsg("You dealt lowered damage!")
+  }
+
+  if rep.LoweredDef {
+    p.SendMsg("You dealt increased damage!")
+  }
+
   if rep.Dmg > 0 {
-    p.SendMsg(fmt.Sprintf("%s took %d damage! %s has %d/%d health left!", opp.GetName(), rep.Dmg, opp.GetName(), opp.GetDet(), opp.GetMaxDet()))
+    if opp.GetDet() == 0 {
+      p.SendMsg(fmt.Sprintf("%s took %d damage!", opp.GetName(), rep.Dmg))
+    } else {
+      p.SendMsg(fmt.Sprintf("%s took %d damage! %s has %d/%d health left!", opp.GetName(), rep.Dmg, opp.GetName(), opp.GetDet(), opp.GetMaxDet()))
+    }
   }
 
   if len(rep.SFx) > 0 {
@@ -316,6 +340,14 @@ func (p *Player) ReportDef(opp interfaces.Combatant, rep structs.CmbRep) {
     p.SendMsg(fmt.Sprintf("%s healed %d damage!", opp.GetName(), rep.Heal))
   }
 
+  if rep.LoweredAtk {
+    p.SendMsg("You took lowered damage!")
+  }
+
+  if rep.LoweredDef {
+    p.SendMsg("You took increased damage!")
+  }
+
   if rep.Dmg > 0 {
     p.SendMsg(fmt.Sprintf("You took %d damage! You have %d/%d health left!", rep.Dmg, p.GetDet(), p.GetMaxDet()))
   }
@@ -325,6 +357,8 @@ func (p *Player) ReportDef(opp interfaces.Combatant, rep structs.CmbRep) {
       switch e {
       case statfx.Stun:
         p.SendMsg("You were stunned into inaction!")
+      case statfx.Surprise:
+        p.SendMsg("You were surprised by the attack!")
       }
     }
   }
