@@ -57,5 +57,5 @@ func (m *MockPlayer) ResistAtk(fx structs.CmbFx) structs.CmbFx {
   return fx
 }
 
-func (m *MockPlayer) ReportAtk(opp interfaces.Combatant, fx structs.CmbFx) {}
-func (m *MockPlayer) ReportDef(opp interfaces.Combatant, fx structs.CmbFx) {}
+func (m *MockPlayer) ReportAtk(_ interfaces.Combatant, _ structs.CmbRep) {}
+func (m *MockPlayer) ReportDef(_ interfaces.Combatant, _ structs.CmbRep) {}

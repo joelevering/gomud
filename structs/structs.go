@@ -8,3 +8,8 @@ type CmbFx struct {
   SFx []statfx.StatusEffect
   SelfSFx []statfx.StatusEffect
 }
+
+type CmbRep struct {
+  CmbFx
+  Stunned bool // TODO test and add report logic
+}

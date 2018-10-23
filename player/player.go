@@ -200,9 +200,6 @@ func (p *Player) EnterCombat(opp interfaces.Combatant) {
   p.SendMsg(fmt.Sprintf("You attack %s!", opp.GetName()))
 }
 
-func (p *Player) findNPAndExecute(npName, notFound string, function func(*Player, interfaces.NPI)) {
-}
-
 func (p *Player) Move(exitKey string) {
   for _, exit := range p.Room.GetExits() {
     if strings.ToUpper(exitKey) == strings.ToUpper(exit.GetKey()) {
@@ -255,9 +252,14 @@ func (p *Player) ChangeClass(class string) {
 
 
 func (p *Player) SendMsg(msgs ...string) {
+  stamp := time.Now().Format(time.Kitchen)
+
   for _, msg := range msgs {
-    stamp := time.Now().Format(time.Kitchen)
-    p.Channel <- fmt.Sprintf("%s %s", stamp, msg)
+    if p.InCombat {
+      p.Channel <- fmt.Sprintf("%s (D %d/%d S %d/%d F %d/%d) %s", stamp, p.GetDet(), p.GetMaxDet(), p.GetStm(), p.GetMaxStm(), p.GetFoc(), p.GetMaxFoc(), msg)
+    } else {
+      p.Channel <- fmt.Sprintf("%s %s", stamp, msg)
+    }
   }
 }
 
@@ -276,15 +278,15 @@ func (p *Player) EnterRoom(room interfaces.RoomI) {
   p.Queue.Pub(fmt.Sprintf("pc-enters-%d", room.GetID()))
 }
 
-func (p *Player) ReportAtk(opp interfaces.Combatant, fx structs.CmbFx) {
-  if fx.Heal > 0 {
-    p.SendMsg(fmt.Sprintf("You healed %d damage!", fx.Heal))
+func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
+  if rep.Heal > 0 {
+    p.SendMsg(fmt.Sprintf("You healed %d damage!", rep.Heal))
   }
-  if fx.Dmg > 0 {
-    p.SendMsg(fmt.Sprintf("%s took %d damage!", opp.GetName(), fx.Dmg))
+  if rep.Dmg > 0 {
+    p.SendMsg(fmt.Sprintf("%s took %d damage!", opp.GetName(), rep.Dmg))
   }
-  if len(fx.SFx) > 0 {
-    for _, e := range fx.SFx {
+  if len(rep.SFx) > 0 {
+    for _, e := range rep.SFx {
       switch e {
       case statfx.Stun:
         p.SendMsg(fmt.Sprintf("%s was stunned!", opp.GetName()))
@@ -292,30 +294,26 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, fx structs.CmbFx) {
     }
   }
 
-  p.SendMsg(fmt.Sprintf("%s has %d/%d health left. You have %d/%d health left.", opp.GetName(), opp.GetDet(), opp.GetMaxDet(), p.GetDet(), p.GetMaxDet()))
+  p.SendMsg(fmt.Sprintf("%s has %d/%d health left.", opp.GetName(), opp.GetDet(), opp.GetMaxDet()))
 }
 
-func (p *Player) ReportDef(opp interfaces.Combatant, fx structs.CmbFx) {
-  if fx.Heal > 0 {
-    p.SendMsg(fmt.Sprintf("%s healed %d damage!", opp.GetName(), fx.Heal))
+func (p *Player) ReportDef(opp interfaces.Combatant, rep structs.CmbRep) {
+  if rep.Heal > 0 {
+    p.SendMsg(fmt.Sprintf("%s healed %d damage!", opp.GetName(), rep.Heal))
   }
 
-  if fx.Dmg > 0 {
-    // take damage
-    p.SendMsg(fmt.Sprintf("You took %d damage!", fx.Dmg))
+  if rep.Dmg > 0 {
+    p.SendMsg(fmt.Sprintf("You took %d damage!", rep.Dmg))
   }
 
-  if len(fx.SFx) > 0 {
-    for _, e := range fx.SFx {
+  if len(rep.SFx) > 0 {
+    for _, e := range rep.SFx {
       switch e {
       case statfx.Stun:
-        // stun yourself
         p.SendMsg("You were stunned!")
       }
     }
   }
-
-  p.SendMsg(fmt.Sprintf("You have %d/%d health left. %s has %d/%d health left.", p.GetDet(), p.GetMaxDet(), opp.GetName(), opp.GetDet(), opp.GetMaxDet()))
 }
 
 func (p *Player) LoseCombat(winner interfaces.Combatant) {

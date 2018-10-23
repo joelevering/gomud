@@ -35,15 +35,8 @@ func (m *MockNP) Say(string) {}
 func (m *MockNP) Emote(string) {}
 
 func (m *MockNP) EnterCombat(opp interfaces.Combatant) { m.EnteredCombat = true }
-func (m *MockNP) AtkFx() structs.CmbFx {
-  return structs.CmbFx{}
-}
-func (m *MockNP) ResistAtk(fx structs.CmbFx) structs.CmbFx {
-  return fx
-}
-func (m *MockNP) IsDefeated() bool { return false }
-func (m *MockNP) ReportAtk(opp interfaces.Combatant, fx structs.CmbFx) {}
-func (m *MockNP) ReportDef(opp interfaces.Combatant, fx structs.CmbFx) {}
+func (m *MockNP) ReportAtk(opp interfaces.Combatant, fx structs.CmbRep) {}
+func (m *MockNP) ReportDef(opp interfaces.Combatant, fx structs.CmbRep) {}
 func (m *MockNP) LoseCombat(opp interfaces.Combatant) {
   m.IsDead = true
   m.DefeatedBy = opp

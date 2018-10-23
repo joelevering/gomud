@@ -3,6 +3,7 @@ package mocks
 import (
   "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/skills"
+  "github.com/joelevering/gomud/structs"
 )
 
 type MockCharacter struct {
@@ -70,6 +71,15 @@ func (m *MockCharacter) GetSpawn() interfaces.RoomI { return m.Spawn }
 func (m *MockCharacter) SetSpawn(spawn interfaces.RoomI) {}
 
 func (m *MockCharacter) IsInCombat() bool { return false }
+func (m *MockCharacter) AtkFx() structs.CmbFx {
+  return structs.CmbFx{}
+}
+func (m *MockCharacter) ResistAtk(fx structs.CmbFx) structs.CmbFx {
+  return fx
+}
+func (m *MockCharacter) ApplyAtk(_ structs.CmbFx, _ *structs.CmbRep) {}
+func (m *MockCharacter) ApplyDef(_ structs.CmbFx, _ *structs.CmbRep) {}
+func (m *MockCharacter) IsDefeated() bool { return false }
 func (m *MockCharacter) ExpToLvl() int { return 100 }
 
 func (m *MockCharacter) Heal() {

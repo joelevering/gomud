@@ -56,8 +56,8 @@ type NPI interface {
   IsAlive() bool
   SetBehavior(QueueI)
   EnterCombat(Combatant)
-  ReportAtk(Combatant, structs.CmbFx)
-  ReportDef(Combatant, structs.CmbFx)
+  ReportAtk(Combatant, structs.CmbRep)
+  ReportDef(Combatant, structs.CmbRep)
   WinCombat(Combatant)
   LoseCombat(Combatant)
 }
@@ -81,8 +81,8 @@ type PlI interface {
   LeaveRoom(string)
   EnterRoom(RoomI)
   EnterCombat(Combatant)
-  ReportAtk(Combatant, structs.CmbFx)
-  ReportDef(Combatant, structs.CmbFx)
+  ReportAtk(Combatant, structs.CmbRep)
+  ReportDef(Combatant, structs.CmbRep)
   WinCombat(Combatant)
   LoseCombat(Combatant)
 }
@@ -91,8 +91,10 @@ type Combatant interface {
   EnterCombat(Combatant)
   AtkFx() structs.CmbFx
   ResistAtk(structs.CmbFx) structs.CmbFx
-  ReportAtk(Combatant, structs.CmbFx)
-  ReportDef(Combatant, structs.CmbFx)
+  ApplyAtk(structs.CmbFx, *structs.CmbRep)
+  ApplyDef(structs.CmbFx, *structs.CmbRep)
+  ReportAtk(Combatant, structs.CmbRep)
+  ReportDef(Combatant, structs.CmbRep)
   IsDefeated() bool
   WinCombat(Combatant)
   LoseCombat(Combatant)
@@ -146,6 +148,8 @@ type CharI interface {
   IsInCombat() bool
   AtkFx() structs.CmbFx
   ResistAtk(structs.CmbFx) structs.CmbFx
+  ApplyAtk(structs.CmbFx, *structs.CmbRep)
+  ApplyDef(structs.CmbFx, *structs.CmbRep)
   IsDefeated() bool
 }
 

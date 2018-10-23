@@ -7,28 +7,71 @@ import (
   "github.com/joelevering/gomud/util"
 )
 
-// Character needs to hold all Status Effects related to it
+func (ch *Character) EnterCombat(opp *Character) {
+  ch.InCombat = true
+}
 
+func (ch *Character) LeaveCombat() {
+  ch.InCombat = false
+}
+
+func (ch *Character) IsInCombat() bool {
+  return ch.InCombat
+}
+
+// Based on current combat skill, locks/retrieves/clears skill and figures out what the effects are (taking status effects into account)
+// Returns a structs.CmbFx obj with summary of intended effects on target
 func (ch *Character) AtkFx() structs.CmbFx {
-  // Based on current combat skill, locks/retrieves/clears skill and figures out what the effects are (taking status effects into account)
-  // Returns a structs.CmbFx obj with summary of intended effects on target
-
   sk := ch.getAndClearCmbSkill()
   cFx := ch.calcCmbFx(sk)
   return cFx
 }
 
+// Called when a character is being attacked. Applies damage reduction/status effect resistances etc.
+// Calculates damage and effects after factoring in resistances
+// Returns another structs.CmbFx obj with updated summary of damage
 func (ch *Character) ResistAtk(fx structs.CmbFx) structs.CmbFx {
-  // Called when a character is being attacked. Applies damage reduction/status effect resistances etc.
-  // Calculates damage and effects after factoring in resistances
-  // Returns another structs.CmbFx obj with updated summary of damage
-
   dmg := ch.calcDmg(fx.Dmg)
   sfx := ch.calcSFx(fx.SFx)
 
   return structs.CmbFx{
     Dmg: dmg,
     SFx: sfx,
+  }
+}
+
+// Apply CmbFx for which you are the attacker
+func (ch *Character) ApplyAtk(fx structs.CmbFx, rep *structs.CmbRep) {
+  if fx.Heal > 0 {
+    det := ch.GetDet()
+    // TODO turn this into a separate character method
+    newDet := ch.GetDet() + fx.Heal
+    if newDet > ch.GetMaxDet() {
+      newDet = ch.GetMaxDet()
+    }
+
+    ch.SetDet(newDet)
+    rep.Heal = newDet - det
+  }
+}
+
+// Apply CmbFx for which you are the defender
+func (ch *Character) ApplyDef(fx structs.CmbFx, rep *structs.CmbRep) {
+  if fx.Dmg > 0 {
+    ch.SetDet(ch.GetDet() - fx.Dmg)
+    rep.Dmg = fx.Dmg
+  }
+
+  if len(fx.SFx) > 0 {
+    for _, e := range fx.SFx {
+      switch e {
+      case statfx.Stun:
+        // add to report
+        ch.Stunned = true
+      }
+    }
+
+    rep.SFx = fx.SFx
   }
 }
 
@@ -71,16 +114,4 @@ func (ch *Character) calcDmg(dmg int) int {
 
 func (ch *Character) calcSFx(sfx []statfx.StatusEffect) []statfx.StatusEffect {
   return sfx
-}
-
-func (ch *Character) EnterCombat(opp *Character) {
-  ch.InCombat = true
-}
-
-func (ch *Character) LeaveCombat() {
-  ch.InCombat = false
-}
-
-func (ch *Character) IsInCombat() bool {
-  return ch.InCombat
 }

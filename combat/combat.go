@@ -1,9 +1,11 @@
 package combat
 
 import (
+  "log"
   "time"
 
   "github.com/joelevering/gomud/interfaces"
+  "github.com/joelevering/gomud/structs"
 )
 
 const tickTime = 1500 * time.Millisecond
@@ -25,9 +27,15 @@ func Start(pc interfaces.Combatant, npc interfaces.Combatant) {
 
 func TickCombat(agg, def interfaces.Combatant) (combatOver bool) {
   aggFx := agg.AtkFx()
+  log.Printf("%s fx: %v", agg.GetName(), aggFx)
   resFx := def.ResistAtk(aggFx)
-  agg.ReportAtk(def, resFx)
-  def.ReportDef(agg, resFx)
+
+  report := &structs.CmbRep{}
+  agg.ApplyAtk(resFx, report)
+  def.ApplyDef(resFx, report)
+
+  agg.ReportAtk(def, *report)
+  def.ReportDef(agg, *report)
 
   if def.IsDefeated() {
     agg.WinCombat(def)

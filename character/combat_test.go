@@ -18,17 +18,6 @@ func Test_CharAttacksByDefault(t *testing.T) {
   }
 }
 
-func Test_StunAppliesStun(t *testing.T) {
-  ch := NewCharacter()
-  ch.SetCmbSkill(skills.Stun)
-
-  cFx := ch.AtkFx()
-
-  if len(cFx.SFx) != 1 || cFx.SFx[0] != statfx.Stun {
-    t.Errorf("Expected Stun to apply only stun effect, but it applied %v", cFx.SFx)
-  }
-}
-
 func Test_ResistAtkLowersDmg(t *testing.T) {
   ch := NewCharacter()
   fx := structs.CmbFx{Dmg: 100}
@@ -52,5 +41,74 @@ func Test_ResistAtkKeepsStatusEffects(t *testing.T) {
 
   if len(res.SFx) != 1 || res.SFx[0] != statfx.Stun {
     t.Errorf("Expected status effects to remain the same on resist, but got %v", res.SFx)
+  }
+}
+
+func Test_ApplyDefDealsDamage(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+  cFx := structs.CmbFx{Dmg: 10}
+
+  ch.ApplyDef(cFx, rep)
+
+  if ch.GetDet() != ch.GetMaxDet() - 10 {
+    t.Errorf("Expected ApplyDef with 10 dmg to reduce health by 10, but got %d/%d", ch.GetDet(), ch.GetMaxDet())
+  }
+}
+
+func Test_ApplyDefAppliesStatfx(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+  ch.SetCmbSkill(skills.Stun)
+
+  cFx := ch.AtkFx()
+  ch.ApplyDef(cFx, rep)
+
+  if !ch.Stunned {
+    t.Error("Expected character to be stunned when using ApplyDef with stun SE, but char was not")
+  }
+}
+
+func Test_ApplyDefDoesNotHeal(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+  ch.SetDet(1)
+  cFx := structs.CmbFx{Heal: 10}
+
+  ch.ApplyDef(cFx, rep)
+
+  if ch.GetDet() != 1 {
+    t.Error("Expected no healing with ApplyDef, but the char healed")
+  }
+}
+
+func Test_ApplyAtkHeals(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+  ch.SetDet(1)
+  cFx := structs.CmbFx{Heal: 10}
+
+  ch.ApplyAtk(cFx, rep)
+
+  if ch.GetDet() != 11 {
+    t.Errorf("Expected ApplyAtk with 10 healing to increase health from 1 to 11, but it's %d", ch.GetDet())
+  }
+}
+
+func Test_ApplyAtkDoesNotApplyDmgOrStatfx(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+  ch.SetCmbSkill(skills.Stun)
+
+  cFx := ch.AtkFx()
+  cFx.Dmg = 10
+  ch.ApplyAtk(cFx, rep)
+
+  if ch.Stunned {
+    t.Error("Expected character to not be stunned with ApplyAtk with stun, but they were")
+  }
+
+  if ch.GetDet() < ch.GetMaxDet() {
+    t.Errorf("Expected character to not lose health with ApplyAtk, but they're at %d/%d", ch.GetDet(), ch.GetMaxDet())
   }
 }
