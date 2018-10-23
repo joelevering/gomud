@@ -11,5 +11,6 @@ type CmbFx struct {
 
 type CmbRep struct {
   CmbFx
+  SkName string // skill name
   Stunned bool // TODO test and add report logic
 }

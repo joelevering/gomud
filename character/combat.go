@@ -21,9 +21,9 @@ func (ch *Character) IsInCombat() bool {
 
 // Based on current combat skill, locks/retrieves/clears skill and figures out what the effects are (taking status effects into account)
 // Returns a structs.CmbFx obj with summary of intended effects on target
-func (ch *Character) AtkFx() structs.CmbFx {
+func (ch *Character) AtkFx(rep *structs.CmbRep) structs.CmbFx {
   sk := ch.getAndClearCmbSkill()
-  cFx := ch.calcCmbFx(sk)
+  cFx := ch.calcCmbFx(sk, rep)
   return cFx
 }
 
@@ -75,11 +75,12 @@ func (ch *Character) ApplyDef(fx structs.CmbFx, rep *structs.CmbRep) {
   }
 }
 
-func (ch *Character) calcCmbFx(sk *skills.Skill) structs.CmbFx {
+func (ch *Character) calcCmbFx(sk *skills.Skill, rep *structs.CmbRep) structs.CmbFx {
   res := structs.CmbFx{}
   if ch.Stunned {
+    rep.Stunned = true
     ch.Stunned = false
-    // TODO pass CmbRep so we can log SE impact on attack (e.g. "enemy was stunned!")
+
     return res
   }
 
@@ -87,6 +88,8 @@ func (ch *Character) calcCmbFx(sk *skills.Skill) structs.CmbFx {
     res.Dmg = ch.GetAtk()
     return res
   }
+
+  rep.SkName = sk.Name
 
   for _, e := range sk.Effects {
     switch e.Type {

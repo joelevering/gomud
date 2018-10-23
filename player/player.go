@@ -255,11 +255,7 @@ func (p *Player) SendMsg(msgs ...string) {
   stamp := time.Now().Format(time.Kitchen)
 
   for _, msg := range msgs {
-    if p.InCombat {
-      p.Channel <- fmt.Sprintf("%s (D %d/%d S %d/%d F %d/%d) %s", stamp, p.GetDet(), p.GetMaxDet(), p.GetStm(), p.GetMaxStm(), p.GetFoc(), p.GetMaxFoc(), msg)
-    } else {
-      p.Channel <- fmt.Sprintf("%s %s", stamp, msg)
-    }
+    p.Channel <- fmt.Sprintf("%s %s", stamp, msg)
   }
 }
 
@@ -279,12 +275,22 @@ func (p *Player) EnterRoom(room interfaces.RoomI) {
 }
 
 func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
+  if rep.Stunned {
+    p.SendMsg("You were unable to attack!")
+  }
+
+  if rep.SkName != "" {
+    p.SendMsg(fmt.Sprintf("You used %s!", rep.SkName))
+  }
+
   if rep.Heal > 0 {
     p.SendMsg(fmt.Sprintf("You healed %d damage!", rep.Heal))
   }
+
   if rep.Dmg > 0 {
-    p.SendMsg(fmt.Sprintf("%s took %d damage!", opp.GetName(), rep.Dmg))
+    p.SendMsg(fmt.Sprintf("%s took %d damage! %s has %d/%d health left!", opp.GetName(), rep.Dmg, opp.GetName(), opp.GetDet(), opp.GetMaxDet()))
   }
+
   if len(rep.SFx) > 0 {
     for _, e := range rep.SFx {
       switch e {
@@ -293,24 +299,26 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
       }
     }
   }
-
-  p.SendMsg(fmt.Sprintf("%s has %d/%d health left.", opp.GetName(), opp.GetDet(), opp.GetMaxDet()))
 }
 
 func (p *Player) ReportDef(opp interfaces.Combatant, rep structs.CmbRep) {
+  if rep.SkName != "" {
+    p.SendMsg(fmt.Sprintf("%s used %s!", opp.GetName(), rep.SkName))
+  }
+
   if rep.Heal > 0 {
     p.SendMsg(fmt.Sprintf("%s healed %d damage!", opp.GetName(), rep.Heal))
   }
 
   if rep.Dmg > 0 {
-    p.SendMsg(fmt.Sprintf("You took %d damage!", rep.Dmg))
+    p.SendMsg(fmt.Sprintf("You took %d damage! You have %d/%d health left!", rep.Dmg, p.GetDet(), p.GetMaxDet()))
   }
 
   if len(rep.SFx) > 0 {
     for _, e := range rep.SFx {
       switch e {
       case statfx.Stun:
-        p.SendMsg("You were stunned!")
+        p.SendMsg("You were stunned into inaction!")
       }
     }
   }

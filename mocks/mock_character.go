@@ -71,7 +71,7 @@ func (m *MockCharacter) GetSpawn() interfaces.RoomI { return m.Spawn }
 func (m *MockCharacter) SetSpawn(spawn interfaces.RoomI) {}
 
 func (m *MockCharacter) IsInCombat() bool { return false }
-func (m *MockCharacter) AtkFx() structs.CmbFx {
+func (m *MockCharacter) AtkFx(_ *structs.CmbRep) structs.CmbFx {
   return structs.CmbFx{}
 }
 func (m *MockCharacter) ResistAtk(fx structs.CmbFx) structs.CmbFx {

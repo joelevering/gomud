@@ -95,7 +95,13 @@ func (ch *Character) GetDet() int {
 }
 
 func (ch *Character) SetDet(det int) {
-  ch.Det = det
+  if det > ch.MaxDet {
+    ch.Det = ch.MaxDet
+  } else if det < 0 {
+    ch.Det = 0
+  } else {
+    ch.Det = det
+  }
 }
 
 func (ch *Character) GetMaxStm() int {
