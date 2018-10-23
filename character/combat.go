@@ -79,7 +79,7 @@ func (ch *Character) calcCmbFx(sk *skills.Skill) structs.CmbFx {
   res := structs.CmbFx{}
   if ch.Stunned {
     ch.Stunned = false
-    // Figure out a way to report the influence of a SE on an attack so we can report "you were stunned!"
+    // TODO pass CmbRep so we can log SE impact on attack (e.g. "enemy was stunned!")
     return res
   }
 
