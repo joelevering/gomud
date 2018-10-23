@@ -3,6 +3,7 @@ package mocks
 import (
   "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/skills"
+  "github.com/joelevering/gomud/structs"
 )
 
 type MockCharacter struct {
@@ -61,11 +62,7 @@ func (m *MockCharacter) GetSag() int { return 50 }
 func (m *MockCharacter) SetSag(sag int) {}
 func (m *MockCharacter) GetAtk() int { return m.Atk }
 func (m *MockCharacter) GetDef() int { return m.Def }
-func (m *MockCharacter) GetCmbSkill() *skills.Skill { return m.CmbSkill }
 func (m *MockCharacter) SetCmbSkill(*skills.Skill) {}
-func (m *MockCharacter) ClearCmbSkill() { m.ClearedCmbSkill = true }
-func (m *MockCharacter) LockCmbSkill() { m.LockedCmbSkill = true }
-func (m *MockCharacter) UnlockCmbSkill() { m.UnlockedCmbSkill = true }
 func (m *MockCharacter) GetLevel() int { return 2 }
 func (m *MockCharacter) GetExp() int { return 0 }
 func (m *MockCharacter) GetExpGiven() int { return 2 }
@@ -73,9 +70,16 @@ func (m *MockCharacter) GetNextLvlExp() int { return 1000 }
 func (m *MockCharacter) GetSpawn() interfaces.RoomI { return m.Spawn }
 func (m *MockCharacter) SetSpawn(spawn interfaces.RoomI) {}
 
-func (m *MockCharacter) EnterCombat() { m.EnteredCombat = true }
-func (m *MockCharacter) LeaveCombat() { m.LeftCombat = true }
 func (m *MockCharacter) IsInCombat() bool { return false }
+func (m *MockCharacter) AtkFx() structs.CmbFx {
+  return structs.CmbFx{}
+}
+func (m *MockCharacter) ResistAtk(fx structs.CmbFx) structs.CmbFx {
+  return fx
+}
+func (m *MockCharacter) ApplyAtk(_ structs.CmbFx, _ *structs.CmbRep) {}
+func (m *MockCharacter) ApplyDef(_ structs.CmbFx, _ *structs.CmbRep) {}
+func (m *MockCharacter) IsDefeated() bool { return false }
 func (m *MockCharacter) ExpToLvl() int { return 100 }
 
 func (m *MockCharacter) Heal() {

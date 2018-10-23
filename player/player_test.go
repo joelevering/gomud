@@ -33,7 +33,8 @@ func NewTestPlayer() (*Player, chan string, *mocks.MockQueue) {
 func Test_CmdSetsCombatEffectWithSkillName(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   defer close(ch)
-  p.EnterCombat()
+  go p.EnterCombat(&mocks.MockNP{})
+  <-ch // "You attack %s!"
 
   go p.Cmd("bash")
   res := <-ch
@@ -42,7 +43,7 @@ func Test_CmdSetsCombatEffectWithSkillName(t *testing.T) {
     t.Errorf("Expected player to receive 'Preparing bash', but got %s", res)
   }
 
-  sk := p.GetCmbSkill()
+  sk := p.CmbSkill
 
   if sk == nil || sk.Name != "bash" {
     t.Errorf("Expected to get combat skill 'bash' after commanding 'bash', but got %v", sk)
@@ -205,11 +206,11 @@ func Test_LookNPWithNPName(t *testing.T) {
 
   res := <-ch
   if !strings.Contains(res, "You look at mock np name and see:") {
-		t.Errorf("Expected 'You look at mock np name and see:' but got unexpected LookNPC result '%s'", res)
+    t.Errorf("Expected 'You look at mock np name and see:' but got unexpected LookNPC result '%s'", res)
   }
   res = <-ch
   if !strings.Contains(res, "mock np desc") {
-		t.Errorf("Expected 'mock np desc' but got unexpected LookNPC result '%s'", res)
+    t.Errorf("Expected 'mock np desc' but got unexpected LookNPC result '%s'", res)
   }
 }
 
@@ -222,8 +223,8 @@ func Test_LookNPWithNoNP(t *testing.T) {
   go p.LookNP("missingno")
 
   res := <-ch
-  if !strings.Contains(res, "Who are you looking at??") {
-		t.Errorf("Expected 'Who are you looking at??' with unknown NPC, but got '%s'", res)
+  if !strings.Contains(res, "Are you sure they're here??") {
+    t.Errorf("Expected 'Are you sure they're here??' with unknown NPC, but got '%s'", res)
   }
 }
 
@@ -245,18 +246,18 @@ func Test_Yell(t *testing.T) {
   defer close(ch)
   adjacentRoom := &mocks.MockRoom{}
   room := &mocks.MockRoom{
-		Exits: []interfaces.ExitI{
-			&room.Exit{
-				Room: adjacentRoom,
-			},
-		},
+    Exits: []interfaces.ExitI{
+      &room.Exit{
+        Room: adjacentRoom,
+      },
+    },
   }
   p.Room = room
 
   p.Yell("TESTING YELL")
 
   if !strings.Contains(adjacentRoom.Messages[0], "TESTING YELL") {
-		t.Error("Expected Yell to send 'TESTING YELL' to adjacent rooms, but it didn't")
+    t.Error("Expected Yell to send 'TESTING YELL' to adjacent rooms, but it didn't")
   }
 }
 
@@ -264,15 +265,15 @@ func Test_MoveWithAccurateExitKey(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   defer close(ch)
   adjacentRoom := &mocks.MockRoom{
-		Name: "Adjacent Room",
+    Name: "Adjacent Room",
   }
   room := &mocks.MockRoom{
-		Exits: []interfaces.ExitI{
-			&room.Exit{
-				Room: adjacentRoom,
-				Key:  "o",
-			},
-		},
+    Exits: []interfaces.ExitI{
+      &room.Exit{
+        Room: adjacentRoom,
+        Key:  "o",
+      },
+    },
   }
   p.Room = room
 
@@ -281,20 +282,20 @@ func Test_MoveWithAccurateExitKey(t *testing.T) {
   res := <-ch
 
   if room.RemovedPlayer != p {
-		t.Error("Expected player to be removed from initial room, but it was not")
+    t.Error("Expected player to be removed from initial room, but it was not")
   }
 
   if adjacentRoom.AddedPlayer != p {
-		t.Error("Expected player to be added to adjacent room, but it was not")
+    t.Error("Expected player to be added to adjacent room, but it was not")
   }
 
   if !strings.Contains(res, "~~Adjacent Room~~") {
-		t.Errorf("Expected room name 'Name' but got %s", res)
+    t.Errorf("Expected room name 'Name' but got %s", res)
   }
 
   // If the above test passes, assume it's 'Look'-ing and clear the channel before closing
   for i := 0; i < 5; i++ {
-		res = <-ch
+    res = <-ch
   }
 }
 
@@ -309,7 +310,7 @@ func Test_MoveWithInaccurateExitKey(t *testing.T) {
   res := <-ch
 
   if !strings.Contains(res, "Where are you trying to go??") {
-		t.Errorf("Expected 'Where are you trying to go??' with unknown move key, but got '%s'", res)
+    t.Errorf("Expected 'Where are you trying to go??' with unknown move key, but got '%s'", res)
   }
 }
 
@@ -362,7 +363,11 @@ func Test_WinCombatEndsCombatAndGivesExp(t *testing.T) {
   }(ch)
 
   res := <-ch
+  if !strings.Contains(res, "mock np name is defeated!") {
+    t.Errorf("Expected first post combat win message to be 'mock np name is defeated!' but it was '%s'", res)
+  }
 
+  res = <-ch
   if !strings.Contains(res, "You gained 2 experience!") { // hardcoded mock char exp
     t.Errorf("Expected 'You gained 2 experience' on defeating, but got '%s'", res)
   }
@@ -383,12 +388,12 @@ func Test_WinCombatLevelsUpPC(t *testing.T) {
   p.Room = rm
   p.GainExp(p.NextLvlExp - 1)
 
-
   go func (ch chan string) {
     defer close(ch)
     p.WinCombat(p.Room.GetNPs()[0])
   }(ch)
 
+  <-ch // Enemy defeated
   res := <-ch // Exp gain
   if !strings.Contains(res, "leveled up!") {
     t.Errorf("Expected 'leveled up!'' on defeating, but got '%s'", res)

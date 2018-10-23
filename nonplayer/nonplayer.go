@@ -8,6 +8,7 @@ import (
   "github.com/joelevering/gomud/classes"
   "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/stats"
+  "github.com/joelevering/gomud/structs"
   "github.com/joelevering/gomud/util"
 )
 
@@ -76,7 +77,15 @@ func (n *NonPlayer) Emote(emote string) {
   n.Room.Message(fmt.Sprintf("%s %s", n.GetName(), emote))
 }
 
-func (n *NonPlayer) LoseCombat(winner interfaces.CharI) {
+func (n *NonPlayer) EnterCombat(opp interfaces.Combatant) {}
+
+func (n *NonPlayer) ReportAtk(_ interfaces.Combatant, _ structs.CmbRep) {}
+
+func (n *NonPlayer) ReportDef(_ interfaces.Combatant, _ structs.CmbRep) {}
+
+func (n *NonPlayer) WinCombat(_ interfaces.Combatant) {}
+
+func (n *NonPlayer) LoseCombat(_ interfaces.Combatant) {
   n.Alive = false
 
   go func() {

@@ -32,6 +32,7 @@ type Character struct {
   CmbSkill   *skills.Skill
   CmbSkillMu sync.Mutex
   Spawn      interfaces.RoomI
+  Stunned    bool
 }
 
 func NewCharacter() *Character {
@@ -213,26 +214,19 @@ func (ch *Character) GetDef() int {
   return def
 }
 
-func (ch *Character) GetCmbSkill() *skills.Skill {
-  return ch.CmbSkill
-}
-
-func (ch *Character) LockCmbSkill() {
-  ch.CmbSkillMu.Lock()
-}
-
-func (ch *Character) UnlockCmbSkill() {
-  ch.CmbSkillMu.Unlock()
-}
-
 func (ch *Character) SetCmbSkill(sk *skills.Skill) {
   ch.CmbSkillMu.Lock()
   ch.CmbSkill = sk
   ch.CmbSkillMu.Unlock()
 }
 
-func (ch *Character) ClearCmbSkill() {
-  ch.SetCmbSkill(nil)
+func (ch *Character) getAndClearCmbSkill() *skills.Skill {
+  ch.CmbSkillMu.Lock()
+  defer ch.CmbSkillMu.Unlock()
+  sk := ch.CmbSkill
+  ch.CmbSkill = nil
+
+  return sk
 }
 
 func (ch *Character) GetSpawn() interfaces.RoomI {
@@ -247,16 +241,12 @@ func (ch *Character) Heal() {
   ch.Det = ch.MaxDet
 }
 
-func (ch *Character) EnterCombat() {
-  ch.InCombat = true
-}
+func (ch *Character) IsDefeated() bool {
+  if ch.GetDet() <= 0 {
+    return true
+  }
 
-func (ch *Character) LeaveCombat() {
-  ch.InCombat = false
-}
-
-func (ch *Character) IsInCombat() bool {
-  return ch.InCombat
+  return false
 }
 
 func (ch *Character) GainExp(exp int) (leveledUp bool) {
@@ -293,4 +283,8 @@ func (ch *Character) LevelUp() {
 
 func (ch *Character) ExpToLvl() int {
   return ch.NextLvlExp - ch.Exp
+}
+
+func (ch *Character) Stun() {
+  ch.Stunned = true
 }

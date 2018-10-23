@@ -4,13 +4,14 @@ import (
   "net"
 
  "github.com/joelevering/gomud/interfaces"
+ "github.com/joelevering/gomud/structs"
 )
 
 type MockPlayer struct {
   *MockCharacter
 
-  Defeated  interfaces.CharI
-  DefeatedBy  interfaces.CharI
+  Defeated  interfaces.Combatant
+  DefeatedBy  interfaces.Combatant
 }
 
 func NewMockPlayer() *MockPlayer {
@@ -38,10 +39,23 @@ func (m *MockPlayer) SetName(name string) {}
 func (m *MockPlayer) GetID() string { return "mock ID" }
 func (m *MockPlayer) GetRoom() interfaces.RoomI { return nil }
 
-func (m *MockPlayer) LoseCombat(npc interfaces.CharI) {
-  m.DefeatedBy = npc
+func (m *MockPlayer) EnterCombat(opp interfaces.Combatant) {}
+func (m *MockPlayer) IsDefeated() bool { return false }
+func (m *MockPlayer) LoseCombat(winner interfaces.Combatant) {
+  m.DefeatedBy = winner
 }
 
-func (m *MockPlayer) WinCombat(npc interfaces.CharI) {
-  m.Defeated = npc
+func (m *MockPlayer) WinCombat(loser interfaces.Combatant) {
+  m.Defeated = loser
 }
+
+func (m *MockPlayer) AtkFx() structs.CmbFx {
+  return structs.CmbFx{}
+}
+
+func (m *MockPlayer) ResistAtk(fx structs.CmbFx) structs.CmbFx {
+  return fx
+}
+
+func (m *MockPlayer) ReportAtk(_ interfaces.Combatant, _ structs.CmbRep) {}
+func (m *MockPlayer) ReportDef(_ interfaces.Combatant, _ structs.CmbRep) {}

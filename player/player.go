@@ -9,8 +9,11 @@ import (
 
   "github.com/joelevering/gomud/character"
   "github.com/joelevering/gomud/classes"
+  "github.com/joelevering/gomud/combat"
   "github.com/joelevering/gomud/interfaces"
+  "github.com/joelevering/gomud/statfx"
   "github.com/joelevering/gomud/storage"
+  "github.com/joelevering/gomud/structs"
 )
 
 const helpMsg = `
@@ -148,13 +151,18 @@ func (p Player) Look() {
 }
 
 func (p Player) LookNP(npName string) {
-  look := func(p *Player, np interfaces.NPI) {
-    p.SendMsg(
-			fmt.Sprintf("You look at %s and see:", np.GetName()),
-			np.GetDesc(),
-    )
+  for _, np := range p.Room.GetNPs() {
+    if np.IsAlive() && strings.Contains(strings.ToUpper(np.GetName()), strings.ToUpper(npName)) {
+      p.SendMsg(
+        fmt.Sprintf("You look at %s and see:", np.GetName()),
+        np.GetDesc(),
+      )
+
+      return
+    }
   }
-  p.findNPAndExecute(npName, "Who are you looking at??", look)
+
+  p.SendMsg("Are you sure they're here??")
 }
 
 func (p *Player) Status() {
@@ -177,28 +185,19 @@ func (p *Player) Status() {
 }
 
 func (p *Player) AttackNP(npName string) {
-  attack := func(p *Player, np interfaces.NPI) {
-    p.SendMsg(fmt.Sprintf("You attack %s!", np.GetName()))
-    ci := &CombatInstance{
-      pc: p,
-      npc: np,
-    }
-
-    go ci.Start()
-  }
-
-  p.findNPAndExecute(npName, "Who are you attacking??", attack)
-}
-
-func (p *Player) findNPAndExecute(npName, notFound string, function func(*Player, interfaces.NPI)) {
   for _, np := range p.Room.GetNPs() {
     if np.IsAlive() && strings.Contains(strings.ToUpper(np.GetName()), strings.ToUpper(npName)) {
-      function(p, np)
+      go combat.Start(p, np)
       return
     }
   }
 
-  p.SendMsg(notFound)
+  p.SendMsg("Are you sure they're here?")
+}
+
+func (p *Player) EnterCombat(opp interfaces.Combatant) {
+  p.InCombat = true
+  p.SendMsg(fmt.Sprintf("You attack %s!", opp.GetName()))
 }
 
 func (p *Player) Move(exitKey string) {
@@ -253,9 +252,14 @@ func (p *Player) ChangeClass(class string) {
 
 
 func (p *Player) SendMsg(msgs ...string) {
+  stamp := time.Now().Format(time.Kitchen)
+
   for _, msg := range msgs {
-    stamp := time.Now().Format(time.Kitchen)
-    p.Channel <- fmt.Sprintf("%s %s", stamp, msg)
+    if p.InCombat {
+      p.Channel <- fmt.Sprintf("%s (D %d/%d S %d/%d F %d/%d) %s", stamp, p.GetDet(), p.GetMaxDet(), p.GetStm(), p.GetMaxStm(), p.GetFoc(), p.GetMaxFoc(), msg)
+    } else {
+      p.Channel <- fmt.Sprintf("%s %s", stamp, msg)
+    }
   }
 }
 
@@ -274,13 +278,53 @@ func (p *Player) EnterRoom(room interfaces.RoomI) {
   p.Queue.Pub(fmt.Sprintf("pc-enters-%d", room.GetID()))
 }
 
-func (p *Player) LoseCombat(npc interfaces.CharI) {
+func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
+  if rep.Heal > 0 {
+    p.SendMsg(fmt.Sprintf("You healed %d damage!", rep.Heal))
+  }
+  if rep.Dmg > 0 {
+    p.SendMsg(fmt.Sprintf("%s took %d damage!", opp.GetName(), rep.Dmg))
+  }
+  if len(rep.SFx) > 0 {
+    for _, e := range rep.SFx {
+      switch e {
+      case statfx.Stun:
+        p.SendMsg(fmt.Sprintf("%s was stunned!", opp.GetName()))
+      }
+    }
+  }
+
+  p.SendMsg(fmt.Sprintf("%s has %d/%d health left.", opp.GetName(), opp.GetDet(), opp.GetMaxDet()))
+}
+
+func (p *Player) ReportDef(opp interfaces.Combatant, rep structs.CmbRep) {
+  if rep.Heal > 0 {
+    p.SendMsg(fmt.Sprintf("%s healed %d damage!", opp.GetName(), rep.Heal))
+  }
+
+  if rep.Dmg > 0 {
+    p.SendMsg(fmt.Sprintf("You took %d damage!", rep.Dmg))
+  }
+
+  if len(rep.SFx) > 0 {
+    for _, e := range rep.SFx {
+      switch e {
+      case statfx.Stun:
+        p.SendMsg("You were stunned!")
+      }
+    }
+  }
+}
+
+func (p *Player) LoseCombat(winner interfaces.Combatant) {
+  p.LeaveCombat()
+
   spawn := p.GetSpawn()
 
-  deathNotice := fmt.Sprintf("%s was defeated by %s. Their body dissipates.", p.GetName(), npc.GetName())
+  deathNotice := fmt.Sprintf("%s was defeated by %s. Their body dissipates.", p.GetName(), winner.GetName())
   p.LeaveRoom(deathNotice)
 
-  p.SendMsg(fmt.Sprintf("You were defeated by %s.", npc.GetName()))
+  p.SendMsg(fmt.Sprintf("You were defeated by %s.", winner.GetName()))
   time.Sleep(1500 * time.Millisecond)
   p.EnterRoom(spawn)
   p.Heal()
@@ -290,7 +334,11 @@ func (p *Player) LoseCombat(npc interfaces.CharI) {
   p.Look()
 }
 
-func (p *Player) WinCombat(loser interfaces.CharI) {
+func (p *Player) WinCombat(loser interfaces.Combatant) {
+  p.LeaveCombat()
+
+  p.SendMsg(fmt.Sprintf("%s is defeated!", loser.GetName()))
+
   expGained := loser.GetExpGiven()
   leveledUp := p.GainExp(expGained)
 
