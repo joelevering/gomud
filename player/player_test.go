@@ -36,17 +36,17 @@ func Test_CmdSetsCombatSkillWithSkillName(t *testing.T) {
   go p.EnterCombat(&mocks.MockNP{})
   <-ch // "You attack %s!"
 
-  go p.Cmd("bash")
+  go p.Cmd("shove")
   res := <-ch
 
-  if !strings.Contains(res, "Preparing bash") {
-    t.Errorf("Expected player to receive 'Preparing bash', but got %s", res)
+  if !strings.Contains(res, "Preparing shove") {
+    t.Errorf("Expected player to receive 'Preparing shove', but got %s", res)
   }
 
   sk := p.CmbSkill
 
-  if sk == nil || sk.Name != "bash" {
-    t.Errorf("Expected to get combat skill 'bash' after commanding 'bash', but got %v", sk)
+  if sk == nil || sk.Name != "shove" {
+    t.Errorf("Expected to get combat skill 'shove' after commanding 'shove', but got %v", sk)
   }
 }
 

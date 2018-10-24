@@ -78,6 +78,21 @@ func Test_AtkFxReducesResourcesWhenUsingSkill(t *testing.T) {
   }
 }
 
+func Test_AtkFxIsImpactedByLowerStmUse(t *testing.T) {
+  ch := NewCharacter()
+  ch.LowerStmUse = true
+  ch.CmbSkill = skills.Stun
+  rep := &structs.CmbRep{}
+
+  ch.AtkFx(rep)
+  stmUsed := ch.GetMaxStm() - ch.GetStm()
+
+  t.Errorf("Stamina used: %d", stmUsed)
+  // if stmUsed == skills.Stun.CostAmt {
+  //   t.Error("Expected LowerStmUse to reduce stamina cost of skill, but it didn't")
+  // }
+}
+
 func Test_AtkFxDoesNotUseSkillWhenLackingResources(t *testing.T) {
   ch := NewCharacter()
   ch.SetStm(0)
@@ -138,6 +153,22 @@ func Test_ResistAtkKeepsStatusEffects(t *testing.T) {
   }
 }
 
+func Test_ResistAtkKeepsSelfStatusEffects(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+  fx := structs.CmbFx{
+    SelfSFx: []statfx.StatusEffect{
+      statfx.Conserve,
+    },
+  }
+
+  res := ch.ResistAtk(fx, rep)
+
+  if len(res.SelfSFx) != 1 || res.SelfSFx[0] != statfx.Conserve {
+    t.Errorf("Expected self status effects to remain the same on resist, but got %v", res.SelfSFx)
+  }
+}
+
 func Test_ApplyDefDealsDamage(t *testing.T) {
   ch := NewCharacter()
   rep := &structs.CmbRep{}
@@ -171,6 +202,14 @@ func Test_ApplyDefAppliesStatfx(t *testing.T) {
   }
 }
 
+func Test_AtkFxAndApplyDefUsePercentDmgSkills(t *testing.T){
+  // TODO
+}
+
+func Test_AtkFxAndApplyDefUseFlatDmgSkills(t *testing.T){
+  // TODO
+}
+
 func Test_ApplyDefDoesNotHeal(t *testing.T) {
   ch := NewCharacter()
   rep := &structs.CmbRep{}
@@ -187,16 +226,17 @@ func Test_ApplyDefDoesNotHeal(t *testing.T) {
 func Test_ApplyAtkHeals(t *testing.T) {
   ch := NewCharacter()
   rep := &structs.CmbRep{}
+  ch.CmbSkill = skills.PowerNap
   ch.SetDet(1)
-  cFx := structs.CmbFx{Heal: 10}
 
+  cFx := ch.AtkFx(rep)
   ch.ApplyAtk(cFx, rep)
 
-  if ch.GetDet() != 11 {
-    t.Errorf("Expected ApplyAtk with 10 healing to increase health from 1 to 11, but it's %d", ch.GetDet())
+  if ch.GetDet() != 21 {
+    t.Errorf("Expected ApplyAtk with healing to increase health from 1 to 21, but it's %d", ch.GetDet())
   }
 
-  if rep.Heal != 10 {
+  if rep.Heal != 20 {
     t.Errorf("Expected ApplyAtk to apply healing to report, but rep healing is %d", rep.Heal)
   }
 }
@@ -215,6 +255,19 @@ func Test_ApplyAtkHealingReportsAccurately(t *testing.T) {
 
   if rep.Heal != 1 {
     t.Errorf("Expected ApplyAtk to apply accurate healing when maxing health, but rep healing is %d", rep.Heal)
+  }
+}
+
+func Test_ApplyAtkAppliesSelfFx(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+  ch.SetCmbSkill(skills.Conserve)
+
+  cFx := ch.AtkFx(rep)
+  ch.ApplyAtk(cFx, rep)
+
+  if !ch.LowerStmUse {
+    t.Error("Expected atkfx + applyAtk with Conserve skill to apply LowerStmUse to attacker, but it didn't")
   }
 }
 

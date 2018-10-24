@@ -25,6 +25,7 @@ const(
   FlatDmg = EffectType("flatDmg") // Flat Damage
   PctHeal = EffectType("pctHeal") // % Healing
   OppFx = EffectType("oppFx") // Status Effect on Opponent
+  SelfFx = EffectType("selfFx") // Status Effect on Self
 )
 
 type Rstcn string // Restriction
@@ -120,5 +121,19 @@ var(
       },
     },
     Rstcn: OOCOnly,
+  }
+  Conserve = &Skill{
+    Name: "conserve",
+    CostType: stats.Stm,
+    CostAmt: 0,
+    Effects: []Effect{
+      Effect{
+        Type: SelfFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Conserve,
+          Chance: 1,
+        },
+      },
+    },
   }
 )

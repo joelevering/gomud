@@ -32,9 +32,11 @@ type Character struct {
   CmbSkill   *skills.Skill
   CmbSkillMu sync.Mutex
   Spawn      interfaces.RoomI
-  Stunned    bool
-  LowerAtk bool
-  LowerDef bool
+
+  Stunned     bool
+  LowerAtk    bool
+  LowerDef    bool
+  LowerStmUse bool
 }
 
 func NewCharacter() *Character {
@@ -297,7 +299,13 @@ func (ch *Character) getAndClearCmbSkill() *skills.Skill {
 
 func (ch *Character) payForSkill(sk skills.Skill) bool {
   if sk.CostType == stats.Stm {
-    newStm := ch.GetStm() - sk.CostAmt
+    cost := sk.CostAmt
+    if ch.LowerStmUse {
+      cost = int(float64(cost) * 0.5)
+      ch.LowerStmUse = false
+    }
+
+    newStm := ch.GetStm() - cost
     if newStm < 0 {
       return false
     }

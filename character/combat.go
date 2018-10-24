@@ -59,11 +59,13 @@ func (ch *Character) ResistAtk(fx structs.CmbFx, rep *structs.CmbRep) structs.Cm
   return structs.CmbFx{
     Dmg: dmg,
     SFx: sfx,
+    SelfSFx: fx.SelfSFx,
   }
 }
 
 // Apply CmbFx for which you are the attacker
 func (ch *Character) ApplyAtk(fx structs.CmbFx, rep *structs.CmbRep) {
+  // Heal
   if fx.Heal > 0 {
     det := ch.GetDet()
     // TODO turn this into a separate character method
@@ -75,6 +77,9 @@ func (ch *Character) ApplyAtk(fx structs.CmbFx, rep *structs.CmbRep) {
     ch.SetDet(newDet)
     rep.Heal = newDet - det
   }
+
+  ch.applySFx(fx.SelfSFx, rep)
+  rep.SelfSFx = fx.SelfSFx
 }
 
 // Apply CmbFx for which you are the defender
@@ -84,8 +89,13 @@ func (ch *Character) ApplyDef(fx structs.CmbFx, rep *structs.CmbRep) {
     rep.Dmg = fx.Dmg
   }
 
-  if len(fx.SFx) > 0 {
-    for _, e := range fx.SFx {
+  ch.applySFx(fx.SFx, rep)
+  rep.SFx = fx.SFx
+}
+
+func (ch *Character) applySFx(sFx []statfx.StatusEffect, rep *structs.CmbRep) {
+  if len(sFx) > 0 {
+    for _, e := range sFx {
       switch e {
       case statfx.Stun:
         ch.Stunned = true
@@ -101,10 +111,10 @@ func (ch *Character) ApplyDef(fx structs.CmbFx, rep *structs.CmbRep) {
           ch.LowerDef = true
           rep.Surprised = structs.SurpriseRep{LowerDef: true}
         }
+      case statfx.Conserve:
+        ch.LowerStmUse = true
       }
     }
-
-    rep.SFx = fx.SFx
   }
 }
 
@@ -137,6 +147,11 @@ func (ch *Character) calcCmbFx(sk *skills.Skill, rep *structs.CmbRep) structs.Cm
       v := e.Value.(statfx.SEInst)
       if (util.RandF() <= v.Chance) {
         res.SFx = append(res.SFx, v.Effect)
+      }
+    case skills.SelfFx:
+      v := e.Value.(statfx.SEInst)
+      if (util.RandF() <= v.Chance) {
+        res.SelfSFx = append(res.SelfSFx, v.Effect)
       }
     }
   }
