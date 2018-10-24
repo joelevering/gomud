@@ -323,7 +323,7 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
 
   if len(rep.SFx) > 0 {
     for _, e := range rep.SFx {
-      switch e {
+      switch e.Effect {
       case statfx.Stun:
         p.SendMsg(fmt.Sprintf("%s was stunned!", opp.GetName()))
       }
@@ -354,7 +354,7 @@ func (p *Player) ReportDef(opp interfaces.Combatant, rep structs.CmbRep) {
 
   if len(rep.SFx) > 0 {
     for _, e := range rep.SFx {
-      switch e {
+      switch e.Effect {
       case statfx.Stun:
         p.SendMsg("You were stunned into inaction!")
       case statfx.Surprise:

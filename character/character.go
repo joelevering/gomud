@@ -7,6 +7,7 @@ import (
   "github.com/joelevering/gomud/classes"
   "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/skills"
+  "github.com/joelevering/gomud/statfx"
   "github.com/joelevering/gomud/stats"
 )
 
@@ -28,15 +29,12 @@ type Character struct {
   Ing        int               `json:"ingenuity"`
   Kno        int               `json:"knowledge"`
   Sag        int               `json:"sagacity"`
+
+  Spawn      interfaces.RoomI
   InCombat   bool
   CmbSkill   *skills.Skill
   CmbSkillMu sync.Mutex
-  Spawn      interfaces.RoomI
-
-  Stunned     bool
-  LowerAtk    bool
-  LowerDef    bool
-  LowerStmUse bool
+  Fx         map[statfx.StatusEffect]*statfx.SEInst
 }
 
 func NewCharacter() *Character {
@@ -55,6 +53,7 @@ func NewCharacter() *Character {
     Ing:        10,
     Kno:        10,
     Sag:        10,
+    Fx:         make(map[statfx.StatusEffect]*statfx.SEInst),
   }
 }
 
@@ -300,9 +299,8 @@ func (ch *Character) getAndClearCmbSkill() *skills.Skill {
 func (ch *Character) payForSkill(sk skills.Skill) bool {
   if sk.CostType == stats.Stm {
     cost := sk.CostAmt
-    if ch.LowerStmUse {
+    if ch.isConserving() {
       cost = int(float64(cost) * 0.5)
-      ch.LowerStmUse = false
     }
 
     newStm := ch.GetStm() - cost
@@ -325,4 +323,29 @@ func (ch *Character) payForSkill(sk skills.Skill) bool {
   }
 
   return false
+}
+
+func (ch *Character) addFx(i statfx.SEInst) {
+  existing := ch.Fx[i.Effect]
+  if existing != nil && existing.Duration > i.Duration {
+    return
+  }
+
+  ch.Fx[i.Effect] = &i
+}
+
+func (ch *Character) isStunned() bool {
+  return ch.Fx[statfx.Stun] != nil
+}
+
+func (ch *Character) isWeak() bool {
+  return ch.Fx[statfx.Weak] != nil
+}
+
+func (ch *Character) isVulnerable() bool {
+  return ch.Fx[statfx.Vulnerable] != nil
+}
+
+func (ch *Character) isConserving() bool {
+  return ch.Fx[statfx.Conserve] != nil
 }

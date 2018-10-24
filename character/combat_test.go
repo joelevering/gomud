@@ -19,24 +19,24 @@ func Test_CharAttacksByDefault(t *testing.T) {
   }
 }
 
-func Test_AtkFxIsImpactedByLowerAtk(t *testing.T) {
-  ch := NewCharacter()
-  chLowAtk := NewCharacter()
-  chLowAtk.LowerAtk = true
-  rep := &structs.CmbRep{}
-
-  fx := ch.AtkFx(rep)
-  lowAtkFx := chLowAtk.AtkFx(rep)
-
-  if lowAtkFx.Dmg >= fx.Dmg {
-    t.Errorf("Expected LowerAtk to result in a less damaging atk than usual, but was %d compared to %d", lowAtkFx.Dmg, fx.Dmg)
-  }
-}
+// func Test_AtkFxIsImpactedByLowerAtk(t *testing.T) {
+//   ch := NewCharacter()
+//   chLowAtk := NewCharacter()
+//   chLowAtk.LowerAtk = true
+//   rep := &structs.CmbRep{}
+//
+//   fx := ch.AtkFx(rep)
+//   lowAtkFx := chLowAtk.AtkFx(rep)
+//
+//   if lowAtkFx.Dmg >= fx.Dmg {
+//     t.Errorf("Expected LowerAtk to result in a less damaging atk than usual, but was %d compared to %d", lowAtkFx.Dmg, fx.Dmg)
+//   }
+// }
 
 func Test_StunnedCharsDoNotAttack(t *testing.T) {
   ch := NewCharacter()
   rep := &structs.CmbRep{}
-  ch.Stunned = true
+  ch.addFx(skills.Stun.Effects[0].Value.(statfx.SEInst))
 
   cFx := ch.AtkFx(rep)
 
@@ -53,7 +53,7 @@ func Test_StunnedCharsDoNotUseSkills(t *testing.T) {
   ch := NewCharacter()
   rep := &structs.CmbRep{}
   ch.CmbSkill = skills.Stun
-  ch.Stunned = true
+  ch.addFx(skills.Stun.Effects[0].Value.(statfx.SEInst))
 
   cFx := ch.AtkFx(rep)
 
@@ -78,19 +78,18 @@ func Test_AtkFxReducesResourcesWhenUsingSkill(t *testing.T) {
   }
 }
 
-func Test_AtkFxIsImpactedByLowerStmUse(t *testing.T) {
+func Test_AtkFxIsImpactedByConserveUse(t *testing.T) {
   ch := NewCharacter()
-  ch.LowerStmUse = true
+  ch.addFx(skills.Conserve.Effects[0].Value.(statfx.SEInst))
   ch.CmbSkill = skills.Stun
   rep := &structs.CmbRep{}
 
   ch.AtkFx(rep)
   stmUsed := ch.GetMaxStm() - ch.GetStm()
 
-  t.Errorf("Stamina used: %d", stmUsed)
-  // if stmUsed == skills.Stun.CostAmt {
-  //   t.Error("Expected LowerStmUse to reduce stamina cost of skill, but it didn't")
-  // }
+  if stmUsed == skills.Stun.CostAmt {
+    t.Error("Expected Conserve to reduce stamina cost of skill, but it didn't")
+  }
 }
 
 func Test_AtkFxDoesNotUseSkillWhenLackingResources(t *testing.T) {
@@ -122,33 +121,35 @@ func Test_ResistAtkLowersDmg(t *testing.T) {
   }
 }
 
-func Test_ResistAtkIsImpactedByLowerDef(t *testing.T) {
-  ch := NewCharacter()
-  chLowDef := NewCharacter()
-  chLowDef.LowerDef = true
-  rep := &structs.CmbRep{}
-  fx := structs.CmbFx{Dmg: 100}
-
-  regRes := ch.ResistAtk(fx, rep)
-  lowDefRes := chLowDef.ResistAtk(fx, rep)
-
-  if lowDefRes.Dmg <= regRes.Dmg {
-    t.Errorf("Expected LowerDef to result in a more damaging atk than usual, but was %d compared to %d", lowDefRes.Dmg, regRes.Dmg)
-  }
-}
+// func Test_ResistAtkIsImpactedByLowerDef(t *testing.T) {
+//   ch := NewCharacter()
+//   chLowDef := NewCharacter()
+//   chLowDef.LowerDef = true
+//   rep := &structs.CmbRep{}
+//   fx := structs.CmbFx{Dmg: 100}
+//
+//   regRes := ch.ResistAtk(fx, rep)
+//   lowDefRes := chLowDef.ResistAtk(fx, rep)
+//
+//   if lowDefRes.Dmg <= regRes.Dmg {
+//     t.Errorf("Expected LowerDef to result in a more damaging atk than usual, but was %d compared to %d", lowDefRes.Dmg, regRes.Dmg)
+//   }
+// }
 
 func Test_ResistAtkKeepsStatusEffects(t *testing.T) {
   ch := NewCharacter()
   rep := &structs.CmbRep{}
   fx := structs.CmbFx{
-    SFx: []statfx.StatusEffect{
-      statfx.Stun,
+    SFx: []statfx.SEInst{
+      statfx.SEInst{
+        Effect: statfx.Stun,
+      },
     },
   }
 
   res := ch.ResistAtk(fx, rep)
 
-  if len(res.SFx) != 1 || res.SFx[0] != statfx.Stun {
+  if len(res.SFx) != 1 || res.SFx[0].Effect != statfx.Stun {
     t.Errorf("Expected status effects to remain the same on resist, but got %v", res.SFx)
   }
 }
@@ -157,14 +158,16 @@ func Test_ResistAtkKeepsSelfStatusEffects(t *testing.T) {
   ch := NewCharacter()
   rep := &structs.CmbRep{}
   fx := structs.CmbFx{
-    SelfSFx: []statfx.StatusEffect{
-      statfx.Conserve,
+    SelfSFx: []statfx.SEInst{
+      statfx.SEInst{
+        Effect: statfx.Conserve,
+      },
     },
   }
 
   res := ch.ResistAtk(fx, rep)
 
-  if len(res.SelfSFx) != 1 || res.SelfSFx[0] != statfx.Conserve {
+  if len(res.SelfSFx) != 1 || res.SelfSFx[0].Effect != statfx.Conserve {
     t.Errorf("Expected self status effects to remain the same on resist, but got %v", res.SelfSFx)
   }
 }
@@ -193,11 +196,11 @@ func Test_ApplyDefAppliesStatfx(t *testing.T) {
   cFx := ch.AtkFx(rep)
   ch.ApplyDef(cFx, rep)
 
-  if !ch.Stunned {
+  if !ch.isStunned() {
     t.Error("Expected character to be stunned when using ApplyDef with stun SE, but char was not")
   }
 
-  if len(rep.SFx) != 1 || rep.SFx[0] != statfx.Stun {
+  if len(rep.SFx) != 1 || rep.SFx[0].Effect != statfx.Stun {
     t.Errorf("Expected ApplyDef to apply sfx to report, but report sfx are %v", rep.SFx)
   }
 }
@@ -266,8 +269,8 @@ func Test_ApplyAtkAppliesSelfFx(t *testing.T) {
   cFx := ch.AtkFx(rep)
   ch.ApplyAtk(cFx, rep)
 
-  if !ch.LowerStmUse {
-    t.Error("Expected atkfx + applyAtk with Conserve skill to apply LowerStmUse to attacker, but it didn't")
+  if !ch.isConserving() {
+    t.Error("Expected atkfx + applyAtk with Conserve skill to apply Conserve to attacker, but it didn't")
   }
 }
 
@@ -280,7 +283,7 @@ func Test_ApplyAtkDoesNotApplyDmgOrStatfx(t *testing.T) {
   cFx.Dmg = 10
   ch.ApplyAtk(cFx, rep)
 
-  if ch.Stunned {
+  if ch.isStunned() {
     t.Error("Expected character to not be stunned with ApplyAtk with stun, but they were")
   }
 
