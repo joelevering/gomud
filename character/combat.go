@@ -25,11 +25,20 @@ func (ch *Character) IsInCombat() bool {
 // Returns a structs.CmbFx obj with summary of intended effects on target
 func (ch *Character) AtkFx(rep *structs.CmbRep) structs.CmbFx {
   sk := ch.getAndClearCmbSkill()
+
+  if sk != nil {
+    if ch.payForSkill(*sk) {
+      rep.Skill = *sk
+    } else { // couldn't pay for skill
+      sk = nil
+    }
+  }
+
   cFx := ch.calcCmbFx(sk, rep)
-  if ch.LoweredAtk {
+  if ch.LowerAtk {
     cFx.Dmg /= 2
-    ch.LoweredAtk = false
-    rep.LoweredAtk = true
+    ch.LowerAtk = false
+    rep.LowerAtk = true
   }
   return cFx
 }
@@ -41,10 +50,10 @@ func (ch *Character) ResistAtk(fx structs.CmbFx, rep *structs.CmbRep) structs.Cm
   dmg := ch.calcDmg(fx.Dmg)
   sfx := ch.calcSFx(fx.SFx)
 
-  if ch.LoweredDef {
+  if ch.LowerDef {
     dmg *= 2
-    ch.LoweredDef = false
-    rep.LoweredDef = true
+    ch.LowerDef = false
+    rep.LowerDef = true
   }
 
   return structs.CmbFx{
@@ -86,10 +95,10 @@ func (ch *Character) ApplyDef(fx structs.CmbFx, rep *structs.CmbRep) {
           ch.Stunned = true
           rep.Surprised = structs.SurpriseRep{Stunned: true}
         } else if n == 1 {
-          ch.LoweredAtk = true
+          ch.LowerAtk = true
           rep.Surprised = structs.SurpriseRep{LowerAtk: true}
         } else if n == 2 {
-          ch.LoweredDef = true
+          ch.LowerDef = true
           rep.Surprised = structs.SurpriseRep{LowerDef: true}
         }
       }
@@ -113,7 +122,7 @@ func (ch *Character) calcCmbFx(sk *skills.Skill, rep *structs.CmbRep) structs.Cm
     return res
   }
 
-  rep.SkName = sk.Name
+  res.Skill = *sk
 
   for _, e := range sk.Effects {
     switch e.Type {

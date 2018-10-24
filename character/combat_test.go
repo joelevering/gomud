@@ -19,6 +19,20 @@ func Test_CharAttacksByDefault(t *testing.T) {
   }
 }
 
+func Test_AtkFxIsImpactedByLowerAtk(t *testing.T) {
+  ch := NewCharacter()
+  chLowAtk := NewCharacter()
+  chLowAtk.LowerAtk = true
+  rep := &structs.CmbRep{}
+
+  fx := ch.AtkFx(rep)
+  lowAtkFx := chLowAtk.AtkFx(rep)
+
+  if lowAtkFx.Dmg >= fx.Dmg {
+    t.Errorf("Expected LowerAtk to result in a less damaging atk than usual, but was %d compared to %d", lowAtkFx.Dmg, fx.Dmg)
+  }
+}
+
 func Test_StunnedCharsDoNotAttack(t *testing.T) {
   ch := NewCharacter()
   rep := &structs.CmbRep{}
@@ -48,6 +62,39 @@ func Test_StunnedCharsDoNotUseSkills(t *testing.T) {
   }
 }
 
+func Test_AtkFxReducesResourcesWhenUsingSkill(t *testing.T) {
+  ch := NewCharacter()
+  ch.CmbSkill = skills.Stun
+  rep := &structs.CmbRep{}
+
+  ch.AtkFx(rep)
+
+  if ch.GetStm() != (ch.GetMaxStm() - skills.Stun.CostAmt) {
+    t.Errorf("Expected generating fx for an attack that uses Stun skill to reduce char stamina by 10, but it was %d/%d", ch.GetStm(), ch.GetMaxStm())
+  }
+
+  if rep.Skill.Name != skills.Stun.Name {
+    t.Errorf("Expected generating fx an attack using Stun skill to report Stun as skill used, but report has %s for skill name", rep.Skill.Name)
+  }
+}
+
+func Test_AtkFxDoesNotUseSkillWhenLackingResources(t *testing.T) {
+  ch := NewCharacter()
+  ch.SetStm(0)
+  ch.CmbSkill = skills.Stun
+  rep := &structs.CmbRep{}
+
+  fx := ch.AtkFx(rep)
+
+  if len(fx.SFx) != 0 {
+    t.Errorf("Expected AtkFx to not return statfx for using skill with no resources, but SFx was %v", fx.SFx)
+  }
+
+  if rep.Skill.Name != "" {
+    t.Errorf("Expected AtkFx to not report a Skill used when no resource to pay for it, but reported %s", rep.Skill.Name)
+  }
+}
+
 func Test_ResistAtkLowersDmg(t *testing.T) {
   ch := NewCharacter()
   rep := &structs.CmbRep{}
@@ -57,6 +104,21 @@ func Test_ResistAtkLowersDmg(t *testing.T) {
 
   if res.Dmg >= 100 {
     t.Errorf("Expected applying an attack to report lowered damage, but reported %d -> %d", fx.Dmg, res.Dmg)
+  }
+}
+
+func Test_ResistAtkIsImpactedByLowerDef(t *testing.T) {
+  ch := NewCharacter()
+  chLowDef := NewCharacter()
+  chLowDef.LowerDef = true
+  rep := &structs.CmbRep{}
+  fx := structs.CmbFx{Dmg: 100}
+
+  regRes := ch.ResistAtk(fx, rep)
+  lowDefRes := chLowDef.ResistAtk(fx, rep)
+
+  if lowDefRes.Dmg <= regRes.Dmg {
+    t.Errorf("Expected LowerDef to result in a more damaging atk than usual, but was %d compared to %d", lowDefRes.Dmg, regRes.Dmg)
   }
 }
 
@@ -173,8 +235,3 @@ func Test_ApplyAtkDoesNotApplyDmgOrStatfx(t *testing.T) {
     t.Errorf("Expected character to not lose health with ApplyAtk, but they're at %d/%d", ch.GetDet(), ch.GetMaxDet())
   }
 }
-
-
-// TODO test surprise
-// Not sure how to test due to randomness (Surprise could do one of three things)
-// Maybe make stun/lower atk/lower def testable methods and then just call them

@@ -285,8 +285,8 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
     p.SendMsg("You were unable to attack!")
   }
 
-  if rep.SkName != "" {
-    p.SendMsg(fmt.Sprintf("You used %s!", rep.SkName))
+  if rep.Skill.Name != "" {
+    p.SendMsg(fmt.Sprintf("You used %s!", rep.Skill.Name))
   }
 
   if rep.Surprised != (structs.SurpriseRep{}) {
@@ -305,11 +305,11 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
     p.SendMsg(fmt.Sprintf("You healed %d damage!", rep.Heal))
   }
 
-  if rep.LoweredAtk {
+  if rep.LowerAtk {
     p.SendMsg("You dealt lowered damage!")
   }
 
-  if rep.LoweredDef {
+  if rep.LowerDef {
     p.SendMsg("You dealt increased damage!")
   }
 
@@ -332,19 +332,19 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
 }
 
 func (p *Player) ReportDef(opp interfaces.Combatant, rep structs.CmbRep) {
-  if rep.SkName != "" {
-    p.SendMsg(fmt.Sprintf("%s used %s!", opp.GetName(), rep.SkName))
+  if rep.Skill.Name != "" {
+    p.SendMsg(fmt.Sprintf("%s used %s!", opp.GetName(), rep.Skill.Name))
   }
 
   if rep.Heal > 0 {
     p.SendMsg(fmt.Sprintf("%s healed %d damage!", opp.GetName(), rep.Heal))
   }
 
-  if rep.LoweredAtk {
+  if rep.LowerAtk {
     p.SendMsg("You took lowered damage!")
   }
 
-  if rep.LoweredDef {
+  if rep.LowerDef {
     p.SendMsg("You took increased damage!")
   }
 
