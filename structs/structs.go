@@ -1,16 +1,28 @@
 package structs
 
-import "github.com/joelevering/gomud/statfx"
+import (
+  "github.com/joelevering/gomud/skills"
+  "github.com/joelevering/gomud/statfx"
+)
 
 type CmbFx struct {
   Dmg int
   Heal int
   SFx []statfx.StatusEffect
   SelfSFx []statfx.StatusEffect
+  Skill skills.Skill
 }
 
 type CmbRep struct {
   CmbFx
-  SkName string // skill name
-  Stunned bool // TODO test and add report logic
+  Stunned bool
+  LowerAtk bool
+  LowerDef bool
+  Surprised SurpriseRep
+}
+
+type SurpriseRep struct {
+  Stunned bool
+  LowerAtk bool
+  LowerDef bool
 }

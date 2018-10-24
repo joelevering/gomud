@@ -1,6 +1,8 @@
 package character
 
 import (
+  "math/rand"
+
   "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/statfx"
   "github.com/joelevering/gomud/structs"
@@ -23,25 +25,47 @@ func (ch *Character) IsInCombat() bool {
 // Returns a structs.CmbFx obj with summary of intended effects on target
 func (ch *Character) AtkFx(rep *structs.CmbRep) structs.CmbFx {
   sk := ch.getAndClearCmbSkill()
+
+  if sk != nil {
+    if ch.payForSkill(*sk) {
+      rep.Skill = *sk
+    } else { // couldn't pay for skill
+      sk = nil
+    }
+  }
+
   cFx := ch.calcCmbFx(sk, rep)
+  if ch.LowerAtk {
+    cFx.Dmg /= 2
+    ch.LowerAtk = false
+    rep.LowerAtk = true
+  }
   return cFx
 }
 
 // Called when a character is being attacked. Applies damage reduction/status effect resistances etc.
 // Calculates damage and effects after factoring in resistances
 // Returns another structs.CmbFx obj with updated summary of damage
-func (ch *Character) ResistAtk(fx structs.CmbFx) structs.CmbFx {
+func (ch *Character) ResistAtk(fx structs.CmbFx, rep *structs.CmbRep) structs.CmbFx {
   dmg := ch.calcDmg(fx.Dmg)
   sfx := ch.calcSFx(fx.SFx)
+
+  if ch.LowerDef {
+    dmg *= 2
+    ch.LowerDef = false
+    rep.LowerDef = true
+  }
 
   return structs.CmbFx{
     Dmg: dmg,
     SFx: sfx,
+    SelfSFx: fx.SelfSFx,
   }
 }
 
 // Apply CmbFx for which you are the attacker
 func (ch *Character) ApplyAtk(fx structs.CmbFx, rep *structs.CmbRep) {
+  // Heal
   if fx.Heal > 0 {
     det := ch.GetDet()
     // TODO turn this into a separate character method
@@ -53,6 +77,9 @@ func (ch *Character) ApplyAtk(fx structs.CmbFx, rep *structs.CmbRep) {
     ch.SetDet(newDet)
     rep.Heal = newDet - det
   }
+
+  ch.applySFx(fx.SelfSFx, rep)
+  rep.SelfSFx = fx.SelfSFx
 }
 
 // Apply CmbFx for which you are the defender
@@ -62,16 +89,32 @@ func (ch *Character) ApplyDef(fx structs.CmbFx, rep *structs.CmbRep) {
     rep.Dmg = fx.Dmg
   }
 
-  if len(fx.SFx) > 0 {
-    for _, e := range fx.SFx {
+  ch.applySFx(fx.SFx, rep)
+  rep.SFx = fx.SFx
+}
+
+func (ch *Character) applySFx(sFx []statfx.StatusEffect, rep *structs.CmbRep) {
+  if len(sFx) > 0 {
+    for _, e := range sFx {
       switch e {
       case statfx.Stun:
-        // add to report
         ch.Stunned = true
+      case statfx.Surprise:
+        n := rand.Intn(3)
+        if n == 0 {
+          ch.Stunned = true
+          rep.Surprised = structs.SurpriseRep{Stunned: true}
+        } else if n == 1 {
+          ch.LowerAtk = true
+          rep.Surprised = structs.SurpriseRep{LowerAtk: true}
+        } else if n == 2 {
+          ch.LowerDef = true
+          rep.Surprised = structs.SurpriseRep{LowerDef: true}
+        }
+      case statfx.Conserve:
+        ch.LowerStmUse = true
       }
     }
-
-    rep.SFx = fx.SFx
   }
 }
 
@@ -89,7 +132,7 @@ func (ch *Character) calcCmbFx(sk *skills.Skill, rep *structs.CmbRep) structs.Cm
     return res
   }
 
-  rep.SkName = sk.Name
+  res.Skill = *sk
 
   for _, e := range sk.Effects {
     switch e.Type {
@@ -97,10 +140,18 @@ func (ch *Character) calcCmbFx(sk *skills.Skill, rep *structs.CmbRep) structs.Cm
       res.Dmg = int(float64(ch.GetAtk()) * e.Value.(float64))
     case skills.FlatDmg:
       res.Dmg = ch.GetAtk() + e.Value.(int)
+    case skills.PctHeal:
+      healAmt := float64(ch.GetMaxDet()) * e.Value.(float64)
+      res.Heal = int(healAmt)
     case skills.OppFx:
       v := e.Value.(statfx.SEInst)
       if (util.RandF() <= v.Chance) {
         res.SFx = append(res.SFx, v.Effect)
+      }
+    case skills.SelfFx:
+      v := e.Value.(statfx.SEInst)
+      if (util.RandF() <= v.Chance) {
+        res.SelfSFx = append(res.SelfSFx, v.Effect)
       }
     }
   }

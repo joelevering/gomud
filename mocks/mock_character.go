@@ -74,7 +74,7 @@ func (m *MockCharacter) IsInCombat() bool { return false }
 func (m *MockCharacter) AtkFx(_ *structs.CmbRep) structs.CmbFx {
   return structs.CmbFx{}
 }
-func (m *MockCharacter) ResistAtk(fx structs.CmbFx) structs.CmbFx {
+func (m *MockCharacter) ResistAtk(fx structs.CmbFx, _ *structs.CmbRep) structs.CmbFx {
   return fx
 }
 func (m *MockCharacter) ApplyAtk(_ structs.CmbFx, _ *structs.CmbRep) {}

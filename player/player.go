@@ -12,6 +12,7 @@ import (
   "github.com/joelevering/gomud/combat"
   "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/statfx"
+  "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/storage"
   "github.com/joelevering/gomud/structs"
 )
@@ -77,6 +78,11 @@ func (p *Player) Cmd(cmd string) {
   if p.IsInCombat() {
     sk := p.Class.GetSkill(words[0])
     if sk != nil {
+      if sk.Rstcn == skills.OOCOnly {
+        p.SendMsg(fmt.Sprintf("You cannot use '%s' in combat!", sk.Name))
+        return
+      }
+
       p.SetCmbSkill(sk)
       p.SendMsg(fmt.Sprintf("Preparing %s", sk.Name))
       return
@@ -279,16 +285,40 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
     p.SendMsg("You were unable to attack!")
   }
 
-  if rep.SkName != "" {
-    p.SendMsg(fmt.Sprintf("You used %s!", rep.SkName))
+  if rep.Skill.Name != "" {
+    p.SendMsg(fmt.Sprintf("You used %s!", rep.Skill.Name))
+  }
+
+  if rep.Surprised != (structs.SurpriseRep{}) {
+    if rep.Surprised.Stunned {
+      p.SendMsg(fmt.Sprintf("You surprised %s! They're stunned!", opp.GetName()))
+    }
+    if rep.Surprised.LowerAtk {
+      p.SendMsg(fmt.Sprintf("You surprised %s! They're off-balance!", opp.GetName()))
+    }
+    if rep.Surprised.LowerDef {
+      p.SendMsg(fmt.Sprintf("You surprised %s! They're vulnerable!", opp.GetName()))
+    }
   }
 
   if rep.Heal > 0 {
     p.SendMsg(fmt.Sprintf("You healed %d damage!", rep.Heal))
   }
 
+  if rep.LowerAtk {
+    p.SendMsg("You dealt lowered damage!")
+  }
+
+  if rep.LowerDef {
+    p.SendMsg("You dealt increased damage!")
+  }
+
   if rep.Dmg > 0 {
-    p.SendMsg(fmt.Sprintf("%s took %d damage! %s has %d/%d health left!", opp.GetName(), rep.Dmg, opp.GetName(), opp.GetDet(), opp.GetMaxDet()))
+    if opp.GetDet() == 0 {
+      p.SendMsg(fmt.Sprintf("%s took %d damage!", opp.GetName(), rep.Dmg))
+    } else {
+      p.SendMsg(fmt.Sprintf("%s took %d damage! %s has %d/%d health left!", opp.GetName(), rep.Dmg, opp.GetName(), opp.GetDet(), opp.GetMaxDet()))
+    }
   }
 
   if len(rep.SFx) > 0 {
@@ -302,12 +332,20 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
 }
 
 func (p *Player) ReportDef(opp interfaces.Combatant, rep structs.CmbRep) {
-  if rep.SkName != "" {
-    p.SendMsg(fmt.Sprintf("%s used %s!", opp.GetName(), rep.SkName))
+  if rep.Skill.Name != "" {
+    p.SendMsg(fmt.Sprintf("%s used %s!", opp.GetName(), rep.Skill.Name))
   }
 
   if rep.Heal > 0 {
     p.SendMsg(fmt.Sprintf("%s healed %d damage!", opp.GetName(), rep.Heal))
+  }
+
+  if rep.LowerAtk {
+    p.SendMsg("You took lowered damage!")
+  }
+
+  if rep.LowerDef {
+    p.SendMsg("You took increased damage!")
   }
 
   if rep.Dmg > 0 {
@@ -319,6 +357,8 @@ func (p *Player) ReportDef(opp interfaces.Combatant, rep structs.CmbRep) {
       switch e {
       case statfx.Stun:
         p.SendMsg("You were stunned into inaction!")
+      case statfx.Surprise:
+        p.SendMsg("You were surprised by the attack!")
       }
     }
   }

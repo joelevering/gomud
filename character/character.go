@@ -32,7 +32,11 @@ type Character struct {
   CmbSkill   *skills.Skill
   CmbSkillMu sync.Mutex
   Spawn      interfaces.RoomI
-  Stunned    bool
+
+  Stunned     bool
+  LowerAtk    bool
+  LowerDef    bool
+  LowerStmUse bool
 }
 
 func NewCharacter() *Character {
@@ -226,15 +230,6 @@ func (ch *Character) SetCmbSkill(sk *skills.Skill) {
   ch.CmbSkillMu.Unlock()
 }
 
-func (ch *Character) getAndClearCmbSkill() *skills.Skill {
-  ch.CmbSkillMu.Lock()
-  defer ch.CmbSkillMu.Unlock()
-  sk := ch.CmbSkill
-  ch.CmbSkill = nil
-
-  return sk
-}
-
 func (ch *Character) GetSpawn() interfaces.RoomI {
   return ch.Spawn
 }
@@ -291,6 +286,43 @@ func (ch *Character) ExpToLvl() int {
   return ch.NextLvlExp - ch.Exp
 }
 
-func (ch *Character) Stun() {
-  ch.Stunned = true
+// private
+
+func (ch *Character) getAndClearCmbSkill() *skills.Skill {
+  ch.CmbSkillMu.Lock()
+  defer ch.CmbSkillMu.Unlock()
+  sk := ch.CmbSkill
+  ch.CmbSkill = nil
+
+  return sk
+}
+
+func (ch *Character) payForSkill(sk skills.Skill) bool {
+  if sk.CostType == stats.Stm {
+    cost := sk.CostAmt
+    if ch.LowerStmUse {
+      cost = int(float64(cost) * 0.5)
+      ch.LowerStmUse = false
+    }
+
+    newStm := ch.GetStm() - cost
+    if newStm < 0 {
+      return false
+    }
+
+    ch.SetStm(newStm)
+    return true
+  }
+
+  if sk.CostType == stats.Foc {
+    newFoc := ch.GetFoc() - sk.CostAmt
+    if newFoc < 0 {
+      return false
+    }
+
+    ch.SetFoc(newFoc)
+    return true
+  }
+
+  return false
 }

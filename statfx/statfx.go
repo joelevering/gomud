@@ -9,4 +9,6 @@ type SEInst struct {
 
 const(
   Stun = StatusEffect("stun")
+  Surprise = StatusEffect("surprise")
+  Conserve = StatusEffect("conserve")
 )

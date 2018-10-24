@@ -28,7 +28,7 @@ func TickCombat(agg, def interfaces.Combatant) (combatOver bool) {
   report := &structs.CmbRep{}
 
   aggFx := agg.AtkFx(report)
-  resFx := def.ResistAtk(aggFx)
+  resFx := def.ResistAtk(aggFx, report)
 
   agg.ApplyAtk(resFx, report)
   def.ApplyDef(resFx, report)
