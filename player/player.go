@@ -81,7 +81,6 @@ func (p *Player) Cmd(cmd string) {
   }
 
   switch strings.ToLower(words[0]) {
-  case "":
   case "ls", "list":
     p.List()
   case "l", "look":
@@ -91,27 +90,41 @@ func (p *Player) Cmd(cmd string) {
       p.LookNP(words[1])
     }
   case "m", "move":
-    if len(words) > 1 {
+    if len(words) == 2 {
       p.Move(words[1])
     } else {
-      p.SendMsg("Where are you trying to go??")
+      p.SendMsg("I'm not sure where you're trying to go. Try again with a correct exit key.")
     }
   case "h", "help":
     p.SendMsg(helpMsg)
   case "s", "say":
-    p.Say(strings.Join(words[1:], " "))
+    if len(words) > 1 {
+      p.Say(strings.Join(words[1:], " "))
+    } else {
+      p.SendMsg("If you want to say something, include a message. E.g. 'say hello there!'")
+    }
   case "y", "yell":
-    p.Yell(strings.Join(words[1:], " "))
+    if len(words) > 1 {
+      p.Yell(strings.Join(words[1:], " "))
+    } else {
+      p.SendMsg("If you want to yell something, include a message. E.g. 'yell HELLO THERE!'")
+    }
   case "a", "attack":
     if len(words) == 2 {
       p.AttackNP(words[1], "")
-    } else {
+    } else if len(words) == 3 {
       p.AttackNP(words[1], words[2])
+    } else {
+      p.SendMsg("I'm not sure how to interpret your attack. Use either 'attack <first name of enemy> <skill name>' or omit the skill name.")
     }
   case "st", "status":
     p.Status()
   case "c", "change":
-    p.ChangeClass(words[1])
+    if len(words) == 2 {
+      p.ChangeClass(words[1])
+    } else {
+      p.SendMsg("I'm not sure how to interpret your class change. Use 'change <class name>' and try again.")
+    }
   default:
     p.SendMsg("I'm not sure what you mean. Type 'help' for assistance.")
   }
