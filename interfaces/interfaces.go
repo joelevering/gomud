@@ -73,7 +73,7 @@ type PlI interface {
   Look()
   LookNP(string)
   Status()
-  AttackNP(string)
+  AttackNP(string, string)
   Move(string)
   Say(string)
   Yell(string)
