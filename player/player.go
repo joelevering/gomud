@@ -149,12 +149,9 @@ func (p Player) List() {
 }
 
 func (p Player) Look() {
-  p.SendMsg(
-    fmt.Sprintf("~~%s~~", p.Room.GetName()),
-    p.Room.GetDesc(),
-    "",
-    "Exits:",
-  )
+  p.SendMsg(fmt.Sprintf("~~%s~~", p.Room.GetName()))
+  p.SendMsg(strings.Split(p.Room.GetDesc(), "\n")...)
+  p.SendMsg("", "Exits:")
 
   for _, exit := range p.Room.GetExits() {
     p.SendMsg(fmt.Sprintf("- %s", exit.GetDesc()))

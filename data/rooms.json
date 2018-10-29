@@ -116,12 +116,17 @@
   {
     "id": 5,
     "name": "The Castle Gate",
-    "description": "A gate of fair size - closed",
+    "description": "A gate of fair size. It's open to a bright clearing that shimmers like a mirage.",
     "exits": [
       {
         "room_id": 3,
         "key": "i",
         "description": "(I)nto the Courtyard"
+      },
+      {
+        "room_id": 10,
+        "key": "o",
+        "description": "(O)ut into the clearing, past the point of no return"
       }
     ],
     "npcs": [
@@ -230,6 +235,121 @@
             "chance": 1
           }
         ]
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "name": "Slime Forest - Mossy Clearing",
+    "description": "A large oblong clearing covered in shimmering green moss.\nWhile the space appears clear, you can't seem to pass through it.",
+    "exits": [
+      {
+        "room_id": 5,
+        "key": "push",
+        "description": "An invisible barrier prevents you from moving through the center"
+      },
+      {
+        "room_id": 11,
+        "key": "w",
+        "description": "(W)est on a path through a sparser part of the forest"
+      },
+      {
+        "room_id": 12,
+        "key": "e",
+        "description": "Delve (e)ast into the densest swath of trees"
+      }
+    ],
+    "npcs": []
+  },
+  {
+    "id": 11,
+    "name": "Slime Forest - Path - Crossroads",
+    "description": "A three way intersection of light dirt paths meandering through the bright forest.\nPeaceful chirping echoes from the west.\nNothing can be heard to the north.",
+    "exits": [
+      {
+        "room_id": 15,
+        "key": "w",
+        "description": "(W)est towards the sounds of peaceful nature"
+      },
+      {
+        "room_id": 13,
+        "key": "n",
+        "description": "(N)orth towards a nondescript section of trees"
+      },
+      {
+        "room_id": 16,
+        "key": "s",
+        "description": "(S)outh"
+      },
+      {
+        "room_id": 10,
+        "key": "c",
+        "description": "Towards a large (c)learing off the path"
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "name": "Slime Forest - Center - Western Edge",
+    "description": "Trees and foliage crowd together unnaturally tightly, the sun darkened by their overhanging branches.",
+    "exits": [
+      {
+        "room_id": 10,
+        "key": "f",
+        "description": "(F)ollow what light you can see"
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "name": "Slime Forest - Path - Dampening Ground",
+    "description": "The path continues to wander past a seemingly-static varitey of trees.\nThe ground underneath your feet begins to feel spongy, happily giving way under your feet.",
+    "exits": [
+      {
+        "room_id": 11,
+        "key": "a",
+        "description": "(A)way from the damp ground"
+      },
+      {
+        "room_id": 14,
+        "key": "d",
+        "description": "(D)own the softening path"
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "name": "Slime Forest - Path - Muddy Dead End",
+    "description": "Despite a moderate number of trees and plants, the forest ground here has given way to mud.\nThe path here, clearly identifiable to the west, abruptly sinks into the earth and vanishes to the east.",
+    "exits": [
+      {
+        "room_id": 13,
+        "key": "w",
+        "description": "Down the (w)estward path"
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "name": "Slime Forest - Path - Bright Patch",
+    "description": "Trees are sparse here, causing the sun to shine particularly brightly.\nThe path is illuminated before you.",
+    "exits": [
+      {
+        "room_id": 11,
+        "key": "d",
+        "description": "(D)eeper into the forest"
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "name": "Slime Forest - Path - South",
+    "description": "A path in the southern part of the forest",
+    "exits": [
+      {
+        "room_id": 11,
+        "key": "n",
+        "description": "(N)orth"
       }
     ]
   }
