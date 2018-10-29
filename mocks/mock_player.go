@@ -27,7 +27,7 @@ func (m *MockPlayer) List() {}
 func (m *MockPlayer) Look() {}
 func (m *MockPlayer) LookNP(string) {}
 func (m *MockPlayer) Status() {}
-func (m *MockPlayer) AttackNP(string) {}
+func (m *MockPlayer) AttackNP(_, _ string) {}
 func (m *MockPlayer) Move(string) {}
 func (m *MockPlayer) Say(string) {}
 func (m *MockPlayer) Yell(string) {}
