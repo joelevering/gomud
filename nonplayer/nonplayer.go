@@ -7,6 +7,7 @@ import (
   "github.com/joelevering/gomud/character"
   "github.com/joelevering/gomud/classes"
   "github.com/joelevering/gomud/interfaces"
+  "github.com/joelevering/gomud/statfx"
   "github.com/joelevering/gomud/stats"
   "github.com/joelevering/gomud/structs"
   "github.com/joelevering/gomud/util"
@@ -33,6 +34,8 @@ type Behavior struct {
 }
 
 func (n *NonPlayer) Init(room interfaces.RoomI, queue interfaces.QueueI) {
+  n.Fx = make(map[statfx.StatusEffect]*statfx.SEInst)
+
   n.SetSpawn(room)
   n.SetClass()
   n.ResetStats()
@@ -83,9 +86,13 @@ func (n *NonPlayer) ReportAtk(_ interfaces.Combatant, _ structs.CmbRep) {}
 
 func (n *NonPlayer) ReportDef(_ interfaces.Combatant, _ structs.CmbRep) {}
 
-func (n *NonPlayer) WinCombat(_ interfaces.Combatant) {}
+func (n *NonPlayer) WinCombat(_ interfaces.Combatant) {
+  n.LeaveCombat()
+}
 
 func (n *NonPlayer) LoseCombat(_ interfaces.Combatant) {
+  n.LeaveCombat()
+
   n.Alive = false
 
   go func() {

@@ -14,6 +14,10 @@ func (ch *Character) EnterCombat(opp *Character) {
 }
 
 func (ch *Character) LeaveCombat() {
+  for k := range ch.Fx {
+    delete(ch.Fx, k)
+  }
+
   ch.InCombat = false
 }
 
@@ -35,9 +39,8 @@ func (ch *Character) AtkFx(rep *structs.CmbRep) structs.CmbFx {
   }
 
   cFx := ch.calcCmbFx(sk, rep)
-  if ch.LowerAtk {
+  if ch.isWeak() {
     cFx.Dmg /= 2
-    ch.LowerAtk = false
     rep.LowerAtk = true
   }
   return cFx
@@ -50,9 +53,8 @@ func (ch *Character) ResistAtk(fx structs.CmbFx, rep *structs.CmbRep) structs.Cm
   dmg := ch.calcDmg(fx.Dmg)
   sfx := ch.calcSFx(fx.SFx)
 
-  if ch.LowerDef {
+  if ch.isVulnerable() {
     dmg *= 2
-    ch.LowerDef = false
     rep.LowerDef = true
   }
 
@@ -93,70 +95,44 @@ func (ch *Character) ApplyDef(fx structs.CmbFx, rep *structs.CmbRep) {
   rep.SFx = fx.SFx
 }
 
-func (ch *Character) applySFx(sFx []statfx.StatusEffect, rep *structs.CmbRep) {
-  if len(sFx) > 0 {
-    for _, e := range sFx {
-      switch e {
-      case statfx.Stun:
-        ch.Stunned = true
-      case statfx.Surprise:
-        n := rand.Intn(3)
-        if n == 0 {
-          ch.Stunned = true
-          rep.Surprised = structs.SurpriseRep{Stunned: true}
-        } else if n == 1 {
-          ch.LowerAtk = true
-          rep.Surprised = structs.SurpriseRep{LowerAtk: true}
-        } else if n == 2 {
-          ch.LowerDef = true
-          rep.Surprised = structs.SurpriseRep{LowerDef: true}
-        }
-      case statfx.Conserve:
-        ch.LowerStmUse = true
-      }
-    }
-  }
-}
-
 func (ch *Character) calcCmbFx(sk *skills.Skill, rep *structs.CmbRep) structs.CmbFx {
-  res := structs.CmbFx{}
-  if ch.Stunned {
+  fx := structs.CmbFx{}
+  if ch.isStunned() {
     rep.Stunned = true
-    ch.Stunned = false
 
-    return res
+    return fx
   }
 
   if sk == nil {
-    res.Dmg = ch.GetAtk()
-    return res
+    fx.Dmg = ch.GetAtk()
+    return fx
   }
 
-  res.Skill = *sk
+  fx.Skill = *sk
 
   for _, e := range sk.Effects {
     switch e.Type {
     case skills.PctDmg:
-      res.Dmg = int(float64(ch.GetAtk()) * e.Value.(float64))
+      fx.Dmg = int(float64(ch.GetAtk()) * e.Value.(float64))
     case skills.FlatDmg:
-      res.Dmg = ch.GetAtk() + e.Value.(int)
+      fx.Dmg = ch.GetAtk() + e.Value.(int)
     case skills.PctHeal:
       healAmt := float64(ch.GetMaxDet()) * e.Value.(float64)
-      res.Heal = int(healAmt)
+      fx.Heal = int(healAmt)
     case skills.OppFx:
       v := e.Value.(statfx.SEInst)
       if (util.RandF() <= v.Chance) {
-        res.SFx = append(res.SFx, v.Effect)
+        fx.SFx = append(fx.SFx, v)
       }
     case skills.SelfFx:
       v := e.Value.(statfx.SEInst)
       if (util.RandF() <= v.Chance) {
-        res.SelfSFx = append(res.SelfSFx, v.Effect)
+        fx.SelfSFx = append(fx.SelfSFx, v)
       }
     }
   }
 
-  return res
+  return fx
 }
 
 func (ch *Character) calcDmg(dmg int) int {
@@ -166,6 +142,43 @@ func (ch *Character) calcDmg(dmg int) int {
   return int(adjDmg)
 }
 
-func (ch *Character) calcSFx(sfx []statfx.StatusEffect) []statfx.StatusEffect {
+func (ch *Character) calcSFx(sfx []statfx.SEInst) []statfx.SEInst {
   return sfx
+}
+
+func (ch *Character) applySFx(sFx []statfx.SEInst, rep *structs.CmbRep) {
+  if len(sFx) > 0 {
+    for _, e := range sFx {
+      switch e.Effect {
+      case statfx.Surprise:
+        n := rand.Intn(3)
+        if n == 0 {
+          srpFx := statfx.SEInst{
+            Effect: statfx.Stun,
+          }
+          ch.addFx(srpFx)
+
+          rep.Surprised = structs.SurpriseRep{Stunned: true}
+        } else if n == 1 {
+          srpFx := statfx.SEInst{
+            Effect: statfx.Weak,
+            Duration: (rand.Intn(2)),
+          }
+          ch.addFx(srpFx)
+
+          rep.Surprised = structs.SurpriseRep{LowerAtk: true}
+        } else if n == 2 {
+          srpFx := statfx.SEInst{
+            Effect: statfx.Vulnerable,
+            Duration: (rand.Intn(2)),
+          }
+          ch.addFx(srpFx)
+
+          rep.Surprised = structs.SurpriseRep{LowerDef: true}
+        }
+      default:
+        ch.addFx(e)
+      }
+    }
+  }
 }

@@ -8,8 +8,8 @@ import (
 type CmbFx struct {
   Dmg int
   Heal int
-  SFx []statfx.StatusEffect
-  SelfSFx []statfx.StatusEffect
+  SFx []statfx.SEInst
+  SelfSFx []statfx.SEInst
   Skill skills.Skill
 }
 
