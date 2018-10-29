@@ -14,8 +14,9 @@ type Skill struct {
 }
 
 type Effect struct {
-  Type  EffectType
-  Value interface{}
+  Type   EffectType
+  Value  interface{}
+  Chance float64
 }
 
 type EffectType string
@@ -35,48 +36,50 @@ const(
 )
 
 var(
-  Stun = &Skill{
-    Name: "stun",
-    CostType: stats.Stm,
-    CostAmt: 10,
-    Effects: []Effect{
-      Effect{
-        Type: OppFx,
-        Value: statfx.SEInst{
-          Effect: statfx.Stun,
-          Chance: 1,
-        },
-      },
-    },
-  }
-  Surprise = &Skill{
-    Name: "surprise",
-    CostType: stats.Stm,
-    CostAmt: 10,
-    Effects: []Effect{
-      Effect{
-        Type: OppFx,
-        Value: statfx.SEInst{
-          Effect: statfx.Surprise,
-          Chance: 1,
-        },
-      },
-    },
-  }
-  Bash = &Skill{
-    Name: "bash",
+  T_PctDmg = &Skill{
+    Name: "t_pctdmg",
     CostType: stats.Stm,
     CostAmt: 10,
     Effects: []Effect{
       Effect{
         Type: PctDmg,
-        Value: 1.25,
+        Value: 0.5,
       },
+    },
+  }
+  T_FlatDmg = &Skill{
+    Name: "t_flatdmg",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: FlatDmg,
+        Value: 10,
+      },
+    },
+  }
+  T_NoChance = &Skill{
+    Name: "t_nochance",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: FlatDmg,
+        Value: 10,
+        Chance: 0.00001,
+      },
+    },
+  }
+  T_Stun = &Skill{
+    Name: "t_stun",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
       Effect{
         Type: OppFx,
         Value: statfx.SEInst{
           Effect: statfx.Stun,
-          Chance: 0.25,
+          Chance: 1,
         },
       },
     },
@@ -134,6 +137,18 @@ var(
           Chance: 1,
           Duration: 2,
         },
+      },
+    },
+  }
+  Desperation = &Skill{
+    Name: "desperation",
+    CostType: stats.Stm,
+    CostAmt: 20,
+    Effects: []Effect{
+      Effect{
+        Type: PctDmg,
+        Value: 3.0,
+        Chance: 0.34,
       },
     },
   }

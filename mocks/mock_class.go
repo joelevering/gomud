@@ -30,5 +30,5 @@ func (m *MockClass) GetDefStats() []stats.Stat {
 }
 
 func (m *MockClass) GetSkill(string) *skills.Skill {
-  return skills.Bash
+  return skills.Shove
 }

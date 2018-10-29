@@ -15,6 +15,7 @@ type CmbFx struct {
 
 type CmbRep struct {
   CmbFx
+  Missed bool
   Stunned bool
   LowerAtk bool
   LowerDef bool

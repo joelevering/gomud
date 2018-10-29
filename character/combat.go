@@ -111,24 +111,28 @@ func (ch *Character) calcCmbFx(sk *skills.Skill, rep *structs.CmbRep) structs.Cm
   fx.Skill = *sk
 
   for _, e := range sk.Effects {
-    switch e.Type {
-    case skills.PctDmg:
-      fx.Dmg = int(float64(ch.GetAtk()) * e.Value.(float64))
-    case skills.FlatDmg:
-      fx.Dmg = ch.GetAtk() + e.Value.(int)
-    case skills.PctHeal:
-      healAmt := float64(ch.GetMaxDet()) * e.Value.(float64)
-      fx.Heal = int(healAmt)
-    case skills.OppFx:
-      v := e.Value.(statfx.SEInst)
-      if (util.RandF() <= v.Chance) {
-        fx.SFx = append(fx.SFx, v)
+    if e.Chance == 0 || (util.RandF() <= e.Chance) {
+      switch e.Type {
+      case skills.PctDmg:
+        fx.Dmg = int(float64(ch.GetAtk()) * e.Value.(float64))
+      case skills.FlatDmg:
+        fx.Dmg = ch.GetAtk() + e.Value.(int)
+      case skills.PctHeal:
+        healAmt := float64(ch.GetMaxDet()) * e.Value.(float64)
+        fx.Heal = int(healAmt)
+      case skills.OppFx:
+        v := e.Value.(statfx.SEInst)
+        if (util.RandF() <= v.Chance) {
+          fx.SFx = append(fx.SFx, v)
+        }
+      case skills.SelfFx:
+        v := e.Value.(statfx.SEInst)
+        if (util.RandF() <= v.Chance) {
+          fx.SelfSFx = append(fx.SelfSFx, v)
+        }
       }
-    case skills.SelfFx:
-      v := e.Value.(statfx.SEInst)
-      if (util.RandF() <= v.Chance) {
-        fx.SelfSFx = append(fx.SelfSFx, v)
-      }
+    } else {
+      rep.Missed = true
     }
   }
 

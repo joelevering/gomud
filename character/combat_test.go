@@ -19,6 +19,46 @@ func Test_CharAttacksByDefault(t *testing.T) {
   }
 }
 
+func Test_AtkFxPctDmg(t *testing.T){
+  ch := NewCharacter()
+  pctDmgCh := NewCharacter()
+  pctDmgCh.SetCmbSkill(skills.T_PctDmg)
+  rep := &structs.CmbRep{}
+
+  cFx := ch.AtkFx(rep)
+  pctDmgCFx := pctDmgCh.AtkFx(rep)
+
+  if pctDmgCFx.Dmg != (cFx.Dmg/2) {
+    t.Errorf("Expected .5 pct dmg skill to deal half damage, but it dealt %d compared to %d", pctDmgCFx.Dmg, cFx.Dmg)
+  }
+}
+
+func Test_AtkFxFlatDmg(t *testing.T){
+  ch := NewCharacter()
+  flatDmgCh := NewCharacter()
+  flatDmgCh.SetCmbSkill(skills.T_FlatDmg)
+  rep := &structs.CmbRep{}
+
+  cFx := ch.AtkFx(rep)
+  flatDmgCFx := flatDmgCh.AtkFx(rep)
+
+  if flatDmgCFx.Dmg != (cFx.Dmg + 10) {
+    t.Errorf("Expected 10 flat damage skill to deal dmg + 10, but it dealt %d compared to %d", flatDmgCFx.Dmg, cFx.Dmg)
+  }
+}
+
+func Test_AtkFxDmgChance(t *testing.T) {
+  ch := NewCharacter()
+  ch.SetCmbSkill(skills.T_NoChance)
+  rep := &structs.CmbRep{}
+
+  cFx := ch.AtkFx(rep)
+
+  if cFx.Dmg != 0 {
+    t.Errorf("Expected no chance dmg skill to generate 0 dmg, but it generated %d", cFx.Dmg)
+  }
+}
+
 func Test_AtkFxIsImpactedByWeak(t *testing.T) {
   ch := NewCharacter()
   chWeak := NewCharacter()
@@ -41,7 +81,7 @@ func Test_AtkFxIsImpactedByWeak(t *testing.T) {
 func Test_StunnedCharsDoNotAttack(t *testing.T) {
   ch := NewCharacter()
   rep := &structs.CmbRep{}
-  ch.addFx(skills.Stun.Effects[0].Value.(statfx.SEInst))
+  ch.addFx(skills.T_Stun.Effects[0].Value.(statfx.SEInst))
 
   cFx := ch.AtkFx(rep)
 
@@ -57,8 +97,8 @@ func Test_StunnedCharsDoNotAttack(t *testing.T) {
 func Test_StunnedCharsDoNotUseSkills(t *testing.T) {
   ch := NewCharacter()
   rep := &structs.CmbRep{}
-  ch.CmbSkill = skills.Stun
-  ch.addFx(skills.Stun.Effects[0].Value.(statfx.SEInst))
+  ch.CmbSkill = skills.T_Stun
+  ch.addFx(skills.T_Stun.Effects[0].Value.(statfx.SEInst))
 
   cFx := ch.AtkFx(rep)
 
@@ -69,16 +109,16 @@ func Test_StunnedCharsDoNotUseSkills(t *testing.T) {
 
 func Test_AtkFxReducesResourcesWhenUsingSkill(t *testing.T) {
   ch := NewCharacter()
-  ch.CmbSkill = skills.Stun
+  ch.CmbSkill = skills.T_Stun
   rep := &structs.CmbRep{}
 
   ch.AtkFx(rep)
 
-  if ch.GetStm() != (ch.GetMaxStm() - skills.Stun.CostAmt) {
+  if ch.GetStm() != (ch.GetMaxStm() - skills.T_Stun.CostAmt) {
     t.Errorf("Expected generating fx for an attack that uses Stun skill to reduce char stamina by 10, but it was %d/%d", ch.GetStm(), ch.GetMaxStm())
   }
 
-  if rep.Skill.Name != skills.Stun.Name {
+  if rep.Skill.Name != skills.T_Stun.Name {
     t.Errorf("Expected generating fx an attack using Stun skill to report Stun as skill used, but report has %s for skill name", rep.Skill.Name)
   }
 }
@@ -86,13 +126,13 @@ func Test_AtkFxReducesResourcesWhenUsingSkill(t *testing.T) {
 func Test_AtkFxIsImpactedByConserveUse(t *testing.T) {
   ch := NewCharacter()
   ch.addFx(skills.Conserve.Effects[0].Value.(statfx.SEInst))
-  ch.CmbSkill = skills.Stun
+  ch.CmbSkill = skills.T_Stun
   rep := &structs.CmbRep{}
 
   ch.AtkFx(rep)
   stmUsed := ch.GetMaxStm() - ch.GetStm()
 
-  if stmUsed == skills.Stun.CostAmt {
+  if stmUsed == skills.T_Stun.CostAmt {
     t.Error("Expected Conserve to reduce stamina cost of skill, but it didn't")
   }
 }
@@ -100,7 +140,7 @@ func Test_AtkFxIsImpactedByConserveUse(t *testing.T) {
 func Test_AtkFxDoesNotUseSkillWhenLackingResources(t *testing.T) {
   ch := NewCharacter()
   ch.SetStm(0)
-  ch.CmbSkill = skills.Stun
+  ch.CmbSkill = skills.T_Stun
   rep := &structs.CmbRep{}
 
   fx := ch.AtkFx(rep)
@@ -201,7 +241,7 @@ func Test_ApplyDefDealsDamage(t *testing.T) {
 func Test_ApplyDefAppliesStatfx(t *testing.T) {
   ch := NewCharacter()
   rep := &structs.CmbRep{}
-  ch.SetCmbSkill(skills.Stun)
+  ch.SetCmbSkill(skills.T_Stun)
 
   cFx := ch.AtkFx(rep)
   ch.ApplyDef(cFx, rep)
@@ -213,10 +253,6 @@ func Test_ApplyDefAppliesStatfx(t *testing.T) {
   if len(rep.SFx) != 1 || rep.SFx[0].Effect != statfx.Stun {
     t.Errorf("Expected ApplyDef to apply sfx to report, but report sfx are %v", rep.SFx)
   }
-}
-
-func Test_AtkFxAndApplyDefUsePercentDmgSkills(t *testing.T){
-  // TODO
 }
 
 func Test_AtkFxAndApplyDefUseFlatDmgSkills(t *testing.T){
@@ -287,7 +323,7 @@ func Test_ApplyAtkAppliesSelfFx(t *testing.T) {
 func Test_ApplyAtkDoesNotApplyDmgOrStatfx(t *testing.T) {
   ch := NewCharacter()
   rep := &structs.CmbRep{}
-  ch.SetCmbSkill(skills.Stun)
+  ch.SetCmbSkill(skills.T_Stun)
 
   cFx := ch.AtkFx(rep)
   cFx.Dmg = 10
