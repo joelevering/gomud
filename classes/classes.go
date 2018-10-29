@@ -41,6 +41,7 @@ var Conscript = &Class{
     skills.PowerNap,
     skills.Charge,
     skills.Conserve,
+    skills.Desperation,
   },
 }
 
