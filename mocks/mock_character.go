@@ -81,6 +81,7 @@ func (m *MockCharacter) ApplyAtk(_ structs.CmbFx, _ *structs.CmbRep) {}
 func (m *MockCharacter) ApplyDef(_ structs.CmbFx, _ *structs.CmbRep) {}
 func (m *MockCharacter) IsDefeated() bool { return false }
 func (m *MockCharacter) ExpToLvl() int { return 100 }
+func (m *MockCharacter) TickFx() {}
 
 func (m *MockCharacter) Heal() {
   m.Healed = true

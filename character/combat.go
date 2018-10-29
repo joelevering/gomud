@@ -155,7 +155,6 @@ func (ch *Character) applySFx(sFx []statfx.SEInst, rep *structs.CmbRep) {
         if n == 0 {
           srpFx := statfx.SEInst{
             Effect: statfx.Stun,
-            Duration: 1,
           }
           ch.addFx(srpFx)
 
@@ -163,7 +162,7 @@ func (ch *Character) applySFx(sFx []statfx.SEInst, rep *structs.CmbRep) {
         } else if n == 1 {
           srpFx := statfx.SEInst{
             Effect: statfx.Weak,
-            Duration: (rand.Intn(2) + 1),
+            Duration: (rand.Intn(2)),
           }
           ch.addFx(srpFx)
 
@@ -171,16 +170,13 @@ func (ch *Character) applySFx(sFx []statfx.SEInst, rep *structs.CmbRep) {
         } else if n == 2 {
           srpFx := statfx.SEInst{
             Effect: statfx.Vulnerable,
-            Duration: (rand.Intn(2) + 1),
+            Duration: (rand.Intn(2)),
           }
           ch.addFx(srpFx)
 
           rep.Surprised = structs.SurpriseRep{LowerDef: true}
         }
       default:
-        // TODO this might break multiple copies of the same effect.
-        // Write a test to assure the duration ticking on e.g. Stun does not
-        // Permanently lower Stun duration to 0
         ch.addFx(e)
       }
     }

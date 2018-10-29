@@ -95,6 +95,7 @@ type Combatant interface {
   ApplyDef(structs.CmbFx, *structs.CmbRep)
   ReportAtk(Combatant, structs.CmbRep)
   ReportDef(Combatant, structs.CmbRep)
+  TickFx()
   IsDefeated() bool
   WinCombat(Combatant)
   LoseCombat(Combatant)
@@ -144,6 +145,7 @@ type CharI interface {
   Heal()
   GainExp(int) bool
   ExpToLvl() int
+  TickFx()
 
   IsInCombat() bool
   AtkFx(*structs.CmbRep) structs.CmbFx

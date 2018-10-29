@@ -132,6 +132,7 @@ var(
         Value: statfx.SEInst{
           Effect: statfx.Conserve,
           Chance: 1,
+          Duration: 2,
         },
       },
     },

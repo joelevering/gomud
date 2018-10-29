@@ -3,7 +3,8 @@ package character
 import (
   "testing"
 
-	"github.com/joelevering/gomud/mocks"
+  "github.com/joelevering/gomud/mocks"
+  "github.com/joelevering/gomud/statfx"
 )
 
 func Test_GainExpIncreasesExp(t *testing.T) {
@@ -56,5 +57,37 @@ func Test_GainExpLevelsUp(t *testing.T) {
   }
   if pc.Str <= 30 || pc.Flo <= 50 {
     t.Error("Expected leveling up to raise max str and flo, but it didn't")
+  }
+}
+
+func Test_TickFxLowersFxDuration(t *testing.T) {
+  ch := NewCharacter()
+  fxI := statfx.SEInst{
+    Effect: statfx.Weak,
+    Duration: 1,
+  }
+  ch.addFx(fxI)
+
+  ch.TickFx()
+
+  fxRes := ch.Fx[statfx.Weak]
+  if fxRes.Duration != 0 {
+    t.Errorf("Expected TickFx to lower duration, but duration is %d", fxRes.Duration)
+  }
+}
+
+func Test_TickFxRemoves0DurationFx(t *testing.T) {
+  ch := NewCharacter()
+  fxI := statfx.SEInst{
+    Effect: statfx.Weak,
+    Duration: 0,
+  }
+  ch.addFx(fxI)
+
+  ch.TickFx()
+
+  fxRes := ch.Fx[statfx.Weak]
+  if fxRes != nil {
+    t.Error("Expected TickDuration to remove 0-duration fx")
   }
 }

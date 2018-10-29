@@ -42,5 +42,7 @@ func TickCombat(agg, def interfaces.Combatant) (combatOver bool) {
     return true
   }
 
+  agg.TickFx()
+
   return false
 }

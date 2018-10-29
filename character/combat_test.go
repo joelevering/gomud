@@ -19,19 +19,24 @@ func Test_CharAttacksByDefault(t *testing.T) {
   }
 }
 
-// func Test_AtkFxIsImpactedByLowerAtk(t *testing.T) {
-//   ch := NewCharacter()
-//   chLowAtk := NewCharacter()
-//   chLowAtk.LowerAtk = true
-//   rep := &structs.CmbRep{}
-//
-//   fx := ch.AtkFx(rep)
-//   lowAtkFx := chLowAtk.AtkFx(rep)
-//
-//   if lowAtkFx.Dmg >= fx.Dmg {
-//     t.Errorf("Expected LowerAtk to result in a less damaging atk than usual, but was %d compared to %d", lowAtkFx.Dmg, fx.Dmg)
-//   }
-// }
+func Test_AtkFxIsImpactedByWeak(t *testing.T) {
+  ch := NewCharacter()
+  chWeak := NewCharacter()
+  weakInst := statfx.SEInst{
+    Effect: statfx.Weak,
+    Chance: 1,
+    Duration: 1,
+  }
+  chWeak.addFx(weakInst)
+  rep := &structs.CmbRep{}
+
+  fx := ch.AtkFx(rep)
+  weakFx := chWeak.AtkFx(rep)
+
+  if weakFx.Dmg >= fx.Dmg {
+    t.Errorf("Expected LowerAtk to result in a less damaging atk than usual, but was %d compared to %d", weakFx.Dmg, fx.Dmg)
+  }
+}
 
 func Test_StunnedCharsDoNotAttack(t *testing.T) {
   ch := NewCharacter()
@@ -121,20 +126,25 @@ func Test_ResistAtkLowersDmg(t *testing.T) {
   }
 }
 
-// func Test_ResistAtkIsImpactedByLowerDef(t *testing.T) {
-//   ch := NewCharacter()
-//   chLowDef := NewCharacter()
-//   chLowDef.LowerDef = true
-//   rep := &structs.CmbRep{}
-//   fx := structs.CmbFx{Dmg: 100}
-//
-//   regRes := ch.ResistAtk(fx, rep)
-//   lowDefRes := chLowDef.ResistAtk(fx, rep)
-//
-//   if lowDefRes.Dmg <= regRes.Dmg {
-//     t.Errorf("Expected LowerDef to result in a more damaging atk than usual, but was %d compared to %d", lowDefRes.Dmg, regRes.Dmg)
-//   }
-// }
+func Test_ResistAtkIsImpactedByLowerDef(t *testing.T) {
+  ch := NewCharacter()
+  vulnCh := NewCharacter()
+  vulnInst := statfx.SEInst{
+    Effect: statfx.Vulnerable,
+    Chance: 1,
+    Duration: 1,
+  }
+  vulnCh.addFx(vulnInst)
+  rep := &structs.CmbRep{}
+  fx := structs.CmbFx{Dmg: 100}
+
+  regRes := ch.ResistAtk(fx, rep)
+  vulnRes := vulnCh.ResistAtk(fx, rep)
+
+  if vulnRes.Dmg <= regRes.Dmg {
+    t.Errorf("Expected Vulnerable to result in a more damaging atk than usual, but was %d compared to %d", vulnRes.Dmg, regRes.Dmg)
+  }
+}
 
 func Test_ResistAtkKeepsStatusEffects(t *testing.T) {
   ch := NewCharacter()

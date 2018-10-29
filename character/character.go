@@ -285,6 +285,16 @@ func (ch *Character) ExpToLvl() int {
   return ch.NextLvlExp - ch.Exp
 }
 
+func (ch *Character) TickFx() {
+  for _, fx := range ch.Fx {
+    if fx.Duration == 0 {
+      delete(ch.Fx, fx.Effect)
+    } else {
+      fx.Duration -= 1
+    }
+  }
+}
+
 // private
 
 func (ch *Character) getAndClearCmbSkill() *skills.Skill {
