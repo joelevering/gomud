@@ -467,22 +467,26 @@ func Test_ChangeClassKeepsDet(t *testing.T) {
   }
 }
 
-func Test_ClassSavesPersistAcrossLikeNames(t *testing.T) {
+func Test_SavePersistsClassAndChar(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   defer close(ch)
   name := "name"
   p.SetName(name)
   p.Init()
   p.GainExp(p.NextLvlExp)
-  p.ChangeClass("athlete") // to persist conscript
+  p.Save()
 
-  ch = make(chan string)
-  p2 := NewPlayer(ch, p.Queue, p.Store)
-  defer close(ch)
+  ch2 := make(chan string)
+  p2 := NewPlayer(ch2, p.Queue, p.Store)
+  defer close(ch2)
   p2.SetName(name)
   p2.Init()
 
   if p2.Level != 2 {
     t.Errorf("Expected player class level to persist across like-named characters, but level is %d", p2.GetLevel())
+  }
+
+  if p2.Str != 20 {
+    t.Errorf("Expected player char stats to persist on save, but got %d str instead of 20", p2.GetStr())
   }
 }
