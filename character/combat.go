@@ -60,6 +60,7 @@ func (ch *Character) ResistAtk(fx structs.CmbFx, rep *structs.CmbRep) structs.Cm
 
   return structs.CmbFx{
     Dmg: dmg,
+    Heal: fx.Heal,
     SFx: sfx,
     SelfSFx: fx.SelfSFx,
   }
