@@ -18,7 +18,7 @@ type QueueI interface {
 
 type StorageI interface {
   StoreExists(string) bool
-  InitStats(string)
+  InitPlayerData(string)
   PersistClass(string, string, storage.ClassStats)
   LoadStats(string, string) storage.ClassStats
   PersistStore(string)

@@ -59,7 +59,7 @@ func (p Player) StartWriter(conn net.Conn) {
 
 func (p *Player) Init() {
   if !p.Store.StoreExists(p.GetID()) {
-    p.Store.InitStats(p.GetID())
+    p.Store.InitPlayerData(p.GetID())
     for _, class := range classes.PlayerClasses {
       p.persistClass(class.GetName())
     }

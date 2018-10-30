@@ -20,7 +20,7 @@ func LoadStore(filename string) *Storage {
   }
 
   s := &Storage{
-    PlayersClasses: make(map[string]map[string]ClassStats),
+    PlayersData: make(map[string]*PlayerData),
     Filename: filename,
   }
 
@@ -37,10 +37,13 @@ func LoadStore(filename string) *Storage {
   return s
 }
 
-// Stores player name to a map of class name to stats
 type Storage struct {
-  PlayersClasses map[string]map[string]ClassStats `json:"players_classes"`
-  Filename       string
+  PlayersData map[string]*PlayerData `json:"players_data"`
+  Filename    string
+}
+
+type PlayerData struct {
+  Classes map[string]ClassStats `json:classes`
 }
 
 type ClassStats struct {
@@ -51,23 +54,25 @@ type ClassStats struct {
 }
 
 func (s *Storage) StoreExists(pID string) bool {
-  return s.PlayersClasses[pID] != nil
+  return s.PlayersData[pID] != nil
 }
 
-func (s *Storage) InitStats(pID string) {
-  if s.PlayersClasses[pID] == nil {
-    s.PlayersClasses[pID] = make(map[string]ClassStats)
+func (s *Storage) InitPlayerData(pID string) {
+  if s.PlayersData[pID] == nil {
+    s.PlayersData[pID] = &PlayerData{
+      Classes: make(map[string]ClassStats),
+    }
   }
 }
 
 func (s *Storage) PersistClass(pID, className string, stats ClassStats) {
-  s.PlayersClasses[pID][className] = stats
+  s.PlayersData[pID].Classes[className] = stats
 
   s.PersistStore(s.Filename)
 }
 
 func (s *Storage) LoadStats(pID, className string) ClassStats {
-  return s.PlayersClasses[pID][className]
+  return s.PlayersData[pID].Classes[className]
 }
 
 func (s *Storage) PersistStore(filename string) {
