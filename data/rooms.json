@@ -286,6 +286,25 @@
         "key": "c",
         "description": "Into a large (c)learing off the path"
       }
+    ],
+    "npcs": [
+      {
+        "id": 7,
+        "description": "Angry eyes shift rapidly on this dark green pile of goo",
+        "class": "Slime",
+        "character": {
+          "name": "Timid Forest Slime",
+          "level": 1,
+          "exp_given": 5
+        },
+        "ooc_behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [["emote", "looks away quickly."]],
+            "chance": 1
+          }
+        ]
+      }
     ]
   },
   {
@@ -338,6 +357,18 @@
         "room_id": 11,
         "key": "d",
         "description": "(D)eeper into the forest"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 8,
+        "description": "This particularly small slime appears quite frustrated with your appearance",
+        "class": "Slime",
+        "character": {
+          "name": "Forest Slime Runt",
+          "level": 1,
+          "exp_given": 5
+        }
       }
     ]
   },

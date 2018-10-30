@@ -19,6 +19,7 @@ var ByName = map[string]*Class{
   "Charmer":     Charmer,
   "Augur":       Augur,
   "Sophist":     Sophist,
+  "Slime":       Slime,
   "Slime King":  SlimeKing,
   "Slime Chef":  SlimeChef,
   "Slime Guard": SlimeGuard,
@@ -89,6 +90,32 @@ var Sophist = &Class{
   atkStats: []stats.Stat{stats.Sag},
   defStats: []stats.Stat{stats.Sag},
 }
+
+var Crab = &Class{
+  name: "Crab",
+  growth: StatGrowth{
+    Det: 10,
+    Str: 1,
+    Flo: 2,
+  },
+  atkStats: []stats.Stat{stats.Str},
+  defStats: []stats.Stat{stats.Flo},
+}
+
+// Slime Forest
+
+var Slime = &Class{
+  name: "Slime",
+  growth: StatGrowth{
+    Det: 50,
+    Str: 10,
+    Ing: 5,
+  },
+  atkStats: []stats.Stat{stats.Ing},
+  defStats: []stats.Stat{stats.Str},
+}
+
+// Slime Castle
 
 var SlimeKing = &Class{
   name: "Slime King",
@@ -165,17 +192,6 @@ var DogGod = &Class{
     Ing: 1000,
     Kno: 1000,
     Sag: 1000,
-  },
-  atkStats: []stats.Stat{stats.Str},
-  defStats: []stats.Stat{stats.Flo},
-}
-
-var Crab = &Class{
-  name: "Crab",
-  growth: StatGrowth{
-    Det: 10,
-    Str: 1,
-    Flo: 2,
   },
   atkStats: []stats.Stat{stats.Str},
   defStats: []stats.Stat{stats.Flo},
