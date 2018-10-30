@@ -10,10 +10,11 @@ type SEInst struct {
 
 const(
   // Negative
-  Stun       = StatusEffect("stun")
-  Surprise   = StatusEffect("surprise")
-  Weak       = StatusEffect("weak")
-  Vulnerable = StatusEffect("vulnerable")
+  Stun          = StatusEffect("stun")
+  Surprise      = StatusEffect("surprise")
+  Weak          = StatusEffect("weak")
+  Vulnerable    = StatusEffect("vulnerable")
+  Concentration = StatusEffect("concentration")
 
   // Positive
   Conserve   = StatusEffect("conserve")

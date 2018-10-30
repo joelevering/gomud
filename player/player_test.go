@@ -431,7 +431,8 @@ func Test_ChangeClassResetsStats(t *testing.T) {
   p.Init()
   p.GainExp(p.NextLvlExp + 1)
 
-  p.ChangeClass("athlete")
+  go p.ChangeClass("athlete")
+  <- ch
 
   if p.GetClassName() != classes.Athlete.GetName() {
     t.Errorf("Expected class name to be Athlete on change, but it's %s", p.GetClassName())
@@ -460,7 +461,8 @@ func Test_ChangeClassKeepsDet(t *testing.T) {
   p.Init()
   p.SetDet(33)
 
-  p.ChangeClass("athlete")
+  go p.ChangeClass("athlete")
+  <- ch
 
   if p.GetDet() != 33 {
     t.Errorf("Expected determination to remain 33 on class change, but it's %d", p.GetDet())

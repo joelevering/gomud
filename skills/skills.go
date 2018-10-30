@@ -152,4 +152,30 @@ var(
       },
     },
   }
+  Freneticism = &Skill{
+    Name: "freneticism",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: OppFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Surprise,
+          Chance: 0.6,
+        },
+      },
+      Effect{
+        Type: SelfFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Concentration,
+          Chance: 1,
+          Duration: 1,
+        },
+      },
+      Effect{
+        Type: PctDmg,
+        Value: 1.0,
+      },
+    },
+  }
 )

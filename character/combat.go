@@ -30,7 +30,13 @@ func (ch *Character) IsInCombat() bool {
 func (ch *Character) AtkFx(rep *structs.CmbRep) structs.CmbFx {
   sk := ch.getAndClearCmbSkill()
 
-  if sk != nil {
+  if ch.isConcentrating() {
+    if sk != nil {
+      rep.Skill = *sk
+      sk = nil
+    }
+    rep.Concentrating = true
+  } else if sk != nil {
     if ch.payForSkill(*sk) {
       rep.Skill = *sk
     } else { // couldn't pay for skill
