@@ -66,6 +66,21 @@ func (p *Player) Init() {
   } else {
     p.loadClass(classes.Conscript)
   }
+
+  go p.regen()
+}
+
+func (p *Player) regen() {
+  tickTime := 10 * time.Second
+  for true {
+    time.Sleep(tickTime)
+
+    if !p.IsInCombat() {
+      p.HealPct(0.05)
+      p.RefocusPct(0.05)
+      p.RecuperatePct(0.05)
+    }
+  }
 }
 
 func (p *Player) Save() {
@@ -389,7 +404,7 @@ func (p *Player) LoseCombat(winner interfaces.Combatant) {
   p.SendMsg(fmt.Sprintf("You were defeated by %s.", winner.GetName()))
   time.Sleep(1500 * time.Millisecond)
   p.EnterRoom(spawn)
-  p.Heal()
+  p.FullHeal()
   p.SendMsg(fmt.Sprintf("You find yourself back in a familiar place: %s", spawn.GetName()))
   time.Sleep(1500 * time.Millisecond)
   p.SendMsg("")

@@ -88,6 +88,7 @@ func (n *NonPlayer) ReportDef(_ interfaces.Combatant, _ structs.CmbRep) {}
 
 func (n *NonPlayer) WinCombat(_ interfaces.Combatant) {
   n.LeaveCombat()
+  n.FullHeal()
 }
 
 func (n *NonPlayer) LoseCombat(_ interfaces.Combatant) {
@@ -97,7 +98,7 @@ func (n *NonPlayer) LoseCombat(_ interfaces.Combatant) {
 
   go func() {
     time.Sleep(10 * time.Second)
-    n.Heal()
+    n.FullHeal()
     n.Alive = true
   }()
 }

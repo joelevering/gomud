@@ -91,3 +91,63 @@ func Test_TickFxRemoves0DurationFx(t *testing.T) {
     t.Error("Expected TickDuration to remove 0-duration fx")
   }
 }
+
+func Test_Heal(t *testing.T) {
+  ch := NewCharacter()
+  ch.SetDet(1)
+  ch.Heal(1)
+
+  if ch.GetDet() != 2 {
+    t.Errorf("Heal should heal the given amount, but it only healed %d", (ch.GetDet() - 1))
+  }
+}
+
+func Test_HealDoesntAllowOverhealing(t *testing.T) {
+  ch := NewCharacter()
+  ch.SetDet(ch.GetMaxDet() - 1)
+  ch.Heal(2)
+
+  if ch.GetDet() != ch.GetMaxDet() {
+    t.Errorf("Heal should not allow healing over max health, but it allowed %d/%d", ch.GetDet(), ch.GetMaxDet())
+  }
+}
+
+func Test_Refocus(t *testing.T) {
+  ch := NewCharacter()
+  ch.SetFoc(1)
+  ch.Refocus(1)
+
+  if ch.GetFoc() != 2 {
+    t.Errorf("Refocus should increase focus the given amount, but it only increased %d", (ch.GetFoc() - 1))
+  }
+}
+
+func Test_RefocusDoesntAllowOverhealing(t *testing.T) {
+  ch := NewCharacter()
+  ch.SetFoc(ch.GetMaxFoc() - 1)
+  ch.Refocus(2)
+
+  if ch.GetFoc() != ch.GetMaxFoc() {
+    t.Errorf("Refocus should not allow focus over max, but it allowed %d/%d", ch.GetFoc(), ch.GetMaxFoc())
+  }
+}
+
+func Test_Recuperate(t *testing.T) {
+  ch := NewCharacter()
+  ch.SetStm(1)
+  ch.Recuperate(1)
+
+  if ch.GetStm() != 2 {
+    t.Errorf("Recuperate should increase stm the given amount, but it only increased %d", (ch.GetStm() - 1))
+  }
+}
+
+func Test_RecuperateDoesntAllowOverhealing(t *testing.T) {
+  ch := NewCharacter()
+  ch.SetStm(ch.GetMaxStm() - 1)
+  ch.Recuperate(2)
+
+  if ch.GetStm() != ch.GetMaxStm() {
+    t.Errorf("Recuperate should not allow stm over max, but it allowed %d/%d", ch.GetStm(), ch.GetMaxStm())
+  }
+}
