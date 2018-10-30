@@ -23,7 +23,7 @@ func Test_LoadingRooms(t *testing.T) {
     t.Errorf("Room id expected to be 1 but got %v", room.GetID())
   }
 
-  if room.GetName() != "The Throne Room" {
+  if room.GetName() != "Slime Castle - Throne Room" {
     t.Errorf("Room name expected to be 'The Throne Room' but got %v", room.GetName())
   }
 

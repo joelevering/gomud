@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "name": "The Throne Room",
+    "name": "Slime Castle - Throne Room",
     "description": "A large hall with a green throne in the center",
     "exits": [
       {
@@ -52,7 +52,7 @@
   },
   {
     "id": 2,
-    "name": "The Grand Stairs",
+    "name": "Slime Castle - Grand Stairs",
     "description": "The grandest of stairs",
     "exits": [
       {
@@ -69,7 +69,7 @@
   },
   {
     "id": 3,
-    "name": "The Courtyard",
+    "name": "Slime Castle - Courtyard",
     "description": "A desolate courtyard littered with dead trees",
     "exits": [
       {
@@ -91,7 +91,7 @@
   },
   {
     "id": 4,
-    "name": "Hidden grove",
+    "name": "Slime Castle - Hidden Grove",
     "description": "A cluster of greenery",
     "exits": [
       {
@@ -115,7 +115,7 @@
   },
   {
     "id": 5,
-    "name": "The Castle Gate",
+    "name": "Slime Castle - Gate",
     "description": "A gate of fair size. It's open to a bright clearing that shimmers like a mirage.",
     "exits": [
       {
@@ -144,7 +144,7 @@
   },
   {
     "id": 6,
-    "name": "The King's Chambers",
+    "name": "Slime Castle - King's Chambers",
     "description": "Looks like a big ol' king lives here",
     "exits": [
       {
@@ -156,7 +156,7 @@
   },
   {
     "id": 7,
-    "name": "The Kitchen",
+    "name": "Slime Castle - Kitchen",
     "description": "A number of pots and pans are strewn about -- aparently unused in years",
     "exits": [
       {
@@ -180,7 +180,7 @@
   },
   {
     "id": 8,
-    "name": "Guest Quarters",
+    "name": "Slime Castle - Guest Quarters",
     "description": "A stone room replete with several piles of hay",
     "exits": [
       {
@@ -204,7 +204,7 @@
   },
   {
     "id": 9,
-    "name": "Cave",
+    "name": "??? - Cave",
     "description": "A dark and unfamiliar cave",
     "exits": [
       {
@@ -264,7 +264,7 @@
   {
     "id": 11,
     "name": "Slime Forest - Path - Crossroads",
-    "description": "A three way intersection of light dirt paths meandering through the bright forest.\nPeaceful chirping echoes from the west.\nNothing can be heard to the north.",
+    "description": "A three way intersection of light dirt paths meandering through the bright forest.\nPeaceful chirping echoes from the west.\nAn eerie silence drifts from the north, overdubbed by a whisper of wind from the south.",
     "exits": [
       {
         "room_id": 15,
@@ -279,12 +279,12 @@
       {
         "room_id": 16,
         "key": "s",
-        "description": "(S)outh"
+        "description": "(S)outh towards a light breeze"
       },
       {
         "room_id": 10,
         "key": "c",
-        "description": "Towards a large (c)learing off the path"
+        "description": "Into a large (c)learing off the path"
       }
     ]
   },
@@ -343,13 +343,64 @@
   },
   {
     "id": 16,
-    "name": "Slime Forest - Path - South",
-    "description": "A path in the southern part of the forest",
+    "name": "Slime Forest - Path - Breezy Incline",
+    "description": "The path darkens slightly here as maple and birch trees give way to a growing number of pines.\nThe path angles lightly, inclining towards a light wind which gently knudges travelers back down the slope.",
     "exits": [
       {
         "room_id": 11,
-        "key": "n",
-        "description": "(N)orth"
+        "key": "f",
+        "description": "(F)ollow the breeze down the path"
+      },
+      {
+        "room_id": 17,
+        "key": "u",
+        "description": "Push against the wind and (u)p the incline"
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "name": "Slime Forest - Path - Pine Lane",
+    "description": "The growing number of pines press against the path. Its angle sharpens here,\nas if it and the forest are funneling you away from this hill.",
+    "exits": [
+      {
+        "room_id": 16,
+        "key": "d",
+        "description": "Go (d)own the trail"
+      },
+      {
+        "room_id": 18,
+        "key": "u",
+        "description": "Trudge (u)phill"
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "name": "Slime Forest - Path - Chilly Bluff",
+    "description": "An exposed dirt and rock area only sparsely populated with trees.",
+    "exits": [
+      {
+        "room_id": 17,
+        "key": "d",
+        "description": "Hike (d)own the sloping path"
+      },
+      {
+        "room_id": 19,
+        "key": "i",
+        "description": "Head (i)nland"
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "name": "Tableland - Path - Northern Edge",
+    "description": "A narrow dirt trail winding over a wide stretch of plains that's encompassed on three\nsides by distant mountains. One end of the path disappears at a cliff to the north,\nthe other into a seemingly endless expanse of dirt and dry grass.",
+    "exits": [
+      {
+        "room_id": 18,
+        "key": "e",
+        "description": "Towards the (e)dge of the highland"
       }
     ]
   }
