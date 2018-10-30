@@ -19,6 +19,35 @@ func Test_CharAttacksByDefault(t *testing.T) {
   }
 }
 
+func Test_AtkFxWithConcentration(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+  conInst := statfx.SEInst{
+    Effect: statfx.Concentration,
+    Chance: 1,
+  }
+  ch.addFx(conInst)
+  ch.SetCmbSkill(skills.T_Stun)
+
+  cFx := ch.AtkFx(rep)
+
+  if len(cFx.SFx) != 0 {
+    t.Errorf("Concentrating should not result in statfx combat fx, but it did (%v)", cFx.SFx)
+  }
+
+  if cFx.Dmg != ch.GetAtk() {
+    t.Error("CFx while concentrating should have regular damage, but they don't")
+  }
+
+  if rep.Skill.Name != skills.T_Stun.Name {
+    t.Error("Skill should still be reported when concetrating, but it wasn't")
+  }
+
+  if !rep.Concentrating {
+    t.Error("Rep should report concentration, but it's not")
+  }
+}
+
 func Test_AtkFxPctDmg(t *testing.T){
   ch := NewCharacter()
   pctDmgCh := NewCharacter()
@@ -253,10 +282,6 @@ func Test_ApplyDefAppliesStatfx(t *testing.T) {
   if len(rep.SFx) != 1 || rep.SFx[0].Effect != statfx.Stun {
     t.Errorf("Expected ApplyDef to apply sfx to report, but report sfx are %v", rep.SFx)
   }
-}
-
-func Test_AtkFxAndApplyDefUseFlatDmgSkills(t *testing.T){
-  // TODO
 }
 
 func Test_ApplyDefDoesNotHeal(t *testing.T) {

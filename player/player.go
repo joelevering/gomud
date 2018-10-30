@@ -291,6 +291,8 @@ func (p *Player) ChangeClass(class string) {
     p.Save()
     p.loadClass(classes.Sophist)
   }
+
+  p.SendMsg(fmt.Sprintf("Changed to %s!", p.Class.GetName()))
 }
 
 
@@ -322,8 +324,16 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
     p.SendMsg("You were unable to attack!")
   }
 
+  if rep.Concentrating {
+    p.SendMsg("You are concentrating on your enemy.")
+  }
+
   if rep.Skill.Name != "" {
-    p.SendMsg(fmt.Sprintf("You used %s!", rep.Skill.Name))
+    if rep.Concentrating {
+      p.SendMsg(fmt.Sprintf("You were unable to use %s!", rep.Skill.Name))
+    } else {
+      p.SendMsg(fmt.Sprintf("You used %s!", rep.Skill.Name))
+    }
   }
 
   if rep.Missed {

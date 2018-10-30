@@ -70,6 +70,9 @@ var Athlete = &Class{
   },
   atkStats: []stats.Stat{stats.Flo},
   defStats: []stats.Stat{stats.Flo},
+  skills: []*skills.Skill{
+    skills.Freneticism,
+  },
 }
 
 var Charmer = &Class{

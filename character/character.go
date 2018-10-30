@@ -405,3 +405,7 @@ func (ch *Character) isVulnerable() bool {
 func (ch *Character) isConserving() bool {
   return ch.Fx[statfx.Conserve] != nil
 }
+
+func (ch *Character) isConcentrating() bool {
+  return ch.Fx[statfx.Concentration] != nil
+}
