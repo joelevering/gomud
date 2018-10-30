@@ -237,8 +237,50 @@ func (ch *Character) SetSpawn(spawn interfaces.RoomI) {
   ch.Spawn = spawn
 }
 
-func (ch *Character) Heal() {
+func (ch *Character) HealPct(pct float64) {
+  amt := float64(ch.GetMaxDet()) * pct
+  ch.Heal(int(amt))
+}
+
+func (ch *Character) Heal(amt int) {
+  newDet := ch.GetDet() + amt
+  if newDet > ch.GetMaxDet() {
+    ch.FullHeal()
+  } else {
+    ch.Det = newDet
+  }
+}
+
+func (ch *Character) FullHeal() {
   ch.Det = ch.MaxDet
+}
+
+func (ch *Character) RefocusPct(pct float64) {
+  amt := float64(ch.GetMaxFoc()) * pct
+  ch.Refocus(int(amt))
+}
+
+func (ch *Character) Refocus(amt int) {
+  newFoc := ch.GetFoc() + amt
+  if newFoc > ch.GetMaxFoc() {
+    ch.SetFoc(ch.GetMaxFoc())
+  } else {
+    ch.SetFoc(newFoc)
+  }
+}
+
+func (ch *Character) RecuperatePct(pct float64) {
+  amt := float64(ch.GetMaxStm()) * pct
+  ch.Recuperate(int(amt))
+}
+
+func (ch *Character) Recuperate(amt int) {
+  newStm := ch.GetStm() + amt
+  if newStm > ch.GetMaxStm() {
+    ch.SetStm(ch.GetMaxStm())
+  } else {
+    ch.SetStm(newStm)
+  }
 }
 
 func (ch *Character) IsDefeated() bool {
@@ -278,7 +320,7 @@ func (ch *Character) LevelUp() {
   newNextLvlExp := float64(ch.NextLvlExp) * 1.25
   ch.NextLvlExp = int(math.Round(newNextLvlExp))
 
-  ch.Heal()
+  ch.FullHeal()
 }
 
 func (ch *Character) ExpToLvl() int {

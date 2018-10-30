@@ -83,7 +83,7 @@ func (m *MockCharacter) IsDefeated() bool { return false }
 func (m *MockCharacter) ExpToLvl() int { return 100 }
 func (m *MockCharacter) TickFx() {}
 
-func (m *MockCharacter) Heal() {
+func (m *MockCharacter) FullHeal() {
   m.Healed = true
 }
 

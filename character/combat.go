@@ -68,17 +68,12 @@ func (ch *Character) ResistAtk(fx structs.CmbFx, rep *structs.CmbRep) structs.Cm
 
 // Apply CmbFx for which you are the attacker
 func (ch *Character) ApplyAtk(fx structs.CmbFx, rep *structs.CmbRep) {
-  // Heal
   if fx.Heal > 0 {
-    det := ch.GetDet()
-    // TODO turn this into a separate character method
-    newDet := ch.GetDet() + fx.Heal
-    if newDet > ch.GetMaxDet() {
-      newDet = ch.GetMaxDet()
-    }
+    oldDet := ch.GetDet()
+    ch.Heal(fx.Heal)
+    healed := ch.GetDet() - oldDet
 
-    ch.SetDet(newDet)
-    rep.Heal = newDet - det
+    rep.Heal = healed
   }
 
   ch.applySFx(fx.SelfSFx, rep)
