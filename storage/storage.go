@@ -5,7 +5,49 @@ import (
   "io/ioutil"
   "log"
   "os"
+
+  "github.com/joelevering/gomud/character"
 )
+
+type StorageI interface {
+  StoreExists(string) bool
+  InitPlayerData(string)
+  PersistClass(string, string, ClassStats)
+  PersistChar(string, *character.Character)
+  LoadStats(string, string) ClassStats
+  LoadChar(string) CharStats
+  PersistStore(string)
+}
+
+type ClassStats struct {
+  Lvl        int `json:"level"`
+  MaxDet     int `json:"max_health"`
+  Exp        int `json:"experience"`
+  NextLvlExp int `json:"next_level_exp"`
+}
+
+type CharStats struct {
+  Det    int `json:"health"`
+  MaxStm int `json:"max_stamina"`
+  Stm    int `json:"stamina"`
+  MaxFoc int `json:"max_focus"`
+  Foc    int `json:"focus"`
+  Str    int `json:"strength"`
+  Flo    int `json:"flow"`
+  Ing    int `json:"ingenuity"`
+  Kno    int `json:"knowledge"`
+  Sag    int `json:"sagacity"`
+}
+
+type Storage struct {
+  PlayersData map[string]*PlayerData `json:"players_data"`
+  Filename    string
+}
+
+type PlayerData struct {
+  Classes   map[string]ClassStats `json:classes`
+  Character CharStats             `json:character`
+}
 
 func LoadStore(filename string) *Storage {
   f, err := os.OpenFile(filename, os.O_CREATE, 0644)
@@ -20,7 +62,7 @@ func LoadStore(filename string) *Storage {
   }
 
   s := &Storage{
-    PlayersClasses: make(map[string]map[string]ClassStats),
+    PlayersData: make(map[string]*PlayerData),
     Filename: filename,
   }
 
@@ -37,43 +79,56 @@ func LoadStore(filename string) *Storage {
   return s
 }
 
-// Stores player name to a map of class name to stats
-type Storage struct {
-  PlayersClasses map[string]map[string]ClassStats `json:"players_classes"`
-  Filename       string
-}
-
-type ClassStats struct {
-  Lvl        int `json:"level"`
-  MaxDet     int `json:"max_health"`
-  Exp        int `json:"experience"`
-  NextLvlExp int `json:"next_level_exp"`
-}
-
 func (s *Storage) StoreExists(pID string) bool {
-  return s.PlayersClasses[pID] != nil
+  return s.PlayersData[pID] != nil
 }
 
-func (s *Storage) InitStats(pID string) {
-  if s.PlayersClasses[pID] == nil {
-    s.PlayersClasses[pID] = make(map[string]ClassStats)
+func (s *Storage) InitPlayerData(pID string) {
+  if s.PlayersData[pID] == nil {
+    s.PlayersData[pID] = &PlayerData{
+      Classes: make(map[string]ClassStats),
+    }
   }
 }
 
 func (s *Storage) PersistClass(pID, className string, stats ClassStats) {
-  s.PlayersClasses[pID][className] = stats
+  s.PlayersData[pID].Classes[className] = stats
+
+  s.PersistStore(s.Filename)
+}
+
+func (s *Storage) PersistChar(pID string, ch *character.Character) {
+  s.PlayersData[pID].Character = CharStats{
+    Det: ch.Det,
+    MaxStm: ch.MaxStm,
+    Stm: ch.Stm,
+    MaxFoc: ch.MaxFoc,
+    Foc: ch.Foc,
+    Str: ch.Str,
+    Flo: ch.Flo,
+    Ing: ch.Ing,
+    Kno: ch.Kno,
+    Sag: ch.Sag,
+  }
 
   s.PersistStore(s.Filename)
 }
 
 func (s *Storage) LoadStats(pID, className string) ClassStats {
-  return s.PlayersClasses[pID][className]
+  return s.PlayersData[pID].Classes[className]
+}
+
+func (s *Storage) LoadChar(pID string) CharStats {
+  return s.PlayersData[pID].Character
 }
 
 func (s *Storage) PersistStore(filename string) {
-  j, _ := json.Marshal(s)
-  err := ioutil.WriteFile(filename, j, 0644)
+  j, err := json.Marshal(s)
   if err != nil {
-    log.Printf("storage:persist - %s", err)
+    log.Printf("storage:persist:marshal - %s", err)
+  }
+  err = ioutil.WriteFile(filename, j, 0644)
+  if err != nil {
+    log.Printf("storage:persist:write - %s", err)
   }
 }

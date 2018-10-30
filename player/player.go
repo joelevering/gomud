@@ -39,15 +39,17 @@ type Player struct {
   Channel chan string
   Queue   interfaces.QueueI
   Room    interfaces.RoomI
-  Store   interfaces.StorageI
+  Store   storage.StorageI
+  Logout  chan string
 }
 
-func NewPlayer(ch chan string, q interfaces.QueueI, s interfaces.StorageI) *Player {
+func NewPlayer(ch chan string, q interfaces.QueueI, s storage.StorageI) *Player {
   return &Player{
     Character: character.NewCharacter(),
     Channel:   ch,
     Queue:     q,
     Store:     s,
+    Logout:    make(chan string),
   }
 }
 
@@ -59,32 +61,41 @@ func (p Player) StartWriter(conn net.Conn) {
 
 func (p *Player) Init() {
   if !p.Store.StoreExists(p.GetID()) {
-    p.Store.InitStats(p.GetID())
+    p.Store.InitPlayerData(p.GetID())
     for _, class := range classes.PlayerClasses {
       p.persistClass(class.GetName())
     }
   } else {
     p.loadClass(classes.Conscript)
+    p.loadChar()
   }
 
   go p.regen()
 }
 
 func (p *Player) regen() {
-  tickTime := 10 * time.Second
-  for true {
-    time.Sleep(tickTime)
+  tickTime := 5 * time.Second
+  time.Sleep(tickTime)
 
-    if !p.IsInCombat() {
-      p.HealPct(0.05)
-      p.RefocusPct(0.05)
-      p.RecuperatePct(0.05)
+  for {
+    select {
+    default:
+      if !p.IsInCombat() {
+        p.HealPct(0.025)
+        p.RefocusPct(0.025)
+        p.RecuperatePct(0.025)
+      }
+
+      time.Sleep(tickTime)
+    case <-p.Logout:
+      return
     }
   }
 }
 
 func (p *Player) Save() {
   p.persistClass(p.GetClassName())
+  p.Store.PersistChar(p.GetName(), p.Character)
 }
 
 func (p *Player) Cmd(cmd string) {
@@ -465,6 +476,20 @@ func (p *Player) loadClass(class *classes.Class) {
   }
   p.Exp = stats.Exp
   p.NextLvlExp = stats.NextLvlExp
+}
+
+func (p *Player) loadChar() {
+  l := p.Store.LoadChar(p.GetID())
+
+  p.Det = l.Det
+  p.MaxStm = l.MaxStm
+  p.Stm = l.Stm
+  p.MaxFoc = l.Foc
+  p.Str = l.Str
+  p.Flo = l.Flo
+  p.Ing = l.Ing
+  p.Kno = l.Kno
+  p.Sag = l.Sag
 }
 
 func (p *Player) useSkill (skName string, inCombat bool) {
