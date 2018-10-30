@@ -317,6 +317,18 @@
         "key": "f",
         "description": "(F)ollow what light you can see"
       }
+    ],
+    "npcs": [
+      {
+        "id": 10,
+        "description": "The eyes of this surprisingly bright-colored slime betray nothing.",
+        "class": "Slime",
+        "character": {
+          "name": "Stoic Forest Slime",
+          "level": 5,
+          "exp_given": 25
+        }
+      }
     ]
   },
   {
@@ -334,6 +346,18 @@
         "key": "d",
         "description": "(D)own the softening path"
       }
+    ],
+    "npcs": [
+      {
+        "id": 11,
+        "description": "This green slime seems shinier than usual.",
+        "class": "Slime",
+        "character": {
+          "name": "Forest Slime",
+          "level": 2,
+          "exp_given": 10
+        }
+      }
     ]
   },
   {
@@ -345,6 +369,18 @@
         "room_id": 13,
         "key": "w",
         "description": "Down the (w)estward path"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 12,
+        "description": "Mud and flecks of foliage give this green slime the appearance of brown polkadots.",
+        "class": "Slime",
+        "character": {
+          "name": "Dirty Forest Slime",
+          "level": 3,
+          "exp_given": 15
+        }
       }
     ]
   },
@@ -369,6 +405,16 @@
           "level": 1,
           "exp_given": 5
         }
+      },
+      {
+        "id": 9,
+        "description": "This particularly small slime appears quite frustrated with your appearance",
+        "class": "Slime",
+        "character": {
+          "name": "Forest Slime",
+          "level": 2,
+          "exp_given": 10
+        }
       }
     ]
   },
@@ -387,6 +433,18 @@
         "key": "u",
         "description": "Push against the wind and (u)p the incline"
       }
+    ],
+    "npcs": [
+      {
+        "id": 13,
+        "description": "A remarkably spherical ball of goo that's having trouble maintaining its balance on this curved terrain",
+        "class": "Slime",
+        "character": {
+          "name": "Rotund Forest Slime",
+          "level": 2,
+          "exp_given": 10
+        }
+      }
     ]
   },
   {
@@ -404,6 +462,28 @@
         "key": "u",
         "description": "Trudge (u)phill"
       }
+    ],
+    "npcs": [
+      {
+        "id": 14,
+        "description": "Wandering aimlessly, this slime occasionally gurgles angrily to itself.",
+        "class": "Slime",
+        "character": {
+          "name": "Green Forest Slime",
+          "level": 2,
+          "exp_given": 10
+        }
+      },
+      {
+        "id": 15,
+        "description": "A sentient goo pile that darts from tree trunk to tree trunk, blending with its surroundings.",
+        "class": "Slime",
+        "character": {
+          "name": "Brown Forest Slime",
+          "level": 4,
+          "exp_given": 20
+        }
+      }
     ]
   },
   {
@@ -420,6 +500,18 @@
         "room_id": 19,
         "key": "i",
         "description": "Head (i)nland"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 16,
+        "description": "This gelatinous blob has depressions speckling its outside, giving the appearance of pockmarks",
+        "class": "Slime",
+        "character": {
+          "name": "Scarred Forest Slime",
+          "level": 4,
+          "exp_given": 20
+        }
       }
     ]
   },

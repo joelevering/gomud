@@ -103,7 +103,7 @@ var(
     },
   }
   PowerNap = &Skill{
-    Name: "power nap",
+    Name: "powernap",
     CostType: stats.Stm,
     CostAmt: 0,
     Effects: []Effect{
