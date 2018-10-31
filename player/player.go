@@ -218,6 +218,11 @@ func (p *Player) Status() {
   p.SendMsg(fmt.Sprintf("Ingenuity: %d", p.GetIng()))
   p.SendMsg(fmt.Sprintf("Knowledge: %d", p.GetKno()))
   p.SendMsg(fmt.Sprintf("Sagacity: %d", p.GetSag()))
+  p.SendMsg("")
+  p.SendMsg("Skills:")
+  for _, sk := range p.GetSkills() {
+    p.SendMsg(fmt.Sprintf(" * %s", sk.Name))
+  }
   p.SendMsg(strings.Repeat("~", utf8.RuneCountInString(header)))
 }
 
@@ -493,7 +498,7 @@ func (p *Player) loadChar() {
 }
 
 func (p *Player) useSkill (skName string, inCombat bool) {
-  sk := p.Class.GetSkill(skName)
+  sk := p.Class.GetSkill(skName, p.Level)
   if sk != nil {
     if inCombat && sk.Rstcn == skills.OOCOnly {
       p.SendMsg(fmt.Sprintf("You cannot use '%s' in combat!", sk.Name))
@@ -502,5 +507,7 @@ func (p *Player) useSkill (skName string, inCombat bool) {
 
     p.SetCmbSkill(sk)
     p.SendMsg(fmt.Sprintf("Preparing %s", sk.Name))
+  } else {
+    p.SendMsg(fmt.Sprintf("You don't know how to prepare '%s'!", skName))
   }
 }

@@ -27,11 +27,13 @@ func NewTestPlayer() (*Player, chan string, *mocks.MockQueue) {
   ch := make(chan string)
   q := &mocks.MockQueue{}
   s := storage.LoadStore(fmt.Sprintf("../test/%s.json", strconv.Itoa(rand.Intn(999999))))
-  return NewPlayer(ch, q, s), ch, q
+  p := NewPlayer(ch, q, s)
+  return p, ch, q
 }
 
 func Test_CmdSetsCombatSkillWithSkillName(t *testing.T) {
   p, ch, _ := NewTestPlayer()
+  p.Level = 10
   defer close(ch)
   go p.EnterCombat(&mocks.MockNP{})
   <-ch // "You attack %s!"
@@ -52,6 +54,7 @@ func Test_CmdSetsCombatSkillWithSkillName(t *testing.T) {
 
 func Test_CmdDoesNotSetOOCRestrictedSkillInCombat(t *testing.T) {
   p, ch, _ := NewTestPlayer()
+  p.Level = 10
   defer close(ch)
   go p.EnterCombat(&mocks.MockNP{})
   <-ch // "You attack %s!"

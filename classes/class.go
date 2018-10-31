@@ -17,13 +17,18 @@ type StatGrowth struct {
   Sag int
 }
 
+type ClassSkill struct {
+  Skill *skills.Skill
+  Level int
+}
+
 type Class struct {
   name     string
   growth   StatGrowth
   atkStats []stats.Stat
   defStats []stats.Stat
-  skills   []*skills.Skill
-  skillMap map[string]*skills.Skill
+  skills   []*ClassSkill
+  skillMap map[string]*ClassSkill
 }
 
 func (c *Class) GetName() string {
@@ -42,18 +47,33 @@ func (c *Class) GetDefStats() []stats.Stat {
   return c.defStats
 }
 
-func (c *Class) GetSkill(s string) *skills.Skill {
-  if c.skillMap == nil {
-    c.GenerateSkillMap()
+func (c *Class) SkillsForLvl(lvl int) []*skills.Skill {
+  skills := []*skills.Skill{}
+  for _, cs := range c.skills {
+    if lvl >= cs.Level {
+      skills = append(skills, cs.Skill)
+    }
   }
-
-  return c.skillMap[s]
+  return skills
 }
 
-func (c *Class) GenerateSkillMap() {
-  c.skillMap = make(map[string]*skills.Skill)
+func (c *Class) GetSkill(s string, lvl int) *skills.Skill {
+  if c.skillMap == nil {
+    c.generateSkillMap()
+  }
 
-  for _, s := range c.skills {
-    c.skillMap[s.Name] = s
+  cs := c.skillMap[s]
+  if cs != nil && lvl >= cs.Level {
+    return cs.Skill
+  } else {
+    return nil
+  }
+}
+
+func (c *Class) generateSkillMap() {
+  c.skillMap = make(map[string]*ClassSkill)
+
+  for _, cs := range c.skills {
+    c.skillMap[cs.Skill.Name] = cs
   }
 }

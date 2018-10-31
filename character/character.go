@@ -223,6 +223,10 @@ func (ch *Character) GetDef() int {
   return def
 }
 
+func (ch *Character) GetSkills() []*skills.Skill {
+  return ch.Class.SkillsForLvl(ch.Level)
+}
+
 func (ch *Character) SetCmbSkill(sk *skills.Skill) {
   ch.CmbSkillMu.Lock()
   ch.CmbSkill = sk
