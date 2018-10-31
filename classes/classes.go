@@ -81,16 +81,16 @@ var Athlete = &Class{
     },
     &ClassSkill{
       Skill: skills.Duck,
-      Level: 1,
+      Level: 6,
     },
     &ClassSkill{
       Skill: skills.Counter,
-      Level: 1,
+      Level: 8,
     },
-    // &ClassSkill{
-    //   Skill: skills.Uppercut,
-    //   Level: 10,
-    // },
+    &ClassSkill{
+      Skill: skills.Uppercut,
+      Level: 10,
+    },
   },
 }
 

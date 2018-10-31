@@ -331,8 +331,8 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
   if rep.Skill.Name != "" {
     if rep.Concentrating {
       p.SendMsg(fmt.Sprintf("You were unable to use %s!", rep.Skill.Name))
-    } else if rep.SelfFollowUpReq != "" {
-      p.SendMsg(fmt.Sprintf("%s failed! It has to follow up %s", strings.Title(rep.Skill.Name), rep.SelfFollowUpReq))
+    } else if rep.FollowUpReq != "" {
+      p.SendMsg(fmt.Sprintf("%s failed! It has to follow up %s", strings.Title(rep.Skill.Name), rep.FollowUpReq))
     } else {
       p.SendMsg(fmt.Sprintf("You used %s!", rep.Skill.Name))
     }

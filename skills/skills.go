@@ -50,12 +50,8 @@ func (s *Skill) IsOOCOnly() bool {
   return s.Rstcn == OOCOnly
 }
 
-func (s *Skill) IsFollowUp() bool {
-  return s.FollowUpReq != nil
-}
-
 func (s *Skill) SelfFollowUpReq() (bool, statfx.StatusEffect) {
-  if s.FollowUpReq.Type == SelfFollowUp {
+  if s.FollowUpReq != nil && s.FollowUpReq.Type == SelfFollowUp {
     return true, s.FollowUpReq.Effect
   }
 
@@ -63,7 +59,7 @@ func (s *Skill) SelfFollowUpReq() (bool, statfx.StatusEffect) {
 }
 
 func (s *Skill) OppFollowUpReq() (bool, statfx.StatusEffect) {
-  if s.FollowUpReq.Type == OppFollowUp {
+  if s.FollowUpReq != nil && s.FollowUpReq.Type == OppFollowUp {
     return true, s.FollowUpReq.Effect
   }
 
@@ -133,6 +129,7 @@ var(
         Value: statfx.SEInst{
           Effect: statfx.Surprise,
           Chance: 0.5,
+          Duration: 1,
         },
       },
     },
@@ -197,6 +194,7 @@ var(
         Value: statfx.SEInst{
           Effect: statfx.Surprise,
           Chance: 0.6,
+          Duration: 1,
         },
       },
       Effect{
@@ -223,6 +221,7 @@ var(
         Value: statfx.SEInst{
           Effect: statfx.Surprise,
           Chance: 0.6,
+          Duration: 1,
         },
       },
       Effect{
@@ -262,6 +261,21 @@ var(
     FollowUpReq: &FollowUpReq{
       Type: SelfFollowUp,
       Effect: statfx.Dodging,
+    },
+  }
+  Uppercut = &Skill{
+    Name: "uppercut",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: PctDmg,
+        Value: 2.0,
+      },
+    },
+    FollowUpReq: &FollowUpReq{
+      Type: OppFollowUp,
+      Effect: statfx.Surprise,
     },
   }
 )

@@ -63,12 +63,12 @@ func Test_AtkFxFailedSelfFollowUp(t *testing.T) {
     t.Error("Failed self follow up should still report skill")
   }
 
-  if rep.SelfFollowUpReq != statfx.Dodging {
+  if rep.FollowUpReq != statfx.Dodging {
     t.Error("Failed self follow up wasn't reported")
   }
 }
 
-func Test_AtkFxSuccessfulFollowUp(t *testing.T) {
+func Test_AtkFxSuccessfulSelfFollowUp(t *testing.T) {
   ch := NewCharacter()
   rep := &structs.CmbRep{}
   ch.SetCmbSkill(skills.Counter)
@@ -83,6 +83,22 @@ func Test_AtkFxSuccessfulFollowUp(t *testing.T) {
 
   if cFx.Dmg == 0 {
     t.Error("Expected self follow up to add damage effect")
+  }
+}
+
+func Test_AtkFxOppFollowUp(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+  ch.SetCmbSkill(skills.Uppercut)
+
+  cFx := ch.AtkFx(rep)
+
+  if cFx.Dmg == 0 {
+    t.Error("Expected opp follow up to add damage effect")
+  }
+
+  if cFx.Req != statfx.Surprise {
+    t.Error("Expected opp follow up to add status effect requirement")
   }
 }
 
@@ -230,6 +246,48 @@ func Test_ResistAtkLowersDmg(t *testing.T) {
 
   if res.Dmg >= 100 {
     t.Errorf("Expected applying an attack to report lowered damage, but reported %d -> %d", fx.Dmg, res.Dmg)
+  }
+}
+
+func Test_ResistAtkWithReqFailure(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+
+  cFx := structs.CmbFx{
+    Dmg: 100,
+    Req: statfx.Surprise,
+  }
+
+  newCFx := ch.ResistAtk(cFx, rep)
+
+  if newCFx.Dmg != 0 {
+    t.Errorf("Expected opp follow up without fx to result in no combat fx, but got %v", cFx)
+  }
+
+  if rep.FollowUpReq != statfx.Surprise {
+    t.Error("Failed opp follow up wasn't reported")
+  }
+}
+
+func Test_ResistAtkWithReqSuccess(t *testing.T) {
+  ch := NewCharacter()
+  surpInst := statfx.SEInst{
+    Effect: statfx.Surprise,
+    Chance: 1,
+    Duration: 1,
+  }
+  ch.addFx(surpInst)
+
+  rep := &structs.CmbRep{}
+  cFx := structs.CmbFx{
+    Dmg: 100,
+    Req: statfx.Surprise,
+  }
+
+  newCFx := ch.ResistAtk(cFx, rep)
+
+  if newCFx.Dmg == 0 {
+    t.Error("Expected successful opp follow up to have positive damage")
   }
 }
 

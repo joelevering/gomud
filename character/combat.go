@@ -39,13 +39,11 @@ func (ch *Character) AtkFx(rep *structs.CmbRep) structs.CmbFx {
   }
 
   if sk != nil {
-    if sk.IsFollowUp() {
-      isSelf, e := sk.SelfFollowUpReq()
-      if isSelf && !ch.hasEffect(e) {
-        rep.SelfFollowUpReq = e
-        rep.Skill = *sk
-        return structs.CmbFx{}
-      }
+    hasSelfReq, effect := sk.SelfFollowUpReq()
+    if hasSelfReq && !ch.hasEffect(effect) {
+      rep.FollowUpReq = effect
+      rep.Skill = *sk
+      return structs.CmbFx{}
     }
 
     if ch.payForSkill(*sk) {
@@ -56,7 +54,7 @@ func (ch *Character) AtkFx(rep *structs.CmbRep) structs.CmbFx {
   }
 
   cFx := ch.calcCmbFx(sk, rep)
-  if ch.isWeak() {
+  if ch.isWeak() && cFx.Dmg > 1 {
     cFx.Dmg /= 2
     rep.LowerAtk = true
   }
@@ -67,6 +65,11 @@ func (ch *Character) AtkFx(rep *structs.CmbRep) structs.CmbFx {
 // Calculates damage and effects after factoring in resistances
 // Returns another structs.CmbFx obj with updated summary of damage
 func (ch *Character) ResistAtk(fx structs.CmbFx, rep *structs.CmbRep) structs.CmbFx {
+  if fx.Req != "" && !ch.hasEffect(fx.Req) {
+    rep.FollowUpReq = fx.Req
+    return structs.CmbFx{}
+  }
+
   var dmg int
   if ch.isDodging() {
     rep.Dodged = true
@@ -127,8 +130,6 @@ func (ch *Character) calcCmbFx(sk *skills.Skill, rep *structs.CmbRep) structs.Cm
     return fx
   }
 
-  fx.Skill = *sk
-
   for _, e := range sk.Effects {
     if e.Chance == 0 || (util.RandF() <= e.Chance) {
       switch e.Type {
@@ -155,6 +156,14 @@ func (ch *Character) calcCmbFx(sk *skills.Skill, rep *structs.CmbRep) structs.Cm
     }
   }
 
+  hasOppReq, effect := sk.OppFollowUpReq()
+  if hasOppReq {
+    fx.Req = effect
+  }
+
+  fx.Skill = *sk
+
+
   return fx
 }
 
@@ -170,38 +179,35 @@ func (ch *Character) calcSFx(sfx []statfx.SEInst) []statfx.SEInst {
 }
 
 func (ch *Character) applySFx(sFx []statfx.SEInst, rep *structs.CmbRep) {
-  if len(sFx) > 0 {
-    for _, e := range sFx {
-      switch e.Effect {
-      case statfx.Surprise:
-        n := rand.Intn(3)
-        if n == 0 {
-          srpFx := statfx.SEInst{
-            Effect: statfx.Stun,
-          }
-          ch.addFx(srpFx)
-
-          rep.Surprised = structs.SurpriseRep{Stunned: true}
-        } else if n == 1 {
-          srpFx := statfx.SEInst{
-            Effect: statfx.Weak,
-            Duration: (rand.Intn(2)),
-          }
-          ch.addFx(srpFx)
-
-          rep.Surprised = structs.SurpriseRep{LowerAtk: true}
-        } else if n == 2 {
-          srpFx := statfx.SEInst{
-            Effect: statfx.Vulnerable,
-            Duration: (rand.Intn(2)),
-          }
-          ch.addFx(srpFx)
-
-          rep.Surprised = structs.SurpriseRep{LowerDef: true}
+  for _, e := range sFx {
+    if e.Effect == statfx.Surprise {
+      n := rand.Intn(3)
+      if n == 0 {
+        srpFx := statfx.SEInst{
+          Effect: statfx.Stun,
         }
-      default:
-        ch.addFx(e)
+        ch.addFx(srpFx)
+
+        rep.Surprised = structs.SurpriseRep{Stunned: true}
+      } else if n == 1 {
+        srpFx := statfx.SEInst{
+          Effect: statfx.Weak,
+          Duration: (rand.Intn(2)),
+        }
+        ch.addFx(srpFx)
+
+        rep.Surprised = structs.SurpriseRep{LowerAtk: true}
+      } else if n == 2 {
+        srpFx := statfx.SEInst{
+          Effect: statfx.Vulnerable,
+          Duration: (rand.Intn(2)),
+        }
+        ch.addFx(srpFx)
+
+        rep.Surprised = structs.SurpriseRep{LowerDef: true}
       }
     }
+
+    ch.addFx(e)
   }
 }
