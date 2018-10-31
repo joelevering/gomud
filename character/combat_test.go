@@ -215,6 +215,28 @@ func Test_ResistAtkIsImpactedByLowerDef(t *testing.T) {
   }
 }
 
+func Test_ResistAtkWhileDodging(t *testing.T) {
+  ch := NewCharacter()
+  dodgeInst := statfx.SEInst{
+    Effect: statfx.Dodging,
+    Chance: 1,
+    Duration: 1,
+  }
+  ch.addFx(dodgeInst)
+  rep := &structs.CmbRep{}
+  fx := structs.CmbFx{Dmg: 100}
+
+  res := ch.ResistAtk(fx, rep)
+
+  if res.Dmg != 0 {
+    t.Errorf("Expected dodging while resisting atk to zero out damage, but dmg is %d", res.Dmg)
+  }
+
+  if !rep.Dodged {
+    t.Error("Expected dodging while resisting atk to report dodged")
+  }
+}
+
 func Test_ResistAtkKeepsStatusEffects(t *testing.T) {
   ch := NewCharacter()
   rep := &structs.CmbRep{}

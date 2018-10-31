@@ -402,10 +402,14 @@ func (ch *Character) isVulnerable() bool {
   return ch.Fx[statfx.Vulnerable] != nil
 }
 
+func (ch *Character) isConcentrating() bool {
+  return ch.Fx[statfx.Concentration] != nil
+}
+
 func (ch *Character) isConserving() bool {
   return ch.Fx[statfx.Conserve] != nil
 }
 
-func (ch *Character) isConcentrating() bool {
-  return ch.Fx[statfx.Concentration] != nil
+func (ch *Character) isDodging() bool {
+  return ch.Fx[statfx.Dodging] != nil
 }

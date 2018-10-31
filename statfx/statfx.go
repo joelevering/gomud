@@ -17,5 +17,6 @@ const(
   Concentration = StatusEffect("concentration")
 
   // Positive
-  Conserve   = StatusEffect("conserve")
+  Conserve = StatusEffect("conserve")
+  Dodging  = StatusEffect("dodging")
 )

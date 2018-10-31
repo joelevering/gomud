@@ -70,9 +70,27 @@ var Athlete = &Class{
   },
   atkStats: []stats.Stat{stats.Flo},
   defStats: []stats.Stat{stats.Flo},
-  skills: []*skills.Skill{
-    skills.FreneticPace,
-    skills.BackUp,
+  skills: []*ClassSkill{
+    &ClassSkill{
+      Skill: skills.FreneticPace,
+      Level: 2,
+    },
+    &ClassSkill{
+      Skill: skills.BackUp,
+      Level: 4,
+    },
+    &ClassSkill{
+      Skill: skills.Duck,
+      Level: 1,
+    },
+    // &ClassSkill{
+    //   Skill: skills.Counter,
+    //   Level: 8,
+    // },
+    // &ClassSkill{
+    //   Skill: skills.Uppercut,
+    //   Level: 10,
+    // },
   },
 }
 

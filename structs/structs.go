@@ -20,6 +20,7 @@ type CmbRep struct {
   LowerAtk bool
   LowerDef bool
   Concentrating bool
+  Dodged bool
   Surprised SurpriseRep
 }
 

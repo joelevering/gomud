@@ -199,4 +199,19 @@ var(
       },
     },
   }
+  Duck = &Skill{
+    Name: "duck",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: SelfFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Dodging,
+          Chance: 0.85,
+          Duration: 1,
+        },
+      },
+    },
+  }
 )

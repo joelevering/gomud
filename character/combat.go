@@ -56,7 +56,13 @@ func (ch *Character) AtkFx(rep *structs.CmbRep) structs.CmbFx {
 // Calculates damage and effects after factoring in resistances
 // Returns another structs.CmbFx obj with updated summary of damage
 func (ch *Character) ResistAtk(fx structs.CmbFx, rep *structs.CmbRep) structs.CmbFx {
-  dmg := ch.calcDmg(fx.Dmg)
+  var dmg int
+  if ch.isDodging() {
+    rep.Dodged = true
+  } else {
+    dmg = ch.calcDmg(fx.Dmg)
+  }
+
   sfx := ch.calcSFx(fx.SFx)
 
   if ch.isVulnerable() {

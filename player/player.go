@@ -341,6 +341,10 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
     p.SendMsg("Your attack missed!")
   }
 
+  if rep.Dodged {
+    p.SendMsg(fmt.Sprintf("%s dodged your attack!", opp.GetName()))
+  }
+
   if rep.Surprised != (structs.SurpriseRep{}) {
     if rep.Surprised.Stunned {
       p.SendMsg(fmt.Sprintf("You surprised %s! They're stunned!", opp.GetName()))
@@ -390,6 +394,10 @@ func (p *Player) ReportDef(opp interfaces.Combatant, rep structs.CmbRep) {
 
   if rep.Missed {
     p.SendMsg("%s missed their attack!", opp.GetName())
+  }
+
+  if rep.Dodged {
+    p.SendMsg("You dodged the attack!")
   }
 
   if rep.Heal > 0 {
