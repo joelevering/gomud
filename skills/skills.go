@@ -178,4 +178,25 @@ var(
       },
     },
   }
+  BackUp = &Skill{
+    Name: "back up",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: OppFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Surprise,
+          Chance: 0.6,
+        },
+      },
+      Effect{
+        Type: OppFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Weak,
+          Chance: 1,
+        },
+      },
+    },
+  }
 )
