@@ -72,6 +72,7 @@ var Athlete = &Class{
   defStats: []stats.Stat{stats.Flo},
   skills: []*skills.Skill{
     skills.FreneticPace,
+    skills.BackUp,
   },
 }
 
