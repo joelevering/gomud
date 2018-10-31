@@ -32,11 +32,22 @@ func (ch *Character) AtkFx(rep *structs.CmbRep) structs.CmbFx {
 
   if ch.isConcentrating() {
     if sk != nil {
-      rep.Skill = *sk
-      sk = nil
+      rep.Skill = *sk // report the skill
+      sk = nil // but don't actually use it
     }
     rep.Concentrating = true
-  } else if sk != nil {
+  }
+
+  if sk != nil {
+    if sk.IsFollowUp() {
+      isSelf, e := sk.SelfFollowUpReq()
+      if isSelf && !ch.hasEffect(e) {
+        rep.SelfFollowUpReq = e
+        rep.Skill = *sk
+        return structs.CmbFx{}
+      }
+    }
+
     if ch.payForSkill(*sk) {
       rep.Skill = *sk
     } else { // couldn't pay for skill

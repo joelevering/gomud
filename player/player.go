@@ -12,7 +12,6 @@ import (
   "github.com/joelevering/gomud/combat"
   "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/statfx"
-  "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/storage"
   "github.com/joelevering/gomud/structs"
 )
@@ -332,10 +331,13 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
   if rep.Skill.Name != "" {
     if rep.Concentrating {
       p.SendMsg(fmt.Sprintf("You were unable to use %s!", rep.Skill.Name))
+    } else if rep.SelfFollowUpReq != "" {
+      p.SendMsg(fmt.Sprintf("%s failed! It has to follow up %s", strings.Title(rep.Skill.Name), rep.SelfFollowUpReq))
     } else {
       p.SendMsg(fmt.Sprintf("You used %s!", rep.Skill.Name))
     }
   }
+
 
   if rep.Missed {
     p.SendMsg("Your attack missed!")
@@ -525,7 +527,7 @@ func (p *Player) useSkill (skName string) {
 
   sk := p.Class.GetSkill(skName, p.Level)
   if sk != nil {
-    if p.IsInCombat() && sk.Rstcn == skills.OOCOnly {
+    if p.IsInCombat() && sk.IsOOCOnly() {
       p.SendMsg(fmt.Sprintf("You cannot use '%s' in combat!", sk.Name))
       return
     }

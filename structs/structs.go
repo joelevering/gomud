@@ -22,6 +22,9 @@ type CmbRep struct {
   Concentrating bool
   Dodged bool
   Surprised SurpriseRep
+
+  SelfFollowUpReq statfx.StatusEffect
+  OppFollowUpReq  statfx.StatusEffect
 }
 
 type SurpriseRep struct {

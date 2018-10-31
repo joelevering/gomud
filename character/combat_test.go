@@ -48,6 +48,44 @@ func Test_AtkFxWithConcentration(t *testing.T) {
   }
 }
 
+func Test_AtkFxFailedSelfFollowUp(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+  ch.SetCmbSkill(skills.Counter)
+
+  cFx := ch.AtkFx(rep)
+
+  if cFx.Dmg != 0 {
+    t.Errorf("Expected self follow up without fx to result in no combat fx, but got %v", cFx)
+  }
+
+  if rep.Skill.Name != skills.Counter.Name {
+    t.Error("Failed self follow up should still report skill")
+  }
+
+  if rep.SelfFollowUpReq != statfx.Dodging {
+    t.Error("Failed self follow up wasn't reported")
+  }
+}
+
+func Test_AtkFxSuccessfulFollowUp(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+  ch.SetCmbSkill(skills.Counter)
+  dodgeInst := statfx.SEInst{
+    Effect: statfx.Dodging,
+    Chance: 1,
+    Duration: 1,
+  }
+  ch.addFx(dodgeInst)
+
+  cFx := ch.AtkFx(rep)
+
+  if cFx.Dmg == 0 {
+    t.Error("Expected self follow up to add damage effect")
+  }
+}
+
 func Test_AtkFxPctDmg(t *testing.T){
   ch := NewCharacter()
   pctDmgCh := NewCharacter()

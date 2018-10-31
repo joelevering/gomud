@@ -390,6 +390,10 @@ func (ch *Character) addFx(i statfx.SEInst) {
   ch.Fx[i.Effect] = &i
 }
 
+func (ch *Character) hasEffect(e statfx.StatusEffect) bool {
+  return ch.Fx[e] != nil
+}
+
 func (ch *Character) isStunned() bool {
   return ch.Fx[statfx.Stun] != nil
 }

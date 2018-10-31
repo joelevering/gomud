@@ -6,11 +6,12 @@ import (
 )
 
 type Skill struct {
-  Name     string
-  Effects  []Effect
-  CostType stats.Stat
-  CostAmt  int
-  Rstcn    Rstcn
+  Name        string
+  Effects     []Effect
+  CostType    stats.Stat
+  CostAmt     int
+  Rstcn       Rstcn
+  FollowUpReq *FollowUpReq
 }
 
 type Effect struct {
@@ -34,6 +35,40 @@ type Rstcn string // Restriction
 const(
   OOCOnly = Rstcn("OOCOnly") // skill can only be used Out Of Combat
 )
+
+type FollowUpReq struct {
+  Type   string
+  Effect statfx.StatusEffect
+}
+
+const(
+  SelfFollowUp = "selfFollowUp"
+  OppFollowUp  = "oppFollowUp"
+)
+
+func (s *Skill) IsOOCOnly() bool {
+  return s.Rstcn == OOCOnly
+}
+
+func (s *Skill) IsFollowUp() bool {
+  return s.FollowUpReq != nil
+}
+
+func (s *Skill) SelfFollowUpReq() (bool, statfx.StatusEffect) {
+  if s.FollowUpReq.Type == SelfFollowUp {
+    return true, s.FollowUpReq.Effect
+  }
+
+  return false, ""
+}
+
+func (s *Skill) OppFollowUpReq() (bool, statfx.StatusEffect) {
+  if s.FollowUpReq.Type == OppFollowUp {
+    return true, s.FollowUpReq.Effect
+  }
+
+  return false, ""
+}
 
 var(
   T_PctDmg = &Skill{
@@ -212,6 +247,21 @@ var(
           Duration: 1,
         },
       },
+    },
+  }
+  Counter = &Skill{
+    Name: "counter",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: PctDmg,
+        Value: 2.2,
+      },
+    },
+    FollowUpReq: &FollowUpReq{
+      Type: SelfFollowUp,
+      Effect: statfx.Dodging,
     },
   }
 )
