@@ -47,7 +47,7 @@ var Conscript = &Class{
       Level: 4,
     },
     &ClassSkill{
-      Skill: skills.Desperation,
+      Skill: skills.DesperateBlow,
       Level: 6,
     },
     &ClassSkill{
@@ -71,7 +71,7 @@ var Athlete = &Class{
   atkStats: []stats.Stat{stats.Flo},
   defStats: []stats.Stat{stats.Flo},
   skills: []*skills.Skill{
-    skills.Freneticism,
+    skills.FreneticPace,
   },
 }
 

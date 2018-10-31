@@ -99,12 +99,12 @@ func (p *Player) Save() {
 }
 
 func (p *Player) Cmd(cmd string) {
-  words := strings.Split(cmd, " ")
-
   if p.IsInCombat() {
-    p.useSkill(words[0], true)
+    p.useSkill(cmd)
     return
   }
+
+  words := strings.Split(cmd, " ")
 
   switch strings.ToLower(words[0]) {
   case "ls", "list":
@@ -138,8 +138,9 @@ func (p *Player) Cmd(cmd string) {
   case "a", "attack":
     if len(words) == 2 {
       p.AttackNP(words[1], "")
-    } else if len(words) == 3 {
-      p.AttackNP(words[1], words[2])
+    } else if len(words) > 2 {
+      skName := strings.Join(words[2:], " ")
+      p.AttackNP(words[1], skName)
     } else {
       p.SendMsg("I'm not sure how to interpret your attack. Use either 'attack <first name of enemy> <skill name>' or omit the skill name.")
     }
@@ -229,7 +230,7 @@ func (p *Player) Status() {
 func (p *Player) AttackNP(npName, skName string) {
   for _, np := range p.Room.GetNPs() {
     if np.IsAlive() && strings.Contains(strings.ToUpper(np.GetName()), strings.ToUpper(npName)) {
-      p.useSkill(skName, false)
+      p.useSkill(skName)
       go combat.Start(p, np)
       return
     }
@@ -511,12 +512,12 @@ func (p *Player) loadChar() {
   p.Sag = l.Sag
 }
 
-func (p *Player) useSkill (skName string, inCombat bool) {
+func (p *Player) useSkill (skName string) {
   if skName == "" { return }
 
   sk := p.Class.GetSkill(skName, p.Level)
   if sk != nil {
-    if inCombat && sk.Rstcn == skills.OOCOnly {
+    if p.IsInCombat() && sk.Rstcn == skills.OOCOnly {
       p.SendMsg(fmt.Sprintf("You cannot use '%s' in combat!", sk.Name))
       return
     }
