@@ -221,7 +221,7 @@ func (p *Player) Status() {
   p.SendMsg("")
   p.SendMsg("Skills:")
   for _, sk := range p.GetSkills() {
-    p.SendMsg(fmt.Sprintf(" * %s", sk.Name))
+    p.SendMsg(fmt.Sprintf(" * %s", strings.Title(sk.Name)))
   }
   p.SendMsg(strings.Repeat("~", utf8.RuneCountInString(header)))
 }
@@ -438,6 +438,10 @@ func (p *Player) WinCombat(loser interfaces.Combatant) {
   if leveledUp {
     p.SendMsg(fmt.Sprintf("You gained %d experience and leveled up!", expGained))
     p.SendMsg(fmt.Sprintf("You're now level %d!", p.GetLevel()))
+    newSk := p.Class.SkillForLvl(p.Level)
+    if newSk != nil {
+      p.SendMsg(fmt.Sprintf("You gained the skill '%s'!", strings.Title(newSk.Name)))
+    }
   } else {
     p.SendMsg(fmt.Sprintf("You gained %d experience! You need %d more experience to level up.", expGained, p.ExpToLvl()))
   }
@@ -498,6 +502,8 @@ func (p *Player) loadChar() {
 }
 
 func (p *Player) useSkill (skName string, inCombat bool) {
+  if skName == "" { return }
+
   sk := p.Class.GetSkill(skName, p.Level)
   if sk != nil {
     if inCombat && sk.Rstcn == skills.OOCOnly {

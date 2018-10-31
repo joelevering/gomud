@@ -29,6 +29,10 @@ func (m *MockClass) GetDefStats() []stats.Stat {
   return []stats.Stat{stats.Flo}
 }
 
+func (m *MockClass) SkillForLvl(_ int) *skills.Skill {
+  return skills.Charge
+}
+
 func (m *MockClass) SkillsForLvl(_ int) []*skills.Skill {
   return []*skills.Skill{}
 }

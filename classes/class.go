@@ -47,6 +47,16 @@ func (c *Class) GetDefStats() []stats.Stat {
   return c.defStats
 }
 
+func (c *Class) SkillForLvl(lvl int) *skills.Skill {
+  for _, cs := range c.skills {
+    if lvl == cs.Level {
+      return cs.Skill
+    }
+  }
+
+  return nil
+}
+
 func (c *Class) SkillsForLvl(lvl int) []*skills.Skill {
   skills := []*skills.Skill{}
   for _, cs := range c.skills {
