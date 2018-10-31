@@ -42,7 +42,7 @@ var Conscript = &Class{
     skills.PowerNap,
     skills.Charge,
     skills.Conserve,
-    skills.Desperation,
+    skills.DesperateBlow,
   },
 }
 
@@ -56,7 +56,7 @@ var Athlete = &Class{
   atkStats: []stats.Stat{stats.Flo},
   defStats: []stats.Stat{stats.Flo},
   skills: []*skills.Skill{
-    skills.Freneticism,
+    skills.FreneticPace,
   },
 }
 

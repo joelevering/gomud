@@ -103,7 +103,7 @@ var(
     },
   }
   PowerNap = &Skill{
-    Name: "powernap",
+    Name: "power nap",
     CostType: stats.Stm,
     CostAmt: 0,
     Effects: []Effect{
@@ -140,8 +140,8 @@ var(
       },
     },
   }
-  Desperation = &Skill{
-    Name: "desperation",
+  DesperateBlow = &Skill{
+    Name: "desperate blow",
     CostType: stats.Stm,
     CostAmt: 20,
     Effects: []Effect{
@@ -152,8 +152,8 @@ var(
       },
     },
   }
-  Freneticism = &Skill{
-    Name: "freneticism",
+  FreneticPace = &Skill{
+    Name: "frenetic pace",
     CostType: stats.Stm,
     CostAmt: 10,
     Effects: []Effect{
