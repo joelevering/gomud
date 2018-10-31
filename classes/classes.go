@@ -37,12 +37,27 @@ var Conscript = &Class{
   },
   atkStats: []stats.Stat{stats.Str},
   defStats: []stats.Stat{stats.Str},
-  skills: []*skills.Skill{
-    skills.Shove,
-    skills.PowerNap,
-    skills.Charge,
-    skills.Conserve,
-    skills.Desperation,
+  skills: []*ClassSkill{
+    &ClassSkill{
+      Skill: skills.Shove,
+      Level: 2,
+    },
+    &ClassSkill{
+      Skill: skills.Charge,
+      Level: 4,
+    },
+    &ClassSkill{
+      Skill: skills.Desperation,
+      Level: 6,
+    },
+    &ClassSkill{
+      Skill: skills.PowerNap,
+      Level: 8,
+    },
+    &ClassSkill{
+      Skill: skills.Conserve,
+      Level: 10,
+    },
   },
 }
 

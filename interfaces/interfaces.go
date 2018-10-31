@@ -151,5 +151,7 @@ type ClassI interface {
   GetStatGrowth() classes.StatGrowth
   GetAtkStats() []stats.Stat
   GetDefStats() []stats.Stat
-  GetSkill(string) *skills.Skill
+  SkillForLvl(int) *skills.Skill
+  SkillsForLvl(int) []*skills.Skill
+  GetSkill(string, int) *skills.Skill
 }
