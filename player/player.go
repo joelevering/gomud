@@ -73,6 +73,10 @@ func (p *Player) Init() {
     p.SetSpawn(room.RoomStore.Default)
   }
 
+  if p.Room == nil {
+    p.Room = p.GetSpawn()
+  }
+
   go p.regen()
 }
 
@@ -524,6 +528,12 @@ func (p *Player) loadChar() {
   p.Ing = l.Ing
   p.Kno = l.Kno
   p.Sag = l.Sag
+
+  curRm := room.RoomStore.Find(l.Room)
+  if curRm != nil {
+    p.Room = curRm
+  }
+
   spawn := room.RoomStore.Find(l.Spawn)
   if spawn != nil {
     p.SetSpawn(spawn)

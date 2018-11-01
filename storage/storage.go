@@ -38,6 +38,7 @@ type CharStats struct {
   Kno    int `json:"knowledge"`
   Sag    int `json:"sagacity"`
 
+  Room   int `json:"room"`
   Spawn  int `json:"spawn"`
 }
 
@@ -111,7 +112,8 @@ func (s *Storage) PersistChar(pID string, ch *character.Character) {
     Ing: ch.Ing,
     Kno: ch.Kno,
     Sag: ch.Sag,
-    Spawn: ch.Room.GetID(),
+    Room: ch.Room.GetID(),
+    Spawn: ch.GetSpawn().GetID(),
   }
 
   s.PersistStore(s.Filename)

@@ -45,7 +45,7 @@ func LoadRooms(path string) (error) {
   }
 
   RoomStore = newRoomFinder(rooms)
-  RoomStore.Default = RoomStore.Find(8)
+  RoomStore.Default = RoomStore.Find(9)
   attachRoomsToExits(rooms)
 
   return nil
