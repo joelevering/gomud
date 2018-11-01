@@ -37,9 +37,6 @@ func (gk *Gatekeeper) logIn(player *player.Player) {
 
 	gk.state.Players[name] = player
 
-  player.Character.SetSpawn(gk.state.DefaultRoom)
-	player.Spawn()
-
 	player.Look()
 
   go gk.broadcast(fmt.Sprintf("%s has logged in!", name))

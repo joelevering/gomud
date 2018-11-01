@@ -23,8 +23,6 @@ type NonPlayer struct {
   DefStats  []stats.Stat `json:"defense_stats"`
   Behaviors []*Behavior  `json:"ooc_behavior"`
   Alive     bool
-  SpawnRoom interfaces.RoomI
-  Room      interfaces.RoomI
 }
 
 type Behavior struct {
@@ -63,12 +61,8 @@ func (n *NonPlayer) GetDesc() string {
   return n.Desc
 }
 
-func (n *NonPlayer) SetSpawn(room interfaces.RoomI) {
-  n.SpawnRoom = room
-}
-
 func (n *NonPlayer) Spawn() {
-  n.Room = n.SpawnRoom
+  n.Room = n.GetSpawn()
   n.Alive = true
 }
 

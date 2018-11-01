@@ -11,6 +11,7 @@ import (
   "github.com/joelevering/gomud/classes"
   "github.com/joelevering/gomud/combat"
   "github.com/joelevering/gomud/interfaces"
+  "github.com/joelevering/gomud/room"
   "github.com/joelevering/gomud/statfx"
   "github.com/joelevering/gomud/storage"
   "github.com/joelevering/gomud/structs"
@@ -37,7 +38,6 @@ type Player struct {
 
   Channel chan string
   Queue   interfaces.QueueI
-  Room    interfaces.RoomI
   Store   storage.StorageI
   Logout  chan string
 }
@@ -67,6 +67,14 @@ func (p *Player) Init() {
   } else {
     p.loadClass(classes.Conscript)
     p.loadChar()
+  }
+
+  if p.GetSpawn() == nil {
+    p.SetSpawn(room.RoomStore.Default)
+  }
+
+  if p.Room == nil {
+    p.Room = p.GetSpawn()
   }
 
   go p.regen()
@@ -520,6 +528,16 @@ func (p *Player) loadChar() {
   p.Ing = l.Ing
   p.Kno = l.Kno
   p.Sag = l.Sag
+
+  curRm := room.RoomStore.Find(l.Room)
+  if curRm != nil {
+    p.Room = curRm
+  }
+
+  spawn := room.RoomStore.Find(l.Spawn)
+  if spawn != nil {
+    p.SetSpawn(spawn)
+  }
 }
 
 func (p *Player) useSkill (skName string) {
