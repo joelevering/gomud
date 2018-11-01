@@ -12,7 +12,6 @@ import (
   "github.com/joelevering/gomud/combat"
   "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/statfx"
-  "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/storage"
   "github.com/joelevering/gomud/structs"
 )
@@ -99,12 +98,12 @@ func (p *Player) Save() {
 }
 
 func (p *Player) Cmd(cmd string) {
-  words := strings.Split(cmd, " ")
-
   if p.IsInCombat() {
-    p.useSkill(words[0], true)
+    p.useSkill(cmd)
     return
   }
+
+  words := strings.Split(cmd, " ")
 
   switch strings.ToLower(words[0]) {
   case "ls", "list":
@@ -138,8 +137,9 @@ func (p *Player) Cmd(cmd string) {
   case "a", "attack":
     if len(words) == 2 {
       p.AttackNP(words[1], "")
-    } else if len(words) == 3 {
-      p.AttackNP(words[1], words[2])
+    } else if len(words) > 2 {
+      skName := strings.Join(words[2:], " ")
+      p.AttackNP(words[1], skName)
     } else {
       p.SendMsg("I'm not sure how to interpret your attack. Use either 'attack <first name of enemy> <skill name>' or omit the skill name.")
     }
@@ -229,7 +229,7 @@ func (p *Player) Status() {
 func (p *Player) AttackNP(npName, skName string) {
   for _, np := range p.Room.GetNPs() {
     if np.IsAlive() && strings.Contains(strings.ToUpper(np.GetName()), strings.ToUpper(npName)) {
-      p.useSkill(skName, false)
+      p.useSkill(skName)
       go combat.Start(p, np)
       return
     }
@@ -291,6 +291,8 @@ func (p *Player) ChangeClass(class string) {
     p.Save()
     p.loadClass(classes.Sophist)
   }
+
+  p.SendMsg(fmt.Sprintf("Changed to %s!", p.Class.GetName()))
 }
 
 
@@ -322,12 +324,27 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
     p.SendMsg("You were unable to attack!")
   }
 
-  if rep.Skill.Name != "" {
-    p.SendMsg(fmt.Sprintf("You used %s!", rep.Skill.Name))
+  if rep.Concentrating {
+    p.SendMsg("You are concentrating on your enemy.")
   }
+
+  if rep.Skill.Name != "" {
+    if rep.Concentrating {
+      p.SendMsg(fmt.Sprintf("You were unable to use %s!", rep.Skill.Name))
+    } else if rep.FollowUpReq != "" {
+      p.SendMsg(fmt.Sprintf("%s failed! It has to follow up %s", strings.Title(rep.Skill.Name), rep.FollowUpReq))
+    } else {
+      p.SendMsg(fmt.Sprintf("You used %s!", rep.Skill.Name))
+    }
+  }
+
 
   if rep.Missed {
     p.SendMsg("Your attack missed!")
+  }
+
+  if rep.Dodged {
+    p.SendMsg(fmt.Sprintf("%s dodged your attack!", opp.GetName()))
   }
 
   if rep.Surprised != (structs.SurpriseRep{}) {
@@ -379,6 +396,10 @@ func (p *Player) ReportDef(opp interfaces.Combatant, rep structs.CmbRep) {
 
   if rep.Missed {
     p.SendMsg("%s missed their attack!", opp.GetName())
+  }
+
+  if rep.Dodged {
+    p.SendMsg("You dodged the attack!")
   }
 
   if rep.Heal > 0 {
@@ -501,12 +522,12 @@ func (p *Player) loadChar() {
   p.Sag = l.Sag
 }
 
-func (p *Player) useSkill (skName string, inCombat bool) {
+func (p *Player) useSkill (skName string) {
   if skName == "" { return }
 
   sk := p.Class.GetSkill(skName, p.Level)
   if sk != nil {
-    if inCombat && sk.Rstcn == skills.OOCOnly {
+    if p.IsInCombat() && sk.IsOOCOnly() {
       p.SendMsg(fmt.Sprintf("You cannot use '%s' in combat!", sk.Name))
       return
     }

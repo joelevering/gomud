@@ -6,11 +6,12 @@ import (
 )
 
 type CmbFx struct {
-  Dmg int
-  Heal int
-  SFx []statfx.SEInst
+  Dmg     int
+  Heal    int
+  SFx     []statfx.SEInst
   SelfSFx []statfx.SEInst
-  Skill skills.Skill
+  Skill   skills.Skill
+  Req     statfx.StatusEffect
 }
 
 type CmbRep struct {
@@ -19,7 +20,11 @@ type CmbRep struct {
   Stunned bool
   LowerAtk bool
   LowerDef bool
+  Concentrating bool
+  Dodged bool
   Surprised SurpriseRep
+
+  FollowUpReq statfx.StatusEffect
 }
 
 type SurpriseRep struct {

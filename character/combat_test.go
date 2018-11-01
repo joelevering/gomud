@@ -19,6 +19,89 @@ func Test_CharAttacksByDefault(t *testing.T) {
   }
 }
 
+func Test_AtkFxWithConcentration(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+  conInst := statfx.SEInst{
+    Effect: statfx.Concentration,
+    Chance: 1,
+  }
+  ch.addFx(conInst)
+  ch.SetCmbSkill(skills.T_Stun)
+
+  cFx := ch.AtkFx(rep)
+
+  if len(cFx.SFx) != 0 {
+    t.Errorf("Concentrating should not result in statfx combat fx, but it did (%v)", cFx.SFx)
+  }
+
+  if cFx.Dmg != ch.GetAtk() {
+    t.Error("CFx while concentrating should have regular damage, but they don't")
+  }
+
+  if rep.Skill.Name != skills.T_Stun.Name {
+    t.Error("Skill should still be reported when concetrating, but it wasn't")
+  }
+
+  if !rep.Concentrating {
+    t.Error("Rep should report concentration, but it's not")
+  }
+}
+
+func Test_AtkFxFailedSelfFollowUp(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+  ch.SetCmbSkill(skills.Counter)
+
+  cFx := ch.AtkFx(rep)
+
+  if cFx.Dmg != 0 {
+    t.Errorf("Expected self follow up without fx to result in no combat fx, but got %v", cFx)
+  }
+
+  if rep.Skill.Name != skills.Counter.Name {
+    t.Error("Failed self follow up should still report skill")
+  }
+
+  if rep.FollowUpReq != statfx.Dodging {
+    t.Error("Failed self follow up wasn't reported")
+  }
+}
+
+func Test_AtkFxSuccessfulSelfFollowUp(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+  ch.SetCmbSkill(skills.Counter)
+  dodgeInst := statfx.SEInst{
+    Effect: statfx.Dodging,
+    Chance: 1,
+    Duration: 1,
+  }
+  ch.addFx(dodgeInst)
+
+  cFx := ch.AtkFx(rep)
+
+  if cFx.Dmg == 0 {
+    t.Error("Expected self follow up to add damage effect")
+  }
+}
+
+func Test_AtkFxOppFollowUp(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+  ch.SetCmbSkill(skills.Uppercut)
+
+  cFx := ch.AtkFx(rep)
+
+  if cFx.Dmg == 0 {
+    t.Error("Expected opp follow up to add damage effect")
+  }
+
+  if cFx.Req != statfx.Surprise {
+    t.Error("Expected opp follow up to add status effect requirement")
+  }
+}
+
 func Test_AtkFxPctDmg(t *testing.T){
   ch := NewCharacter()
   pctDmgCh := NewCharacter()
@@ -166,6 +249,48 @@ func Test_ResistAtkLowersDmg(t *testing.T) {
   }
 }
 
+func Test_ResistAtkWithReqFailure(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+
+  cFx := structs.CmbFx{
+    Dmg: 100,
+    Req: statfx.Surprise,
+  }
+
+  newCFx := ch.ResistAtk(cFx, rep)
+
+  if newCFx.Dmg != 0 {
+    t.Errorf("Expected opp follow up without fx to result in no combat fx, but got %v", cFx)
+  }
+
+  if rep.FollowUpReq != statfx.Surprise {
+    t.Error("Failed opp follow up wasn't reported")
+  }
+}
+
+func Test_ResistAtkWithReqSuccess(t *testing.T) {
+  ch := NewCharacter()
+  surpInst := statfx.SEInst{
+    Effect: statfx.Surprise,
+    Chance: 1,
+    Duration: 1,
+  }
+  ch.addFx(surpInst)
+
+  rep := &structs.CmbRep{}
+  cFx := structs.CmbFx{
+    Dmg: 100,
+    Req: statfx.Surprise,
+  }
+
+  newCFx := ch.ResistAtk(cFx, rep)
+
+  if newCFx.Dmg == 0 {
+    t.Error("Expected successful opp follow up to have positive damage")
+  }
+}
+
 func Test_ResistAtkIsImpactedByLowerDef(t *testing.T) {
   ch := NewCharacter()
   vulnCh := NewCharacter()
@@ -183,6 +308,28 @@ func Test_ResistAtkIsImpactedByLowerDef(t *testing.T) {
 
   if vulnRes.Dmg <= regRes.Dmg {
     t.Errorf("Expected Vulnerable to result in a more damaging atk than usual, but was %d compared to %d", vulnRes.Dmg, regRes.Dmg)
+  }
+}
+
+func Test_ResistAtkWhileDodging(t *testing.T) {
+  ch := NewCharacter()
+  dodgeInst := statfx.SEInst{
+    Effect: statfx.Dodging,
+    Chance: 1,
+    Duration: 1,
+  }
+  ch.addFx(dodgeInst)
+  rep := &structs.CmbRep{}
+  fx := structs.CmbFx{Dmg: 100}
+
+  res := ch.ResistAtk(fx, rep)
+
+  if res.Dmg != 0 {
+    t.Errorf("Expected dodging while resisting atk to zero out damage, but dmg is %d", res.Dmg)
+  }
+
+  if !rep.Dodged {
+    t.Error("Expected dodging while resisting atk to report dodged")
   }
 }
 
@@ -253,10 +400,6 @@ func Test_ApplyDefAppliesStatfx(t *testing.T) {
   if len(rep.SFx) != 1 || rep.SFx[0].Effect != statfx.Stun {
     t.Errorf("Expected ApplyDef to apply sfx to report, but report sfx are %v", rep.SFx)
   }
-}
-
-func Test_AtkFxAndApplyDefUseFlatDmgSkills(t *testing.T){
-  // TODO
 }
 
 func Test_ApplyDefDoesNotHeal(t *testing.T) {

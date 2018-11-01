@@ -47,7 +47,7 @@ var Conscript = &Class{
       Level: 4,
     },
     &ClassSkill{
-      Skill: skills.Desperation,
+      Skill: skills.DesperateBlow,
       Level: 6,
     },
     &ClassSkill{
@@ -70,6 +70,28 @@ var Athlete = &Class{
   },
   atkStats: []stats.Stat{stats.Flo},
   defStats: []stats.Stat{stats.Flo},
+  skills: []*ClassSkill{
+    &ClassSkill{
+      Skill: skills.FreneticPace,
+      Level: 2,
+    },
+    &ClassSkill{
+      Skill: skills.BackUp,
+      Level: 4,
+    },
+    &ClassSkill{
+      Skill: skills.Duck,
+      Level: 6,
+    },
+    &ClassSkill{
+      Skill: skills.Counter,
+      Level: 8,
+    },
+    &ClassSkill{
+      Skill: skills.Uppercut,
+      Level: 10,
+    },
+  },
 }
 
 var Charmer = &Class{

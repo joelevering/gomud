@@ -6,11 +6,12 @@ import (
 )
 
 type Skill struct {
-  Name     string
-  Effects  []Effect
-  CostType stats.Stat
-  CostAmt  int
-  Rstcn    Rstcn
+  Name        string
+  Effects     []Effect
+  CostType    stats.Stat
+  CostAmt     int
+  Rstcn       Rstcn
+  FollowUpReq *FollowUpReq
 }
 
 type Effect struct {
@@ -34,6 +35,36 @@ type Rstcn string // Restriction
 const(
   OOCOnly = Rstcn("OOCOnly") // skill can only be used Out Of Combat
 )
+
+type FollowUpReq struct {
+  Type   string
+  Effect statfx.StatusEffect
+}
+
+const(
+  SelfFollowUp = "selfFollowUp"
+  OppFollowUp  = "oppFollowUp"
+)
+
+func (s *Skill) IsOOCOnly() bool {
+  return s.Rstcn == OOCOnly
+}
+
+func (s *Skill) SelfFollowUpReq() (bool, statfx.StatusEffect) {
+  if s.FollowUpReq != nil && s.FollowUpReq.Type == SelfFollowUp {
+    return true, s.FollowUpReq.Effect
+  }
+
+  return false, ""
+}
+
+func (s *Skill) OppFollowUpReq() (bool, statfx.StatusEffect) {
+  if s.FollowUpReq != nil && s.FollowUpReq.Type == OppFollowUp {
+    return true, s.FollowUpReq.Effect
+  }
+
+  return false, ""
+}
 
 var(
   T_PctDmg = &Skill{
@@ -98,12 +129,13 @@ var(
         Value: statfx.SEInst{
           Effect: statfx.Surprise,
           Chance: 0.5,
+          Duration: 1,
         },
       },
     },
   }
   PowerNap = &Skill{
-    Name: "powernap",
+    Name: "power nap",
     CostType: stats.Stm,
     CostAmt: 0,
     Effects: []Effect{
@@ -140,8 +172,8 @@ var(
       },
     },
   }
-  Desperation = &Skill{
-    Name: "desperation",
+  DesperateBlow = &Skill{
+    Name: "desperate blow",
     CostType: stats.Stm,
     CostAmt: 20,
     Effects: []Effect{
@@ -150,6 +182,100 @@ var(
         Value: 3.0,
         Chance: 0.34,
       },
+    },
+  }
+  FreneticPace = &Skill{
+    Name: "frenetic pace",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: OppFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Surprise,
+          Chance: 0.6,
+          Duration: 1,
+        },
+      },
+      Effect{
+        Type: SelfFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Concentration,
+          Chance: 1,
+          Duration: 1,
+        },
+      },
+      Effect{
+        Type: PctDmg,
+        Value: 1.0,
+      },
+    },
+  }
+  BackUp = &Skill{
+    Name: "back up",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: OppFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Surprise,
+          Chance: 0.6,
+          Duration: 1,
+        },
+      },
+      Effect{
+        Type: OppFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Weak,
+          Chance: 1,
+        },
+      },
+    },
+  }
+  Duck = &Skill{
+    Name: "duck",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: SelfFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Dodging,
+          Chance: 0.85,
+          Duration: 1,
+        },
+      },
+    },
+  }
+  Counter = &Skill{
+    Name: "counter",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: PctDmg,
+        Value: 2.2,
+      },
+    },
+    FollowUpReq: &FollowUpReq{
+      Type: SelfFollowUp,
+      Effect: statfx.Dodging,
+    },
+  }
+  Uppercut = &Skill{
+    Name: "uppercut",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: PctDmg,
+        Value: 2.0,
+      },
+    },
+    FollowUpReq: &FollowUpReq{
+      Type: OppFollowUp,
+      Effect: statfx.Surprise,
     },
   }
 )
