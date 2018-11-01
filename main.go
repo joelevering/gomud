@@ -7,6 +7,7 @@ import (
   "github.com/joelevering/gomud/player"
   "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/pubsub"
+  "github.com/joelevering/gomud/room"
   "github.com/joelevering/gomud/storage"
 )
 
@@ -14,8 +15,6 @@ const port = "1919"
 
 type GameState struct {
   Players     map[string]*player.Player
-  Rooms       []interfaces.RoomI
-  DefaultRoom interfaces.RoomI
   Queue       interfaces.QueueI
   Store       *storage.Storage
 }
@@ -64,21 +63,18 @@ func initGameState() *GameState {
   var state = GameState{
     Queue: pubsub.NewQueue(),
     Store: storage.LoadStore("data/store.json"),
+    Players: make(map[string]*player.Player),
   }
 
-  state.Players = make(map[string]*player.Player)
-
-  rooms, err := LoadRooms("data/rooms.json")
+  err := room.LoadRooms("data/rooms.json")
   if err != nil {
     panic("Error loading rooms")
   }
-  err = InitNPs(rooms, state.Queue)
+
+  err = InitNPs(room.RoomStore.Rooms, state.Queue)
   if err != nil {
     panic("Error loading npcs")
   }
-
-  state.Rooms = rooms
-  state.DefaultRoom = state.Rooms[8]
 
   return &state
 }

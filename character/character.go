@@ -30,6 +30,7 @@ type Character struct {
   Kno        int               `json:"knowledge"`
   Sag        int               `json:"sagacity"`
 
+  Room       interfaces.RoomI
   Spawn      interfaces.RoomI
   InCombat   bool
   CmbSkill   *skills.Skill

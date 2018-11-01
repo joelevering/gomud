@@ -18,6 +18,7 @@ import (
 
 func TestMain(m *testing.M) {
   os.Mkdir("../test", 0755)
+  room.LoadRooms("../data/rooms.json")
   r := m.Run()
   os.RemoveAll("../test/")
   os.Exit(r)
@@ -28,6 +29,7 @@ func NewTestPlayer() (*Player, chan string, *mocks.MockQueue) {
   q := &mocks.MockQueue{}
   s := storage.LoadStore(fmt.Sprintf("../test/%s.json", strconv.Itoa(rand.Intn(999999))))
   p := NewPlayer(ch, q, s)
+  p.Room = &room.Room{Id: 1}
   return p, ch, q
 }
 
@@ -485,6 +487,7 @@ func Test_SavePersistsClassAndChar(t *testing.T) {
   p2 := NewPlayer(ch2, p.Queue, p.Store)
   defer close(ch2)
   p2.SetName(name)
+  p2.SetSpawn(&room.Room{})
   p2.Init()
 
   if p2.Level != 2 {
