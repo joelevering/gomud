@@ -36,6 +36,7 @@ type Character struct {
   CmbSkill   *skills.Skill
   CmbSkillMu sync.Mutex
   Fx         map[statfx.StatusEffect]*statfx.SEInst
+  // DoTs       map[string]??
 }
 
 func NewCharacter() *Character {

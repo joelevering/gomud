@@ -104,6 +104,28 @@ var Charmer = &Class{
   },
   atkStats: []stats.Stat{stats.Ing},
   defStats: []stats.Stat{stats.Ing},
+  skills: []*ClassSkill{
+    &ClassSkill{
+      Skill: skills.WittyRetort,
+      Level: 1,
+    },
+    &ClassSkill{
+      Skill: skills.Ploy,
+      Level: 1,
+    },
+    &ClassSkill{
+      Skill: skills.Sideswipe,
+      Level: 1,
+    },
+    &ClassSkill{
+      Skill: skills.Plan,
+      Level: 1,
+    },
+    &ClassSkill{
+      Skill: skills.Sidestep,
+      Level: 1,
+    },
+  },
 }
 
 var Augur = &Class{

@@ -79,7 +79,7 @@ func (ch *Character) ResistAtk(fx structs.CmbFx, rep *structs.CmbRep) structs.Cm
 
   sfx := ch.calcSFx(fx.SFx)
 
-  if ch.isVulnerable() {
+  if ch.isVulnerable() && dmg != 0 {
     dmg *= 2
     rep.LowerDef = true
   }
