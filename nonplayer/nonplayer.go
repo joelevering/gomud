@@ -33,6 +33,7 @@ type Behavior struct {
 
 func (n *NonPlayer) Init(room interfaces.RoomI, queue interfaces.QueueI) {
   n.Fx = make(map[statfx.StatusEffect]*statfx.SEInst)
+  n.Dots = make(map[statfx.DotType]*statfx.DotInst)
 
   n.SetSpawn(room)
   n.SetClass()

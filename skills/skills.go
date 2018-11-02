@@ -28,16 +28,8 @@ const(
   PctHeal = EffectType("pctHeal") // % Healing
   OppFx = EffectType("oppFx") // Status Effect on Opponent
   SelfFx = EffectType("selfFx") // Status Effect on Self
-  DoT = EffectType("doT") // Damage over Time
+  Dot = EffectType("doT") // Damage over Time
 )
-
-type DoTInst struct {
-  Desc        string
-  Chance      float64
-  DmgPct      float64
-  DurationMin int
-  DurationMax int
-}
 
 type Rstcn string // Restriction
 
@@ -95,6 +87,23 @@ var(
       Effect{
         Type: FlatDmg,
         Value: 10,
+      },
+    },
+  }
+  T_Bleed = &Skill{
+    Name: "t_bleed",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: Dot,
+        Value: statfx.DotFx{
+          Type: statfx.Bleed,
+          Chance: 1,
+          DmgPct: 0.5,
+          DurationMin: 1,
+          DurationMax: 1,
+        },
       },
     },
   }
@@ -335,11 +344,11 @@ var(
     CostAmt: 10,
     Effects: []Effect{
       Effect{
-        Type: DoT,
-        Value: DoTInst{
-          Desc: "bleeding",
+        Type: Dot,
+        Value: statfx.DotFx{
+          Type: statfx.Bleed,
           Chance: 0.75,
-          DmgPct: 0.5,
+          DmgPct: 0.33,
           DurationMin: 2,
           DurationMax: 2,
         },

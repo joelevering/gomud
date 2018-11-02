@@ -107,23 +107,23 @@ var Charmer = &Class{
   skills: []*ClassSkill{
     &ClassSkill{
       Skill: skills.WittyRetort,
-      Level: 1,
+      Level: 2,
     },
     &ClassSkill{
       Skill: skills.Ploy,
-      Level: 1,
+      Level: 4,
     },
     &ClassSkill{
       Skill: skills.Sideswipe,
-      Level: 1,
+      Level: 6,
     },
     &ClassSkill{
       Skill: skills.Plan,
-      Level: 1,
+      Level: 8,
     },
     &ClassSkill{
       Skill: skills.Sidestep,
-      Level: 1,
+      Level: 10,
     },
   },
 }

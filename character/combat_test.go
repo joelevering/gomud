@@ -333,13 +333,23 @@ func Test_ResistAtkWhileDodging(t *testing.T) {
   }
 }
 
-func Test_ResistAtkKeepsStatusEffects(t *testing.T) {
+func Test_ResistAtkKeepsStatusEffectsAndDots(t *testing.T) {
   ch := NewCharacter()
   rep := &structs.CmbRep{}
   fx := structs.CmbFx{
     SFx: []statfx.SEInst{
       statfx.SEInst{
         Effect: statfx.Stun,
+      },
+    },
+    SelfSFx: []statfx.SEInst{
+      statfx.SEInst{
+        Effect: statfx.Conserve,
+      },
+    },
+    Dots: []statfx.DotInst{
+      statfx.DotInst{
+        Type: statfx.Bleed,
       },
     },
   }
@@ -349,23 +359,13 @@ func Test_ResistAtkKeepsStatusEffects(t *testing.T) {
   if len(res.SFx) != 1 || res.SFx[0].Effect != statfx.Stun {
     t.Errorf("Expected status effects to remain the same on resist, but got %v", res.SFx)
   }
-}
-
-func Test_ResistAtkKeepsSelfStatusEffects(t *testing.T) {
-  ch := NewCharacter()
-  rep := &structs.CmbRep{}
-  fx := structs.CmbFx{
-    SelfSFx: []statfx.SEInst{
-      statfx.SEInst{
-        Effect: statfx.Conserve,
-      },
-    },
-  }
-
-  res := ch.ResistAtk(fx, rep)
 
   if len(res.SelfSFx) != 1 || res.SelfSFx[0].Effect != statfx.Conserve {
     t.Errorf("Expected self status effects to remain the same on resist, but got %v", res.SelfSFx)
+  }
+
+  if len(res.Dots) != 1 || res.Dots[0].Type != statfx.Bleed {
+    t.Errorf("Expected DoTs to remain the same on resist, but got %v", res.Dots)
   }
 }
 
@@ -394,11 +394,28 @@ func Test_ApplyDefAppliesStatfx(t *testing.T) {
   ch.ApplyDef(cFx, rep)
 
   if !ch.isStunned() {
-    t.Error("Expected character to be stunned when using ApplyDef with stun SE, but char was not")
+    t.Error("Expected character to be stunned when using ApplyDef with stun SE")
   }
 
   if len(rep.SFx) != 1 || rep.SFx[0].Effect != statfx.Stun {
     t.Errorf("Expected ApplyDef to apply sfx to report, but report sfx are %v", rep.SFx)
+  }
+}
+
+func Test_ApplyDefAppliesDoTFx(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+  ch.SetCmbSkill(skills.T_Bleed)
+
+  cFx := ch.AtkFx(rep)
+  ch.ApplyDef(cFx, rep)
+
+  if !ch.isBleeding() {
+    t.Error("Expected character to bleed when using ApplyDef with Bleed DoT")
+  }
+
+  if len(rep.Dots) != 1 || rep.Dots[0].Type != statfx.Bleed {
+    t.Errorf("Expected ApplyDef to apply DoTs to report, but report DoTs are %v", rep.Dots)
   }
 }
 
@@ -460,6 +477,24 @@ func Test_ApplyAtkAppliesSelfFx(t *testing.T) {
 
   if !ch.isConserving() {
     t.Error("Expected atkfx + applyAtk with Conserve skill to apply Conserve to attacker, but it didn't")
+  }
+}
+
+func Test_ApplyAtkAppliesDoTDmg(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+  bleedInst := statfx.DotInst{
+    Type: statfx.Bleed,
+    Dmg: 20,
+    Duration: 1,
+  }
+  ch.addDot(bleedInst)
+
+  fx := ch.AtkFx(rep)
+  ch.ApplyAtk(fx, rep)
+
+  if ch.GetDet() == ch.GetMaxDet() {
+    t.Errorf("Expected ApplyAtk to apply bleed dmg, but det is %d/%d", ch.GetDet(), ch.GetMaxDet())
   }
 }
 
