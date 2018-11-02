@@ -139,24 +139,24 @@ var Augur = &Class{
   defStats: []stats.Stat{stats.Kno},
   skills: []*ClassSkill{
     &ClassSkill{
+      Skill: skills.LowBlow,
+      Level: 2,
+    },
+    &ClassSkill{
       Skill: skills.Spark,
-      Level: 1,
+      Level: 4,
     },
     &ClassSkill{
       Skill: skills.Concentrate,
-      Level: 1,
+      Level: 6,
     },
     &ClassSkill{
       Skill: skills.FirstAid,
-      Level: 1,
-    },
-    &ClassSkill{
-      Skill: skills.LowBlow,
-      Level: 1,
+      Level: 8,
     },
     &ClassSkill{
       Skill: skills.TargetedStrike,
-      Level: 1,
+      Level: 10,
     },
   },
 }

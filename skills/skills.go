@@ -430,7 +430,7 @@ var(
         Value: statfx.SEInst{
           Effect: statfx.Empowered,
           Chance: 1.0,
-          Duration: 1,
+          Duration: 2,
         },
       },
     },
