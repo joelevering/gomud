@@ -20,8 +20,10 @@ type CmbRep struct {
   CmbFx
   Missed bool
   Stunned bool
-  LowerAtk bool
-  LowerDef bool
+  Empowered bool
+  Steeled bool
+  Weak bool
+  Vulnerable bool
   Concentrating bool
   Dodged bool
   Surprised SurpriseRep
@@ -31,6 +33,6 @@ type CmbRep struct {
 
 type SurpriseRep struct {
   Stunned bool
-  LowerAtk bool
-  LowerDef bool
+  Weak bool
+  Vulnerable bool
 }

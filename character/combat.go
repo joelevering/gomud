@@ -60,8 +60,15 @@ func (ch *Character) AtkFx(rep *structs.CmbRep) structs.CmbFx {
   cFx := ch.calcCmbFx(sk, rep)
   if ch.isWeak() && cFx.Dmg > 1 {
     cFx.Dmg /= 2
-    rep.LowerAtk = true
+    rep.Weak = true
   }
+  if ch.isEmpowered() {
+    cFx.Dmg *= 2
+    if cFx.Dmg > 0 {
+      rep.Empowered = true
+    }
+  }
+
   return cFx
 }
 
@@ -88,9 +95,16 @@ func (ch *Character) ResistAtk(fx structs.CmbFx, rep *structs.CmbRep) structs.Cm
 
   sfx := ch.calcSFx(fx.SFx)
 
-  if ch.isVulnerable() && dmg != 0 {
+  if ch.isVulnerable() {
     dmg *= 2
-    rep.LowerDef = true
+    if dmg != 0 {
+      rep.Vulnerable = true
+    }
+  }
+
+  if ch.isSteeled() && dmg >1 {
+    dmg /= 2
+    rep.Steeled = true
   }
 
   newFx.Dmg = dmg
@@ -229,7 +243,7 @@ func (ch *Character) applySFx(sFx []statfx.SEInst, rep *structs.CmbRep) {
         }
         ch.addFx(srpFx)
 
-        rep.Surprised = structs.SurpriseRep{LowerAtk: true}
+        rep.Surprised = structs.SurpriseRep{Weak: true}
       } else if n == 2 {
         srpFx := statfx.SEInst{
           Effect: statfx.Vulnerable,
@@ -237,7 +251,7 @@ func (ch *Character) applySFx(sFx []statfx.SEInst, rep *structs.CmbRep) {
         }
         ch.addFx(srpFx)
 
-        rep.Surprised = structs.SurpriseRep{LowerDef: true}
+        rep.Surprised = structs.SurpriseRep{Vulnerable: true}
       }
     }
 
