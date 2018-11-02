@@ -14,8 +14,12 @@ func (ch *Character) EnterCombat(opp *Character) {
 }
 
 func (ch *Character) LeaveCombat() {
-  for k := range ch.Fx {
-    delete(ch.Fx, k)
+  for e := range ch.Fx {
+    delete(ch.Fx, e)
+  }
+
+  for d := range ch.Dots {
+    delete(ch.Dots, d)
   }
 
   ch.InCombat = false
@@ -61,14 +65,19 @@ func (ch *Character) AtkFx(rep *structs.CmbRep) structs.CmbFx {
   return cFx
 }
 
-// Called when a character is being attacked. Applies damage reduction/status effect resistances etc.
-// Calculates damage and effects after factoring in resistances
-// Returns another structs.CmbFx obj with updated summary of damage
 func (ch *Character) ResistAtk(fx structs.CmbFx, rep *structs.CmbRep) structs.CmbFx {
+  newFx := structs.CmbFx{
+    DotDmgs: fx.DotDmgs,
+  }
+
   if fx.Req != "" && !ch.hasEffect(fx.Req) {
     rep.FollowUpReq = fx.Req
-    return structs.CmbFx{}
+    return newFx
   }
+
+  newFx.Heal = fx.Heal
+  newFx.SelfSFx = fx.SelfSFx
+  newFx.Dots = fx.Dots
 
   var dmg int
   if ch.isDodging() {
@@ -79,21 +88,24 @@ func (ch *Character) ResistAtk(fx structs.CmbFx, rep *structs.CmbRep) structs.Cm
 
   sfx := ch.calcSFx(fx.SFx)
 
-  if ch.isVulnerable() {
+  if ch.isVulnerable() && dmg != 0 {
     dmg *= 2
     rep.LowerDef = true
   }
 
-  return structs.CmbFx{
-    Dmg: dmg,
-    Heal: fx.Heal,
-    SFx: sfx,
-    SelfSFx: fx.SelfSFx,
-  }
+  newFx.Dmg = dmg
+  newFx.SFx = sfx
+
+  return newFx
 }
 
 // Apply CmbFx for which you are the attacker
 func (ch *Character) ApplyAtk(fx structs.CmbFx, rep *structs.CmbRep) {
+  for _, dotDmg := range fx.DotDmgs {
+    ch.SetDet(ch.GetDet() - dotDmg.Dmg)
+  }
+  rep.DotDmgs = fx.DotDmgs
+
   if fx.Heal > 0 {
     oldDet := ch.GetDet()
     ch.Heal(fx.Heal)
@@ -108,17 +120,28 @@ func (ch *Character) ApplyAtk(fx structs.CmbFx, rep *structs.CmbRep) {
 
 // Apply CmbFx for which you are the defender
 func (ch *Character) ApplyDef(fx structs.CmbFx, rep *structs.CmbRep) {
-  if fx.Dmg > 0 {
-    ch.SetDet(ch.GetDet() - fx.Dmg)
-    rep.Dmg = fx.Dmg
-  }
+  ch.SetDet(ch.GetDet() - fx.Dmg)
+  rep.Dmg = fx.Dmg
 
   ch.applySFx(fx.SFx, rep)
   rep.SFx = fx.SFx
+
+  ch.applyDots(fx.Dots, rep)
+  rep.Dots = fx.Dots
+}
+
+func (ch *Character) selfCmbFx() structs.CmbFx {
+  dots := []statfx.DotInst{}
+  for _, d := range ch.Dots {
+    dots = append(dots, *d)
+  }
+
+  return structs.CmbFx{DotDmgs: dots}
 }
 
 func (ch *Character) calcCmbFx(sk *skills.Skill, rep *structs.CmbRep) structs.CmbFx {
-  fx := structs.CmbFx{}
+  fx := ch.selfCmbFx()
+
   if ch.isStunned() {
     rep.Stunned = true
 
@@ -150,6 +173,17 @@ func (ch *Character) calcCmbFx(sk *skills.Skill, rep *structs.CmbRep) structs.Cm
         if (util.RandF() <= v.Chance) {
           fx.SelfSFx = append(fx.SelfSFx, v)
         }
+      case skills.Dot:
+        v := e.Value.(statfx.DotFx)
+        if (util.RandF() <= v.Chance) {
+          duration := util.RandI(v.DurationMin, v.DurationMax)
+          i := statfx.DotInst{
+            Type: v.Type,
+            Dmg: ch.GetAtk(),
+            Duration: duration,
+          }
+          fx.Dots = append(fx.Dots, i)
+        }
       }
     } else {
       rep.Missed = true
@@ -162,7 +196,6 @@ func (ch *Character) calcCmbFx(sk *skills.Skill, rep *structs.CmbRep) structs.Cm
   }
 
   fx.Skill = *sk
-
 
   return fx
 }
@@ -209,5 +242,11 @@ func (ch *Character) applySFx(sFx []statfx.SEInst, rep *structs.CmbRep) {
     }
 
     ch.addFx(e)
+  }
+}
+
+func (ch *Character) applyDots(dots []statfx.DotInst, rep *structs.CmbRep) {
+  for _, d := range dots {
+    ch.addDot(d)
   }
 }

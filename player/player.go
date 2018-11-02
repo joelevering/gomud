@@ -387,12 +387,17 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
     }
   }
 
-  if len(rep.SFx) > 0 {
-    for _, e := range rep.SFx {
-      switch e.Effect {
-      case statfx.Stun:
-        p.SendMsg(fmt.Sprintf("%s was stunned!", opp.GetName()))
-      }
+  for _, e := range rep.SFx {
+    switch e.Effect {
+    case statfx.Stun:
+      p.SendMsg(fmt.Sprintf("%s was stunned!", opp.GetName()))
+    }
+  }
+
+  for _, e := range rep.Dots {
+    switch e.Type {
+    case statfx.Bleed:
+      p.SendMsg(fmt.Sprintf("%s started bleeding!", opp.GetName()))
     }
   }
 }
@@ -400,6 +405,10 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
 func (p *Player) ReportDef(opp interfaces.Combatant, rep structs.CmbRep) {
   if rep.Skill.Name != "" {
     p.SendMsg(fmt.Sprintf("%s used %s!", opp.GetName(), rep.Skill.Name))
+  }
+
+  for _, d := range rep.DotDmgs {
+    p.SendMsg(fmt.Sprintf("%s took %d %s damage!", opp.GetName(), d.Dmg, d.Type))
   }
 
   if rep.Missed {
@@ -423,7 +432,7 @@ func (p *Player) ReportDef(opp interfaces.Combatant, rep structs.CmbRep) {
   }
 
   if rep.Dmg > 0 {
-    p.SendMsg(fmt.Sprintf("You took %d damage! You have %d/%d health left!", rep.Dmg, p.GetDet(), p.GetMaxDet()))
+    p.SendMsg(fmt.Sprintf("You were attacked for %d damage! You have %d/%d health left!", rep.Dmg, p.GetDet(), p.GetMaxDet()))
   }
 
   if len(rep.SFx) > 0 {

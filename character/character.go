@@ -36,6 +36,7 @@ type Character struct {
   CmbSkill   *skills.Skill
   CmbSkillMu sync.Mutex
   Fx         map[statfx.StatusEffect]*statfx.SEInst
+  Dots       map[statfx.DotType]*statfx.DotInst
 }
 
 func NewCharacter() *Character {
@@ -55,6 +56,7 @@ func NewCharacter() *Character {
     Kno:        10,
     Sag:        10,
     Fx:         make(map[statfx.StatusEffect]*statfx.SEInst),
+    Dots:       make(map[statfx.DotType]*statfx.DotInst),
   }
 }
 
@@ -340,6 +342,14 @@ func (ch *Character) TickFx() {
       fx.Duration -= 1
     }
   }
+
+  for _, dot := range ch.Dots {
+    if dot.Duration == 0 {
+      delete(ch.Dots, dot.Type)
+    } else {
+      dot.Duration -= 1
+    }
+  }
 }
 
 // private
@@ -391,6 +401,10 @@ func (ch *Character) addFx(i statfx.SEInst) {
   ch.Fx[i.Effect] = &i
 }
 
+func (ch *Character) addDot(i statfx.DotInst) {
+  ch.Dots[i.Type] = &i
+}
+
 func (ch *Character) hasEffect(e statfx.StatusEffect) bool {
   return ch.Fx[e] != nil
 }
@@ -417,4 +431,8 @@ func (ch *Character) isConserving() bool {
 
 func (ch *Character) isDodging() bool {
   return ch.Fx[statfx.Dodging] != nil
+}
+
+func (ch *Character) isBleeding() bool {
+  return ch.Dots[statfx.Bleed] != nil
 }

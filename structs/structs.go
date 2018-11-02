@@ -7,9 +7,11 @@ import (
 
 type CmbFx struct {
   Dmg     int
+  DotDmgs []statfx.DotInst
   Heal    int
   SFx     []statfx.SEInst
   SelfSFx []statfx.SEInst
+  Dots    []statfx.DotInst
   Skill   skills.Skill
   Req     statfx.StatusEffect
 }

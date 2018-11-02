@@ -28,6 +28,7 @@ const(
   PctHeal = EffectType("pctHeal") // % Healing
   OppFx = EffectType("oppFx") // Status Effect on Opponent
   SelfFx = EffectType("selfFx") // Status Effect on Self
+  Dot = EffectType("doT") // Damage over Time
 )
 
 type Rstcn string // Restriction
@@ -86,6 +87,23 @@ var(
       Effect{
         Type: FlatDmg,
         Value: 10,
+      },
+    },
+  }
+  T_Bleed = &Skill{
+    Name: "t_bleed",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: Dot,
+        Value: statfx.DotFx{
+          Type: statfx.Bleed,
+          Chance: 1,
+          DmgPct: 0.5,
+          DurationMin: 1,
+          DurationMax: 1,
+        },
       },
     },
   }
@@ -276,6 +294,107 @@ var(
     FollowUpReq: &FollowUpReq{
       Type: OppFollowUp,
       Effect: statfx.Surprise,
+    },
+  }
+  WittyRetort = &Skill{
+    Name: "witty retort",
+    CostType: stats.Foc,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: OppFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Vulnerable,
+          Chance: 0.66,
+          Duration: 1,
+        },
+      },
+      Effect{
+        Type: OppFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Weak,
+          Chance: 0.66,
+          Duration: 1,
+        },
+      },
+    },
+  }
+  Ploy = &Skill{
+    Name: "ploy",
+    CostType: stats.Foc,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: OppFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Surprise,
+          Chance: 0.66,
+          Duration: 1,
+        },
+      },
+      Effect{
+        Type: PctDmg,
+        Value: 0.33,
+      },
+    },
+  }
+  Sideswipe = &Skill{
+    Name: "sideswipe",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: Dot,
+        Value: statfx.DotFx{
+          Type: statfx.Bleed,
+          Chance: 0.75,
+          DmgPct: 0.33,
+          DurationMin: 2,
+          DurationMax: 2,
+        },
+      },
+      Effect{
+        Type: PctDmg,
+        Value: 0.5,
+      },
+    },
+  }
+  Plan = &Skill{
+    Name: "plan",
+    CostType: stats.Foc,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: SelfFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Vulnerable,
+          Chance: 1,
+          Duration: 1,
+        },
+      },
+      Effect{
+        Type: OppFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Vulnerable,
+          Chance: 1,
+          Duration: 2,
+        },
+      },
+    },
+  }
+  Sidestep = &Skill{
+    Name: "sidestep",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: SelfFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Dodging,
+          Chance: 0.85,
+          Duration: 1,
+        },
+      },
     },
   }
 )
