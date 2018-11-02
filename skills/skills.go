@@ -159,7 +159,7 @@ var(
     Effects: []Effect{
       Effect{
         Type: PctHeal,
-        Value: 0.1,
+        Value: 0.20,
       },
     },
   }
@@ -373,9 +373,9 @@ var(
         },
       },
       Effect{
-        Type: OppFx,
+        Type: SelfFx,
         Value: statfx.SEInst{
-          Effect: statfx.Vulnerable,
+          Effect: statfx.Empowered,
           Chance: 1,
           Duration: 2,
         },
@@ -394,6 +394,85 @@ var(
           Chance: 0.85,
           Duration: 1,
         },
+      },
+    },
+  }
+  LowBlow = &Skill{
+    Name: "low blow",
+    CostType: stats.Foc,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: OppFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Stun,
+          Chance: 0.5,
+          Duration: 1,
+        },
+      },
+      Effect{
+        Type: SelfFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Vulnerable,
+          Chance: 0.5,
+          Duration: 1,
+        },
+      },
+    },
+  }
+  Concentrate = &Skill{
+    Name: "concentrate",
+    CostType: stats.Foc,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: SelfFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Empowered,
+          Chance: 1.0,
+          Duration: 1,
+        },
+      },
+    },
+  }
+  FirstAid = &Skill{
+    Name: "first aid",
+    CostType: stats.Foc,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: PctHeal,
+        Value: 0.35,
+      },
+    },
+  }
+  TargetedStrike = &Skill{
+    Name: "targeted strike",
+    CostType: stats.Foc,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: OppFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Vulnerable,
+          Chance: 0.75,
+          Duration: 1,
+        },
+      },
+      Effect{
+        Type: PctDmg,
+        Value: 1.0,
+      },
+    },
+  }
+  Spark = &Skill{
+    Name: "spark",
+    CostType: stats.Foc,
+    CostAmt: 15,
+    Effects: []Effect{
+      Effect{
+        Type: PctDmg,
+        Value: 2.0,
       },
     },
   }

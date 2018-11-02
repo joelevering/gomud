@@ -12,11 +12,13 @@ const(
   // Negative
   Stun          = StatusEffect("stun")
   Surprise      = StatusEffect("surprise")
-  Weak          = StatusEffect("weak")
-  Vulnerable    = StatusEffect("vulnerable")
-  Concentration = StatusEffect("concentration")
+  Weak          = StatusEffect("weak") // less damage dealt
+  Vulnerable    = StatusEffect("vulnerable") // more damage taken
+  Concentration = StatusEffect("concentration") // can only attack
 
   // Positive
-  Conserve = StatusEffect("conserve")
-  Dodging  = StatusEffect("dodging")
+  Conserve = StatusEffect("conserve") // reduced stamina consumption
+  Dodging  = StatusEffect("dodging") // avoid attacks
+  Empowered = StatusEffect("empowered") // more damage dealt
+  Steeled = StatusEffect("steeled") // less damage taken
 )

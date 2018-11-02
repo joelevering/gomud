@@ -359,10 +359,10 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
     if rep.Surprised.Stunned {
       p.SendMsg(fmt.Sprintf("You surprised %s! They're stunned!", opp.GetName()))
     }
-    if rep.Surprised.LowerAtk {
+    if rep.Surprised.Weak {
       p.SendMsg(fmt.Sprintf("You surprised %s! They're off-balance!", opp.GetName()))
     }
-    if rep.Surprised.LowerDef {
+    if rep.Surprised.Vulnerable {
       p.SendMsg(fmt.Sprintf("You surprised %s! They're vulnerable!", opp.GetName()))
     }
   }
@@ -371,12 +371,20 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
     p.SendMsg(fmt.Sprintf("You healed %d damage!", rep.Heal))
   }
 
-  if rep.LowerAtk {
+  if rep.Empowered {
+    p.SendMsg("You dealt increased damage!")
+  }
+
+  if rep.Weak {
     p.SendMsg("You dealt lowered damage!")
   }
 
-  if rep.LowerDef {
-    p.SendMsg("You dealt increased damage!")
+  if rep.Steeled {
+    p.SendMsg(fmt.Sprintf("%s steeled themselves, taking lowered damage!", opp.GetName()))
+  }
+
+  if rep.Vulnerable {
+    p.SendMsg(fmt.Sprintf("%s is vulnerable. They took increased damage!", opp.GetName()))
   }
 
   if rep.Dmg > 0 {
@@ -423,12 +431,20 @@ func (p *Player) ReportDef(opp interfaces.Combatant, rep structs.CmbRep) {
     p.SendMsg(fmt.Sprintf("%s healed %d damage!", opp.GetName(), rep.Heal))
   }
 
-  if rep.LowerAtk {
-    p.SendMsg("You took lowered damage!")
+  if rep.Empowered {
+    p.SendMsg(fmt.Sprintf("%s dealt increased damage!", opp.GetName()))
   }
 
-  if rep.LowerDef {
-    p.SendMsg("You took increased damage!")
+  if rep.Weak {
+    p.SendMsg(fmt.Sprintf("%s dealt lowered damage!", opp.GetName()))
+  }
+
+  if rep.Steeled {
+    p.SendMsg("You steeled yourself, taking lowered damage!")
+  }
+
+  if rep.Vulnerable {
+    p.SendMsg("You're vulnerable. You took increased damage!")
   }
 
   if rep.Dmg > 0 {

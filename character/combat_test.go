@@ -142,6 +142,29 @@ func Test_AtkFxDmgChance(t *testing.T) {
   }
 }
 
+func Test_AtkFxIsImpactedByEmpowered(t *testing.T) {
+  ch := NewCharacter()
+  chEmp := NewCharacter()
+  empInst := statfx.SEInst{
+    Effect: statfx.Empowered,
+    Chance: 1,
+    Duration: 1,
+  }
+  chEmp.addFx(empInst)
+  rep := &structs.CmbRep{}
+
+  fx := ch.AtkFx(rep)
+  empFx := chEmp.AtkFx(rep)
+
+  if empFx.Dmg <= fx.Dmg {
+    t.Errorf("Expected Empowered to result in a more damaging atk than usual, but was %d compared to %d", empFx.Dmg, fx.Dmg)
+  }
+
+  if !rep.Empowered {
+    t.Error("Expected Empowered to be reported")
+  }
+}
+
 func Test_AtkFxIsImpactedByWeak(t *testing.T) {
   ch := NewCharacter()
   chWeak := NewCharacter()
@@ -157,7 +180,11 @@ func Test_AtkFxIsImpactedByWeak(t *testing.T) {
   weakFx := chWeak.AtkFx(rep)
 
   if weakFx.Dmg >= fx.Dmg {
-    t.Errorf("Expected LowerAtk to result in a less damaging atk than usual, but was %d compared to %d", weakFx.Dmg, fx.Dmg)
+    t.Errorf("Expected Weak to result in a less damaging atk than usual, but was %d compared to %d", weakFx.Dmg, fx.Dmg)
+  }
+
+  if !rep.Weak {
+    t.Error("Expected Weak to be reported")
   }
 }
 
@@ -291,7 +318,31 @@ func Test_ResistAtkWithReqSuccess(t *testing.T) {
   }
 }
 
-func Test_ResistAtkIsImpactedByLowerDef(t *testing.T) {
+func Test_ResistAtkIsImpactedBySteeled(t *testing.T) {
+  ch := NewCharacter()
+  steeledCh := NewCharacter()
+  steeledInst := statfx.SEInst{
+    Effect: statfx.Steeled,
+    Chance: 1,
+    Duration: 1,
+  }
+  steeledCh.addFx(steeledInst)
+  rep := &structs.CmbRep{}
+  fx := structs.CmbFx{Dmg: 100}
+
+  res := ch.ResistAtk(fx, rep)
+  steeledRes := steeledCh.ResistAtk(fx, rep)
+
+  if steeledRes.Dmg >= res.Dmg {
+    t.Errorf("Expected Steeled to result in a less damaging atk than usual, but was %d compared to %d", steeledRes.Dmg, res.Dmg)
+  }
+
+  if !rep.Steeled {
+    t.Error("Expected Steeled to be reported")
+  }
+}
+
+func Test_ResistAtkIsImpactedByVulnerable(t *testing.T) {
   ch := NewCharacter()
   vulnCh := NewCharacter()
   vulnInst := statfx.SEInst{
@@ -308,6 +359,10 @@ func Test_ResistAtkIsImpactedByLowerDef(t *testing.T) {
 
   if vulnRes.Dmg <= regRes.Dmg {
     t.Errorf("Expected Vulnerable to result in a more damaging atk than usual, but was %d compared to %d", vulnRes.Dmg, regRes.Dmg)
+  }
+
+  if !rep.Vulnerable {
+    t.Error("Expected Vulnerable to be reported")
   }
 }
 
@@ -441,11 +496,11 @@ func Test_ApplyAtkHeals(t *testing.T) {
   cFx := ch.AtkFx(rep)
   ch.ApplyAtk(cFx, rep)
 
-  if ch.GetDet() != 21 {
-    t.Errorf("Expected ApplyAtk with healing to increase health from 1 to 21, but it's %d", ch.GetDet())
+  if ch.GetDet() != 41 {
+    t.Errorf("Expected ApplyAtk with healing to increase health from 1 to 41, but it's %d", ch.GetDet())
   }
 
-  if rep.Heal != 20 {
+  if rep.Heal != 40 {
     t.Errorf("Expected ApplyAtk to apply healing to report, but rep healing is %d", rep.Heal)
   }
 }
