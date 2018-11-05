@@ -18,4 +18,5 @@ type DotInst struct {
 
 const(
   Bleed = DotType("bleed")
+  Fire = DotType("fire")
 )

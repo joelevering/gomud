@@ -346,7 +346,6 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
     }
   }
 
-
   if rep.Missed {
     p.SendMsg("Your attack missed!")
   }
@@ -355,20 +354,16 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
     p.SendMsg(fmt.Sprintf("%s dodged your attack!", opp.GetName()))
   }
 
-  if rep.Surprised != (structs.SurpriseRep{}) {
-    if rep.Surprised.Stunned {
-      p.SendMsg(fmt.Sprintf("You surprised %s! They're stunned!", opp.GetName()))
-    }
-    if rep.Surprised.Weak {
-      p.SendMsg(fmt.Sprintf("You surprised %s! They're off-balance!", opp.GetName()))
-    }
-    if rep.Surprised.Vulnerable {
-      p.SendMsg(fmt.Sprintf("You surprised %s! They're vulnerable!", opp.GetName()))
-    }
+  if rep.Redirected {
+    p.SendMsg(fmt.Sprintf("%s redirected your attack!", opp.GetName()))
   }
 
   if rep.Heal > 0 {
     p.SendMsg(fmt.Sprintf("You healed %d damage!", rep.Heal))
+  }
+
+  if rep.StmRec > 0 {
+    p.SendMsg(fmt.Sprintf("You recovered %d stamina!", rep.StmRec))
   }
 
   if rep.Empowered {
@@ -395,6 +390,10 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
     }
   }
 
+  if rep.SelfDmg > 0 {
+    p.SendMsg(fmt.Sprintf("You took %d damage from the redirection! You have %d/%d health left!", rep.SelfDmg, p.GetDet(), p.GetMaxDet()))
+  }
+
   for _, e := range rep.SFx {
     switch e.Effect {
     case statfx.Stun:
@@ -406,6 +405,20 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
     switch e.Type {
     case statfx.Bleed:
       p.SendMsg(fmt.Sprintf("%s started bleeding!", opp.GetName()))
+    case statfx.Fire:
+      p.SendMsg(fmt.Sprintf("%s caught on fire!", opp.GetName()))
+    }
+  }
+
+  if rep.Surprised != (structs.SurpriseRep{}) {
+    if rep.Surprised.Stunned {
+      p.SendMsg(fmt.Sprintf("You surprised %s! They're stunned!", opp.GetName()))
+    }
+    if rep.Surprised.Weak {
+      p.SendMsg(fmt.Sprintf("You surprised %s! They're off-balance!", opp.GetName()))
+    }
+    if rep.Surprised.Vulnerable {
+      p.SendMsg(fmt.Sprintf("You surprised %s! They're vulnerable!", opp.GetName()))
     }
   }
 }
@@ -427,8 +440,16 @@ func (p *Player) ReportDef(opp interfaces.Combatant, rep structs.CmbRep) {
     p.SendMsg("You dodged the attack!")
   }
 
+  if rep.Redirected {
+    p.SendMsg("You redirected the attack!")
+  }
+
   if rep.Heal > 0 {
     p.SendMsg(fmt.Sprintf("%s healed %d damage!", opp.GetName(), rep.Heal))
+  }
+
+  if rep.StmRec > 0 {
+    p.SendMsg(fmt.Sprintf("%s recovered stamina!", opp.GetName()))
   }
 
   if rep.Empowered {
@@ -449,6 +470,10 @@ func (p *Player) ReportDef(opp interfaces.Combatant, rep structs.CmbRep) {
 
   if rep.Dmg > 0 {
     p.SendMsg(fmt.Sprintf("You were attacked for %d damage! You have %d/%d health left!", rep.Dmg, p.GetDet(), p.GetMaxDet()))
+  }
+
+  if rep.SelfDmg > 0 {
+    p.SendMsg(fmt.Sprintf("%s took %d damage from the redirection!", opp.GetName(), rep.SelfDmg))
   }
 
   if len(rep.SFx) > 0 {
