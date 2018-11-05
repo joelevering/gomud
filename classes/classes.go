@@ -170,6 +170,28 @@ var Sophist = &Class{
   },
   atkStats: []stats.Stat{stats.Sag},
   defStats: []stats.Stat{stats.Sag},
+  skills: []*ClassSkill{
+    &ClassSkill{
+      Skill: skills.CastDoubt,
+      Level: 2,
+    },
+    &ClassSkill{
+      Skill: skills.Benumb,
+      Level: 4,
+    },
+    &ClassSkill{
+      Skill: skills.Radiate,
+      Level: 6,
+    },
+    &ClassSkill{
+      Skill: skills.Redirect,
+      Level: 8,
+    },
+    &ClassSkill{
+      Skill: skills.CastOff,
+      Level: 10,
+    },
+  },
 }
 
 var Crab = &Class{

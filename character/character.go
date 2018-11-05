@@ -433,14 +433,14 @@ func (ch *Character) isDodging() bool {
   return ch.Fx[statfx.Dodging] != nil
 }
 
+func (ch *Character) isRedirecting() bool {
+  return ch.Fx[statfx.Redirecting] != nil
+}
+
 func (ch *Character) isSteeled() bool {
   return ch.Fx[statfx.Steeled] != nil
 }
 
 func (ch *Character) isEmpowered() bool {
   return ch.Fx[statfx.Empowered] != nil
-}
-
-func (ch *Character) isBleeding() bool {
-  return ch.Dots[statfx.Bleed] != nil
 }

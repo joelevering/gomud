@@ -25,7 +25,8 @@ type EffectType string
 const(
   PctDmg = EffectType("pctDmg") // % Damage
   FlatDmg = EffectType("flatDmg") // Flat Damage
-  PctHeal = EffectType("pctHeal") // % Healing
+  PctHeal = EffectType("pctHeal") // % determination recovery
+  FlatStm = EffectType("flatStm") // Flat stamina recovery
   OppFx = EffectType("oppFx") // Status Effect on Opponent
   SelfFx = EffectType("selfFx") // Status Effect on Self
   Dot = EffectType("doT") // Damage over Time
@@ -130,6 +131,28 @@ var(
           Effect: statfx.Stun,
           Chance: 1,
         },
+      },
+    },
+  }
+  T_PctHeal = &Skill{
+    Name: "t_pctHeal",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: PctHeal,
+        Value: 0.1,
+      },
+    },
+  }
+  T_FlatStm = &Skill{
+    Name: "t_flatStm",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: FlatStm,
+        Value: 10,
       },
     },
   }
@@ -473,6 +496,79 @@ var(
       Effect{
         Type: PctDmg,
         Value: 2.0,
+      },
+    },
+  }
+  CastDoubt = &Skill{
+    Name: "cast doubt",
+    CostType: stats.Foc,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: OppFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Vulnerable,
+          Chance: 0.5,
+          Duration: 3,
+        },
+      },
+    },
+  }
+  Benumb = &Skill{
+    Name: "benumb",
+    CostType: stats.Foc,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: OppFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Weak,
+          Chance: 1.0,
+          Duration: 1,
+        },
+      },
+    },
+  }
+  Radiate = &Skill{
+    Name: "radiate",
+    CostType: stats.Foc,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: Dot,
+        Value: statfx.DotFx{
+          Type: statfx.Fire,
+          Chance: 1,
+          DmgPct: 0.3,
+          DurationMin: 2,
+          DurationMax: 4,
+        },
+      },
+    },
+  }
+  Redirect = &Skill{
+    Name: "redirect",
+    CostType: stats.Foc,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: SelfFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Redirecting,
+          Chance: 1.0,
+          Duration: 1.0,
+        },
+      },
+    },
+  }
+  CastOff = &Skill{
+    Name: "cast off",
+    CostType: stats.Foc,
+    CostAmt: 20,
+    Effects: []Effect{
+      Effect{
+        Type: FlatStm,
+        Value: 20,
       },
     },
   }

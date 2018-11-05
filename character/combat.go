@@ -83,12 +83,17 @@ func (ch *Character) ResistAtk(fx structs.CmbFx, rep *structs.CmbRep) structs.Cm
   }
 
   newFx.Heal = fx.Heal
+  newFx.StmRec = fx.StmRec
   newFx.SelfSFx = fx.SelfSFx
   newFx.Dots = fx.Dots
 
-  var dmg int
+  var dmg, selfDmg int
   if ch.isDodging() {
     rep.Dodged = true
+  } else if ch.isRedirecting() {
+    dmg = fx.Dmg/2
+    selfDmg = dmg + fx.SelfDmg
+    rep.Redirected = true
   } else {
     dmg = ch.calcDmg(fx.Dmg)
   }
@@ -108,6 +113,7 @@ func (ch *Character) ResistAtk(fx structs.CmbFx, rep *structs.CmbRep) structs.Cm
   }
 
   newFx.Dmg = dmg
+  newFx.SelfDmg = selfDmg
   newFx.SFx = sfx
 
   return newFx
@@ -115,18 +121,16 @@ func (ch *Character) ResistAtk(fx structs.CmbFx, rep *structs.CmbRep) structs.Cm
 
 // Apply CmbFx for which you are the attacker
 func (ch *Character) ApplyAtk(fx structs.CmbFx, rep *structs.CmbRep) {
+  ch.SetDet(ch.GetDet() - fx.SelfDmg)
+  rep.SelfDmg = fx.SelfDmg
+
   for _, dotDmg := range fx.DotDmgs {
     ch.SetDet(ch.GetDet() - dotDmg.Dmg)
   }
   rep.DotDmgs = fx.DotDmgs
 
-  if fx.Heal > 0 {
-    oldDet := ch.GetDet()
-    ch.Heal(fx.Heal)
-    healed := ch.GetDet() - oldDet
-
-    rep.Heal = healed
-  }
+  rep.Heal = ch.recoverDet(fx.Heal)
+  rep.StmRec = ch.recoverStm(fx.StmRec)
 
   ch.applySFx(fx.SelfSFx, rep)
   rep.SelfSFx = fx.SelfSFx
@@ -177,6 +181,8 @@ func (ch *Character) calcCmbFx(sk *skills.Skill, rep *structs.CmbRep) structs.Cm
       case skills.PctHeal:
         healAmt := float64(ch.GetMaxDet()) * e.Value.(float64)
         fx.Heal = int(healAmt)
+      case skills.FlatStm:
+        fx.StmRec = e.Value.(int)
       case skills.OppFx:
         v := e.Value.(statfx.SEInst)
         if (util.RandF() <= v.Chance) {
@@ -263,4 +269,24 @@ func (ch *Character) applyDots(dots []statfx.DotInst, rep *structs.CmbRep) {
   for _, d := range dots {
     ch.addDot(d)
   }
+}
+
+func (ch *Character) recoverDet(amt int) int {
+  if amt > 0 {
+    oldDet := ch.GetDet()
+    ch.Heal(amt)
+    return ch.GetDet() - oldDet
+  }
+
+  return 0
+}
+
+func (ch *Character) recoverStm(amt int) int {
+  if amt > 0 {
+    oldStm := ch.GetStm()
+    ch.Recuperate(amt)
+    return ch.GetStm() - oldStm
+  }
+
+  return 0
 }

@@ -388,6 +388,28 @@ func Test_ResistAtkWhileDodging(t *testing.T) {
   }
 }
 
+func Test_ResistAtkWhileRedirecting(t *testing.T) {
+  ch := NewCharacter()
+  redirInst := statfx.SEInst{
+    Effect: statfx.Redirecting,
+    Chance: 1,
+    Duration: 1,
+  }
+  ch.addFx(redirInst)
+  rep := &structs.CmbRep{}
+  fx := structs.CmbFx{Dmg: 100}
+
+  res := ch.ResistAtk(fx, rep)
+
+  if res.Dmg != 50 || res.SelfDmg != 50 {
+    t.Errorf("Expected redirecting while resisting atk to split 100 damage to 50/50, but dmg is %d and self dmg is %d", res.Dmg, res.SelfDmg)
+  }
+
+  if !rep.Redirected {
+    t.Error("Expected redirecting while resisting atk to report redirected")
+  }
+}
+
 func Test_ResistAtkKeepsStatusEffectsAndDots(t *testing.T) {
   ch := NewCharacter()
   rep := &structs.CmbRep{}
@@ -465,7 +487,8 @@ func Test_ApplyDefAppliesDoTFx(t *testing.T) {
   cFx := ch.AtkFx(rep)
   ch.ApplyDef(cFx, rep)
 
-  if !ch.isBleeding() {
+
+  if ch.Dots[statfx.Bleed] == nil {
     t.Error("Expected character to bleed when using ApplyDef with Bleed DoT")
   }
 
@@ -474,33 +497,37 @@ func Test_ApplyDefAppliesDoTFx(t *testing.T) {
   }
 }
 
-func Test_ApplyDefDoesNotHeal(t *testing.T) {
+func Test_ApplyDefDoesNotRecover(t *testing.T) {
   ch := NewCharacter()
   rep := &structs.CmbRep{}
   ch.SetDet(1)
-  cFx := structs.CmbFx{Heal: 10}
+  ch.SetStm(1)
+  cFx := structs.CmbFx{
+    Heal: 10,
+    StmRec: 10,
+  }
 
   ch.ApplyDef(cFx, rep)
 
-  if ch.GetDet() != 1 {
-    t.Error("Expected no healing with ApplyDef, but the char healed")
+  if ch.GetDet() != 1 || ch.GetStm() != 1 {
+    t.Errorf("Expected no det/stm/foc recovery with ApplyDef, but got %d/%d/%d det/stm/foc", ch.GetDet(), ch.GetStm(), ch.GetFoc())
   }
 }
 
 func Test_ApplyAtkHeals(t *testing.T) {
   ch := NewCharacter()
   rep := &structs.CmbRep{}
-  ch.CmbSkill = skills.PowerNap
+  ch.CmbSkill = skills.T_PctHeal
   ch.SetDet(1)
 
   cFx := ch.AtkFx(rep)
   ch.ApplyAtk(cFx, rep)
 
-  if ch.GetDet() != 41 {
-    t.Errorf("Expected ApplyAtk with healing to increase health from 1 to 41, but it's %d", ch.GetDet())
+  if ch.GetDet() != 21 {
+    t.Errorf("Expected ApplyAtk with healing to increase health from 1 to 21, but it's %d", ch.GetDet())
   }
 
-  if rep.Heal != 40 {
+  if rep.Heal != 20 {
     t.Errorf("Expected ApplyAtk to apply healing to report, but rep healing is %d", rep.Heal)
   }
 }
@@ -522,6 +549,24 @@ func Test_ApplyAtkHealingReportsAccurately(t *testing.T) {
   }
 }
 
+func Test_ApplyAtkRecoversStamina(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+  ch.CmbSkill = skills.T_FlatStm
+  ch.SetStm(ch.GetMaxStm() - 1)
+  cFx := structs.CmbFx{StmRec: 10}
+
+  ch.ApplyAtk(cFx, rep)
+
+  if ch.GetStm() != ch.GetMaxStm() {
+    t.Errorf("Expected ApplyAtk with stamina recovery to max out stamina but got %d/%d", ch.GetStm(), ch.GetMaxStm())
+  }
+
+  if rep.StmRec != 1 {
+    t.Errorf("Expected ApplyAtk to apply accurate stmrec when maxing stamina, but rep stmrec is %d", rep.StmRec)
+  }
+}
+
 func Test_ApplyAtkAppliesSelfFx(t *testing.T) {
   ch := NewCharacter()
   rep := &structs.CmbRep{}
@@ -532,6 +577,18 @@ func Test_ApplyAtkAppliesSelfFx(t *testing.T) {
 
   if !ch.isConserving() {
     t.Error("Expected atkfx + applyAtk with Conserve skill to apply Conserve to attacker, but it didn't")
+  }
+}
+
+func Test_ApplyAtkAppliesSelfDmg(t *testing.T) {
+  ch := NewCharacter()
+  rep := &structs.CmbRep{}
+
+  fx := structs.CmbFx{SelfDmg: 10}
+  ch.ApplyAtk(fx, rep)
+
+  if ch.GetDet() != ch.GetMaxDet() - 10 {
+    t.Errorf("Expected ApplyAtk to apply self dmg, but det is %d/%d", ch.GetDet(), ch.GetMaxDet())
   }
 }
 

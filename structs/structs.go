@@ -7,8 +7,10 @@ import (
 
 type CmbFx struct {
   Dmg     int
+  SelfDmg int
   DotDmgs []statfx.DotInst
   Heal    int
+  StmRec  int
   SFx     []statfx.SEInst
   SelfSFx []statfx.SEInst
   Dots    []statfx.DotInst
@@ -26,6 +28,7 @@ type CmbRep struct {
   Vulnerable bool
   Concentrating bool
   Dodged bool
+  Redirected bool
   Surprised SurpriseRep
 
   FollowUpReq statfx.StatusEffect
