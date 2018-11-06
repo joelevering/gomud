@@ -498,3 +498,15 @@ func Test_SavePersistsClassAndChar(t *testing.T) {
     t.Errorf("Expected player char stats to persist on save, but got %d str instead of 20", p2.GetStr())
   }
 }
+
+func Test_InitAddsPlayerToRoom(t *testing.T) {
+  p, _, _ := NewTestPlayer()
+
+  p.Init()
+
+  rmPl := p.Room.GetPlayers()
+
+  if len(rmPl) != 1 || rmPl[0].GetName() != p.GetName() {
+    t.Error("Player.Init should have added player to its room, but it didn't")
+  }
+}
