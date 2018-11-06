@@ -43,13 +43,15 @@ func (gk *Gatekeeper) logIn(player *player.Player) {
 }
 
 func (gk *Gatekeeper) logOut(player *player.Player) {
+  player.Save()
+  player.LeaveRoom("")
+  player.Logout <- "bye"
+
   name := player.GetName()
-	player.LeaveRoom("")
+  log.Printf("User logged out: %s", name)
 
-	log.Printf("User logged out: %s", name)
+  delete(gk.state.Players, name)
+  close(player.Channel)
 
-	delete(gk.state.Players, name)
-	close(player.Channel)
-
-	go gk.broadcast(fmt.Sprintf("%s has logged out!", name))
+  go gk.broadcast(fmt.Sprintf("%s has logged out!", name))
 }
