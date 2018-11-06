@@ -104,12 +104,13 @@ func (p *Player) regen() {
 }
 
 func (p *Player) Save() {
-  log.Print("Saving %s", p.GetName())
+  p.log("Save")
   p.persistClass(p.GetClassName())
   p.Store.PersistChar(p.GetName(), p.Character)
 }
 
 func (p *Player) Cmd(cmd string) {
+  p.log(fmt.Sprintf("Cmd %s", cmd))
   if p.IsInCombat() {
     p.useSkill(cmd)
     return
@@ -493,6 +494,7 @@ func (p *Player) ReportDef(opp interfaces.Combatant, rep structs.CmbRep) {
 }
 
 func (p *Player) LoseCombat(winner interfaces.Combatant) {
+  p.log(fmt.Sprintf("LoseCombat vs %s", winner.GetName()))
   p.LeaveCombat()
 
   spawn := p.GetSpawn()
@@ -511,6 +513,7 @@ func (p *Player) LoseCombat(winner interfaces.Combatant) {
 }
 
 func (p *Player) WinCombat(loser interfaces.Combatant) {
+  p.log(fmt.Sprintf("WinCombat vs %s", loser.GetName()))
   p.LeaveCombat()
 
   p.SendMsg(fmt.Sprintf("%s is defeated!", loser.GetName()))
@@ -609,4 +612,8 @@ func (p *Player) useSkill (skName string) {
   } else {
     p.SendMsg(fmt.Sprintf("You don't know how to prepare '%s'!", skName))
   }
+}
+
+func (p *Player) log(msg string) {
+  log.Print(fmt.Sprintf("%s - %d - %s", p.GetName(), p.GetRoom().GetID(), msg))
 }
