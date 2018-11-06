@@ -2,6 +2,7 @@ package player
 
 import (
   "fmt"
+  "log"
   "net"
   "strings"
   "time"
@@ -103,6 +104,7 @@ func (p *Player) regen() {
 }
 
 func (p *Player) Save() {
+  log.Print("Saving %s", p.GetName())
   p.persistClass(p.GetClassName())
   p.Store.PersistChar(p.GetName(), p.Character)
 }

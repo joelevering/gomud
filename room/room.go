@@ -29,12 +29,13 @@ func (room Room) Message(msg string) {
   }
 }
 
-func (room *Room) RemovePlayer(player interfaces.PlI, msg string) {
+func (room *Room) RemovePlayer(pl interfaces.PlI, msg string) {
   for i, player := range room.Players {
-    if player.GetName() == player.GetName() {
+    if player.GetName() == pl.GetName() {
       room.Players[i] = room.Players[len(room.Players)-1]
       room.Players[len(room.Players)-1] = nil
       room.Players = room.Players[:len(room.Players)-1]
+
       break
     }
   }
@@ -42,9 +43,9 @@ func (room *Room) RemovePlayer(player interfaces.PlI, msg string) {
   room.Message(msg)
 }
 
-func (room *Room) AddPlayer(player interfaces.PlI) {
-  room.Message(player.GetName() + " has entered the room!")
-  room.Players = append(room.Players, player)
+func (room *Room) AddPlayer(pl interfaces.PlI) {
+  room.Message(pl.GetName() + " has entered the room!")
+  room.Players = append(room.Players, pl)
 }
 
 func (room *Room) GetExits() []interfaces.ExitI {
