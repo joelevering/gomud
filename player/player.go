@@ -20,18 +20,22 @@ import (
 
 const helpMsg = `
 Available commands:
+'status' to see details about your character including available skills
 'say <message>' to communicate with people in your room
 'move <exit key>' to move to a new room
+'list' to see who is currently in your room
 'look' to see where you are
 'look <npc name>' to see more details about an NPC
-'list' to see who is currently in your room
-'help' to repeat this message
-'status' to see details about your character
 'attack <npc name>' to start combat
+'attack <npc name> <skill name>' to start combat by using a skill
+'classes' for information on your character's available classes
 'change <class name>' to change your class
 'exit' or 'quit' to log out
+'help' to repeat this message
 
-Most commands have their first letter as a shortcut
+Most commands have their first letter as a shortcut (e.g. 'l' for look, 'a' for attack)
+
+When you are in combat, prepare a skill for your next action by inputting its name
 `
 
 type Player struct {
@@ -158,6 +162,8 @@ func (p *Player) Cmd(cmd string) {
     }
   case "st", "status":
     p.Status()
+  case "cl", "classes":
+    p.Classes()
   case "c", "change":
     if len(words) == 2 {
       p.ChangeClass(words[1])
@@ -237,6 +243,27 @@ func (p *Player) Status() {
     p.SendMsg(fmt.Sprintf(" * %s", strings.Title(sk.Name)))
   }
   p.SendMsg(strings.Repeat("~", utf8.RuneCountInString(header)))
+}
+
+func (p *Player) Classes() {
+  p.SendMsg("Your Classes:")
+  for name, stats := range p.Store.LoadClasses(p.GetID()) {
+    p.SendMsg("")
+    header := fmt.Sprintf("~~~~~~~~~~*%s*~~~~~~~~~~", name)
+    p.SendMsg(header)
+
+    if name == p.GetClassName() {
+      p.SendMsg(fmt.Sprintf("Level: %d", p.GetLevel()))
+      p.SendMsg(fmt.Sprintf("Max. Determination: %d", p.GetMaxDet()))
+      p.SendMsg(fmt.Sprintf("Experience: %d/%d", p.GetExp(), p.GetNextLvlExp()))
+    } else {
+      p.SendMsg(fmt.Sprintf("Level: %d", stats.Lvl))
+      p.SendMsg(fmt.Sprintf("Max. Determination: %d", stats.MaxDet))
+      p.SendMsg(fmt.Sprintf("Experience: %d/%d", stats.Exp, stats.NextLvlExp))
+    }
+
+    p.SendMsg(strings.Repeat("~", utf8.RuneCountInString(header)))
+  }
 }
 
 func (p *Player) AttackNP(npName, skName string) {

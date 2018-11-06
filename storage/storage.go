@@ -15,6 +15,7 @@ type StorageI interface {
   PersistClass(string, string, ClassStats)
   PersistChar(string, *character.Character)
   LoadStats(string, string) ClassStats
+  LoadClasses(string) map[string]ClassStats
   LoadChar(string) CharStats
   PersistStore(string)
 }
@@ -125,6 +126,10 @@ func (s *Storage) PersistChar(pID string, ch *character.Character) {
 
 func (s *Storage) LoadStats(pID, className string) ClassStats {
   return s.PlayersData[pID].Classes[className]
+}
+
+func (s *Storage) LoadClasses(pID string) map[string]ClassStats {
+  return s.PlayersData[pID].Classes
 }
 
 func (s *Storage) LoadChar(pID string) CharStats {
