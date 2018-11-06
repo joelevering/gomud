@@ -249,8 +249,18 @@ func (p *Player) Classes() {
   p.SendMsg("Your Classes:")
   for name, stats := range p.Store.LoadClasses(p.GetID()) {
     p.SendMsg("")
-    header := fmt.Sprintf("~~~~~~~~~~*%s*~~~~~~~~~~", name)
+
+    subheader := classes.ByName[name].GetDesc()
+
+    shCount := utf8.RuneCountInString(subheader)
+    nameCount := utf8.RuneCountInString(name)
+    tildes := strings.Repeat("~", (shCount - nameCount)/2)
+
+    header := (tildes + "*" + name + "*" + tildes)
+
     p.SendMsg(header)
+    p.SendMsg(subheader)
+    p.SendMsg("")
 
     if name == p.GetClassName() {
       p.SendMsg(fmt.Sprintf("Level: %d", p.GetLevel()))
