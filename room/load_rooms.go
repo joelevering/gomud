@@ -27,6 +27,10 @@ func newRoomFinder(rooms []*Room) *RoomFinder {
 }
 
 func (r *RoomFinder) Find(roomID int) *Room {
+  if roomID < 0 {
+    return nil
+  }
+
   index := r.RoomMap[roomID]
   return r.Rooms[index]
 }

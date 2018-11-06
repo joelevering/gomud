@@ -74,7 +74,9 @@ func (p *Player) Init() {
   }
 
   if p.Room == nil {
-    p.Room = p.GetSpawn()
+    p.Spawn()
+  } else {
+    p.EnterRoom(p.Room)
   }
 
   go p.regen()

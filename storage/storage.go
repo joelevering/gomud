@@ -90,6 +90,10 @@ func (s *Storage) InitPlayerData(pID string) {
   if s.PlayersData[pID] == nil {
     s.PlayersData[pID] = &PlayerData{
       Classes: make(map[string]ClassStats),
+      Character: CharStats{
+        Room: -1,
+        Spawn: -1,
+      },
     }
   }
 }
