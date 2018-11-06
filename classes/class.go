@@ -24,6 +24,7 @@ type ClassSkill struct {
 
 type Class struct {
   name     string
+  desc string
   growth   StatGrowth
   atkStats []stats.Stat
   defStats []stats.Stat
@@ -33,6 +34,10 @@ type Class struct {
 
 func (c *Class) GetName() string {
   return c.name
+}
+
+func (c *Class) GetDesc() string {
+  return c.desc
 }
 
 func (c *Class) GetStatGrowth() StatGrowth {

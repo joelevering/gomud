@@ -30,6 +30,7 @@ var ByName = map[string]*Class{
 
 var Conscript = &Class{
   name: "Conscript",
+  desc: "A strength-based class that's brutish attacks are often interrupted by bouts of laziness",
   growth: StatGrowth{
     Det: 25,
     Stm: 10,
@@ -63,6 +64,7 @@ var Conscript = &Class{
 
 var Athlete = &Class{
   name: "Athlete",
+  desc: "A flow-based fighter that uses speed and superior reaction time to chain attacks into damaging combos",
   growth: StatGrowth{
     Det: 25,
     Stm: 10,
@@ -96,6 +98,7 @@ var Athlete = &Class{
 
 var Charmer = &Class{
   name: "Charmer",
+  desc: "An unpredictable class that sabotages enemies with on-the-fly ingenuity",
   growth: StatGrowth{
     Det: 25,
     Stm: 5,
@@ -130,6 +133,7 @@ var Charmer = &Class{
 
 var Augur = &Class{
   name: "Augur",
+  desc: "This class uses research and knowledge to act with in the most effective manner possible",
   growth: StatGrowth{
     Det: 25,
     Foc: 10,
@@ -163,6 +167,7 @@ var Augur = &Class{
 
 var Sophist = &Class{
   name: "Sophist",
+  desc: "This adaptable classes uses simple sagacious movements to disarm and destroy foes",
   growth: StatGrowth{
     Det: 25,
     Foc: 10,
