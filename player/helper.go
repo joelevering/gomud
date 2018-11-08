@@ -1,6 +1,11 @@
 package player
 
-import "strings"
+import (
+  "fmt"
+  "strings"
+
+  "github.com/joelevering/gomud/skills"
+)
 
 func Help(words []string) string {
   if len(words) == 1 {
@@ -42,7 +47,17 @@ func Help(words []string) string {
 }
 
 func HelpSkill(skName string) string {
-  return "skill info"
+  sk := skills.GetSkill(skName)
+  if sk == nil {
+    return "Sorry, I can't find that skill."
+  }
+
+  msg := `***************%s***************
+%s
+
+Cost: %d %s`
+
+  return fmt.Sprintf(msg, strings.Title(skName), sk.Desc, sk.CostAmt, sk.CostType)
 }
 
 const helpMsg = `***************Help***************
