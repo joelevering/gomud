@@ -408,10 +408,10 @@
       },
       {
         "id": 9,
-        "description": "This particularly small slime appears quite frustrated with your appearance",
+        "description": "Have you seen this slime before?",
         "class": "Slime",
         "character": {
-          "name": "Forest Slime",
+          "name": "Unremarkable Forest Slime",
           "level": 2,
           "exp_given": 10
         }
