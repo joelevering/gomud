@@ -18,26 +18,6 @@ import (
   "github.com/joelevering/gomud/structs"
 )
 
-const helpMsg = `
-Available commands:
-'status' to see details about your character including available skills
-'say <message>' to communicate with people in your room
-'move <exit key>' to move to a new room
-'list' to see who is currently in your room
-'look' to see where you are
-'look <npc name>' to see more details about an NPC
-'attack <npc name>' to start combat
-'attack <npc name> <skill name>' to start combat by using a skill
-'classes' for information on your character's available classes
-'change <class name>' to change your class
-'exit' or 'quit' to log out
-'help' to repeat this message
-
-Most commands have their first letter as a shortcut (e.g. 'l' for look, 'a' for attack)
-
-When you are in combat, prepare a skill for your next action by inputting its name
-`
-
 type Player struct {
   *character.Character
 
@@ -138,7 +118,10 @@ func (p *Player) Cmd(cmd string) {
       p.SendMsg("I'm not sure where you're trying to go. Try again with a correct exit key.")
     }
   case "h", "help":
-    p.SendMsg(helpMsg)
+    helpMsg := Help(words)
+    for _, ln := range strings.Split(helpMsg, "\n") {
+      p.SendMsg(ln)
+    }
   case "s", "say":
     if len(words) > 1 {
       p.Say(strings.Join(words[1:], " "))
