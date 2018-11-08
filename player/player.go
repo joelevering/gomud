@@ -233,7 +233,7 @@ func (p *Player) Classes() {
   for name, stats := range p.Store.LoadClasses(p.GetID()) {
     p.SendMsg("")
 
-    subheader := classes.ByName[name].GetDesc()
+    subheader := classes.Find(name).GetDesc()
 
     shCount := utf8.RuneCountInString(subheader)
     nameCount := utf8.RuneCountInString(name)

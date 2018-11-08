@@ -1,6 +1,8 @@
 package classes
 
 import (
+  "strings"
+
   "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/stats"
 )
@@ -26,6 +28,10 @@ var ByName = map[string]*Class{
   "Slime Baby":  SlimeBaby,
   "Dog God":     DogGod,
   "Crab":        Crab,
+}
+
+func Find(name string) *Class {
+  return ByName[strings.Title(name)]
 }
 
 var Conscript = &Class{

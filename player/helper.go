@@ -4,6 +4,7 @@ import (
   "fmt"
   "strings"
 
+  "github.com/joelevering/gomud/classes"
   "github.com/joelevering/gomud/skills"
 )
 
@@ -39,6 +40,12 @@ func Help(words []string) string {
     }
 
     return HelpSkill(strings.Join(words[2:], " "))
+  case "class":
+    if len(words) == 2 {
+      return classMsg
+    }
+
+    return HelpClass(strings.Join(words[2:], " "))
   case "exit", "quit":
     return exitMsg
   }
@@ -58,6 +65,30 @@ func HelpSkill(skName string) string {
 Cost: %d %s`
 
   return fmt.Sprintf(msg, strings.Title(skName), sk.Desc, sk.CostAmt, sk.CostType)
+}
+
+func HelpClass(clName string) string {
+  cl := classes.Find(clName)
+  if cl == nil {
+    return "Sorry, I can't find that class."
+  }
+
+  msg := `***************%s***************
+%s
+
+Attack stats: %v
+Defense stats: %v
+
+Skills:
+%s`
+
+  skillLines := []string{}
+  for _, sk := range cl.GetSkills() {
+    skillLines = append(skillLines, fmt.Sprintf("  * %s (%d)", strings.Title(sk.Skill.Name), sk.Level))
+  }
+  skillsMsg := strings.Join(skillLines, "\n")
+
+  return fmt.Sprintf(msg, strings.Title(clName), cl.GetDesc(), cl.GetAtkStats(), cl.GetDefStats(), skillsMsg)
 }
 
 const helpMsg = `***************Help***************
@@ -152,7 +183,8 @@ Shortcut: 'st'`
 const classesMsg = `**************Classes**************
 
 The 'classes' command is used to list the classes currently available to you.
-Each class is accompanies by a brief description of the class.
+Each class is accompanied by a brief description of the class.
+Use 'help class' followed by the class name for more information on a specific class.
 
 Use 'change' to change your current class to one of those listed by 'classes'. See 'help change' for more infomation.
 
@@ -214,6 +246,14 @@ Skills are used in combat for a variety of effects.
 
 Use 'help combat' for more information on using skills in combat.
 Use 'help skill' followed by the name of a skill for more information on a specific skill.`
+
+const classMsg = `**************Class**************
+
+Your class defines your maximum determination, level, and skills.
+You can change your class with the 'change' command. Use 'help change' for more information.
+You can see your currently-available classes by using the 'classes' command. Use 'help classes' for more information.
+
+For more information on a specific class, use 'class' followed by the name of the class.`
 
 const exitMsg = `***************Exit***************
 
