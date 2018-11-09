@@ -477,9 +477,13 @@ func Test_ChangeClassKeepsDet(t *testing.T) {
 func Test_SavePersistsClassAndChar(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   defer close(ch)
+  go func(ch chan string) {
+    <-ch
+  }(ch)
   name := "name"
   p.SetName(name)
   p.Init()
+  p.ChangeClass("athlete")
   p.GainExp(p.NextLvlExp)
   p.Save()
 
@@ -494,8 +498,12 @@ func Test_SavePersistsClassAndChar(t *testing.T) {
     t.Errorf("Expected player class level to persist across like-named characters, but level is %d", p2.GetLevel())
   }
 
-  if p2.Str != 20 {
-    t.Errorf("Expected player char stats to persist on save, but got %d str instead of 20", p2.GetStr())
+  if p2.Flo != 20 {
+    t.Errorf("Expected player char stats to persist on save, but got %d flo instead of 20", p2.GetFlo())
+  }
+
+  if p2.GetClassName() != "Athlete" {
+    t.Errorf("Expected player class to persist on save, but got %s instead of Athlete", p2.GetClassName())
   }
 }
 
