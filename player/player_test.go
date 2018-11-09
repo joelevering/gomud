@@ -221,31 +221,55 @@ func Test_Look(t *testing.T) {
   }
 }
 
-func Test_LookNPWithNPName(t *testing.T) {
+func Test_LookTargetWithNPName(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   defer close(ch)
   room := &mocks.MockRoom{}
   p.Room = room
 
-  go p.LookNP("mock np")
+  go p.LookTarget("mock np")
 
   res := <-ch
   if !strings.Contains(res, "You look at mock np name and see:") {
-    t.Errorf("Expected 'You look at mock np name and see:' but got unexpected LookNPC result '%s'", res)
+    t.Errorf("Expected 'You look at mock np name and see:' but got unexpected LookTarget result '%s'", res)
   }
   res = <-ch
   if !strings.Contains(res, "mock np desc") {
-    t.Errorf("Expected 'mock np desc' but got unexpected LookNPC result '%s'", res)
+    t.Errorf("Expected 'mock np desc' but got unexpected LookTarget result '%s'", res)
   }
 }
 
-func Test_LookNPWithNoNP(t *testing.T) {
+func Test_LookTargetWithPCName(t *testing.T) {
+  lookee, _, _ := NewTestPlayer()
+  lookee.SetName("the pamela")
+
+  looker, ch, _ := NewTestPlayer()
+  defer close(ch)
+
+  room := &mocks.MockRoom{
+    Players: []interfaces.PlI{lookee},
+  }
+  looker.Room = room
+
+  go looker.LookTarget("the pamela")
+
+  res := <-ch
+  if !strings.Contains(res, "You look at the pamela and see:") {
+    t.Errorf("Expected 'You look at the pamela and see:' but got unexpected LookTarget result '%s'", res)
+  }
+  res = <-ch
+  if !strings.Contains(res, "level 1 Conscript") {
+    t.Errorf("Expected 'level 1 Conscript' but got unexpected LookTarget result '%s'", res)
+  }
+}
+
+func Test_LookTargetFailure(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   defer close(ch)
   room := &mocks.MockRoom{}
   p.Room = room
 
-  go p.LookNP("missingno")
+  go p.LookTarget("missingno")
 
   res := <-ch
   if !strings.Contains(res, "Are you sure they're here??") {
