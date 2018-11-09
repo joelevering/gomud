@@ -307,24 +307,14 @@ func (p *Player) Yell(msg string) {
 }
 
 func (p *Player) ChangeClass(class string) {
-  switch strings.ToLower(class) {
-  case "conscript":
-    p.Save()
-    p.loadClass(classes.Conscript)
-  case "athlete":
-    p.Save()
-    p.loadClass(classes.Athlete)
-  case "charmer":
-    p.Save()
-    p.loadClass(classes.Charmer)
-  case "augur":
-    p.Save()
-    p.loadClass(classes.Augur)
-  case "sophist":
-    p.Save()
-    p.loadClass(classes.Sophist)
+  p.Save()
+  cl := classes.Find(class)
+  if cl == nil {
+    p.SendMsg("Couldn't find class '%s'. Please use `classes` to confirm the spelling.", strings.Title(class))
+    return
   }
 
+  p.loadClass(cl)
   p.SendMsg(fmt.Sprintf("Changed to %s!", p.Class.GetName()))
 }
 
@@ -614,6 +604,11 @@ func (p *Player) loadChar() {
   spawn := room.RoomStore.Find(l.Spawn)
   if spawn != nil {
     p.SetSpawn(spawn)
+  }
+
+  if l.Class != "" {
+    cl := classes.Find(l.Class)
+    p.loadClass(cl)
   }
 }
 
