@@ -334,7 +334,7 @@
   {
     "id": 13,
     "name": "Slime Forest - Path - Dampening Ground",
-    "description": "The path continues to wander past a seemingly-static varitey of trees.\nThe ground underneath your feet begins to feel spongy, happily giving way under your feet.",
+    "description": "The path continues to wander past a seemingly-static variety of trees.\nThe ground underneath your feet begins to feel spongy, happily giving way under your feet.",
     "exits": [
       {
         "room_id": 11,

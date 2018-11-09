@@ -5,8 +5,50 @@ import (
   "github.com/joelevering/gomud/stats"
 )
 
+var All = []*Skill{
+  Shove,
+  PowerNap,
+  Charge,
+  Conserve,
+  DesperateBlow,
+  FreneticPace,
+  BackUp,
+  Duck,
+  Counter,
+  Uppercut,
+  WittyRetort,
+  Ploy,
+  Sideswipe,
+  Plan,
+  Sidestep,
+  LowBlow,
+  Concentrate,
+  FirstAid,
+  TargetedStrike,
+  Spark,
+  CastDoubt,
+  Benumb,
+  Radiate,
+  Redirect,
+  CastOff,
+}
+
+var ByName map[string]*Skill
+
+func GetSkill(name string) *Skill {
+  if len(ByName) == 0 {
+    ByName = make(map[string]*Skill)
+    for _, sk := range All {
+      ByName[sk.Name] = sk
+    }
+  }
+
+  return ByName[name]
+}
+
 type Skill struct {
   Name        string
+  Desc        string
   Effects     []Effect
   CostType    stats.Stat
   CostAmt     int
@@ -158,6 +200,7 @@ var(
   }
   Shove = &Skill{
     Name: "shove",
+    Desc: "Pushes an enemy back for partial damage, with a chance to surprise them.",
     CostType: stats.Stm,
     CostAmt: 10,
     Effects: []Effect{
@@ -177,6 +220,7 @@ var(
   }
   PowerNap = &Skill{
     Name: "power nap",
+    Desc: "Fall asleep on your feet for a turn, healing a small percentage of health.",
     CostType: stats.Stm,
     CostAmt: 0,
     Effects: []Effect{
@@ -188,6 +232,7 @@ var(
   }
   Charge = &Skill{
     Name: "charge",
+    Desc: "Close the gap to an enemy, dealing double damage.",
     CostType: stats.Stm,
     CostAmt: 10,
     Effects: []Effect{
@@ -200,6 +245,7 @@ var(
   }
   Conserve = &Skill{
     Name: "conserve",
+    Desc: "Save strength, reducing stamina consumption on future turns",
     CostType: stats.Stm,
     CostAmt: 0,
     Effects: []Effect{
@@ -215,6 +261,7 @@ var(
   }
   DesperateBlow = &Skill{
     Name: "desperate blow",
+    Desc: "An easily read attack that will do a LOT of damage if it hits",
     CostType: stats.Stm,
     CostAmt: 20,
     Effects: []Effect{
@@ -227,6 +274,7 @@ var(
   }
   FreneticPace = &Skill{
     Name: "frenetic pace",
+    Desc: "Focus on attacking the enemy this turn and the next one for a chance to surprise.",
     CostType: stats.Stm,
     CostAmt: 10,
     Effects: []Effect{
@@ -254,6 +302,7 @@ var(
   }
   BackUp = &Skill{
     Name: "back up",
+    Desc: "Take a possibly-surprising step back to weaken the effectiveness of your enemy's next attack.",
     CostType: stats.Stm,
     CostAmt: 10,
     Effects: []Effect{
@@ -276,6 +325,7 @@ var(
   }
   Duck = &Skill{
     Name: "duck",
+    Desc: "Attempt to dodge the enemy's next attack.",
     CostType: stats.Stm,
     CostAmt: 10,
     Effects: []Effect{
@@ -291,6 +341,7 @@ var(
   }
   Counter = &Skill{
     Name: "counter",
+    Desc: "A powerful counter strike that must follow a dodge.",
     CostType: stats.Stm,
     CostAmt: 10,
     Effects: []Effect{
@@ -306,6 +357,7 @@ var(
   }
   Uppercut = &Skill{
     Name: "uppercut",
+    Desc: "A powerful hit that must follow a surprise attack.",
     CostType: stats.Stm,
     CostAmt: 10,
     Effects: []Effect{
@@ -321,6 +373,7 @@ var(
   }
   WittyRetort = &Skill{
     Name: "witty retort",
+    Desc: "Mental warfare that could make your enemy vulnerable and/or weak for one turn.",
     CostType: stats.Foc,
     CostAmt: 10,
     Effects: []Effect{
@@ -344,6 +397,7 @@ var(
   }
   Ploy = &Skill{
     Name: "ploy",
+    Desc: "A clever-but-weak attack that has a chance to surprise the enemy",
     CostType: stats.Foc,
     CostAmt: 10,
     Effects: []Effect{
@@ -363,6 +417,7 @@ var(
   }
   Sideswipe = &Skill{
     Name: "sideswipe",
+    Desc: "A weaker attack with a decent chance to bleed the enemy",
     CostType: stats.Stm,
     CostAmt: 10,
     Effects: []Effect{
@@ -384,6 +439,7 @@ var(
   }
   Plan = &Skill{
     Name: "plan",
+    Desc: "Spend the turn planning your next move, empowering future attacks and discovering enemy vulnerabilites",
     CostType: stats.Foc,
     CostAmt: 10,
     Effects: []Effect{
@@ -407,6 +463,7 @@ var(
   }
   Sidestep = &Skill{
     Name: "sidestep",
+    Desc: "Attempt to dodge your enemy's next attack",
     CostType: stats.Stm,
     CostAmt: 10,
     Effects: []Effect{
@@ -422,6 +479,7 @@ var(
   }
   LowBlow = &Skill{
     Name: "low blow",
+    Desc: "An uncouth strike with a chance to stun your enemy...or enrage them",
     CostType: stats.Foc,
     CostAmt: 10,
     Effects: []Effect{
@@ -434,9 +492,9 @@ var(
         },
       },
       Effect{
-        Type: SelfFx,
+        Type: OppFx,
         Value: statfx.SEInst{
-          Effect: statfx.Vulnerable,
+          Effect: statfx.Empowered,
           Chance: 0.5,
           Duration: 1,
         },
@@ -445,6 +503,7 @@ var(
   }
   Concentrate = &Skill{
     Name: "concentrate",
+    Desc: "Focus on empowering future attacks",
     CostType: stats.Foc,
     CostAmt: 10,
     Effects: []Effect{
@@ -460,6 +519,7 @@ var(
   }
   FirstAid = &Skill{
     Name: "first aid",
+    Desc: "Heal a moderate amount of health",
     CostType: stats.Foc,
     CostAmt: 10,
     Effects: []Effect{
@@ -471,6 +531,7 @@ var(
   }
   TargetedStrike = &Skill{
     Name: "targeted strike",
+    Desc: "A regular attack with a good chance of making the enemy vulnerable to your follow-up",
     CostType: stats.Foc,
     CostAmt: 10,
     Effects: []Effect{
@@ -490,6 +551,7 @@ var(
   }
   Spark = &Skill{
     Name: "spark",
+    Desc: "Strike an enemy with a firey burst",
     CostType: stats.Foc,
     CostAmt: 15,
     Effects: []Effect{
@@ -501,6 +563,7 @@ var(
   }
   CastDoubt = &Skill{
     Name: "cast doubt",
+    Desc: "A biting word that can preoccupy an enemy, leaving them vulnerable for longer than you'd expect",
     CostType: stats.Foc,
     CostAmt: 10,
     Effects: []Effect{
@@ -516,6 +579,7 @@ var(
   }
   Benumb = &Skill{
     Name: "benumb",
+    Desc: "A chilly wind weakens the enemy's next attack.",
     CostType: stats.Foc,
     CostAmt: 10,
     Effects: []Effect{
@@ -531,6 +595,7 @@ var(
   }
   Radiate = &Skill{
     Name: "radiate",
+    Desc: "A deceptive attack that's lack of immediate effect is proceeded by multiple rounds of fire damage",
     CostType: stats.Foc,
     CostAmt: 10,
     Effects: []Effect{
@@ -548,6 +613,7 @@ var(
   }
   Redirect = &Skill{
     Name: "redirect",
+    Desc: "Reduce the impact of your enemy's next attack while causing the enemy to deal partial damage to themself",
     CostType: stats.Foc,
     CostAmt: 10,
     Effects: []Effect{
@@ -563,6 +629,7 @@ var(
   }
   CastOff = &Skill{
     Name: "cast off",
+    Desc: "Shrug off physical fatigue, channeling focus to replenish stamina",
     CostType: stats.Foc,
     CostAmt: 20,
     Effects: []Effect{
