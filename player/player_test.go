@@ -43,14 +43,14 @@ func Test_CmdSetsCombatSkillWithSkillName(t *testing.T) {
   go p.Cmd("shove")
   res := <-ch
 
-  if !strings.Contains(res, "Preparing shove") {
+  if !strings.Contains(res, "Preparing Shove") {
     t.Errorf("Expected player to receive 'Preparing shove', but got %s", res)
   }
 
   sk := p.CmbSkill
 
-  if sk == nil || sk.Name != "shove" {
-    t.Errorf("Expected to get combat skill 'shove' after commanding 'shove', but got %v", sk)
+  if sk == nil || sk.Name != "Shove" {
+    t.Errorf("Expected to get combat skill 'Shove' after commanding 'shove', but got %v", sk)
   }
 }
 
@@ -64,8 +64,8 @@ func Test_CmdDoesNotSetOOCRestrictedSkillInCombat(t *testing.T) {
   go p.Cmd("charge")
   res := <-ch
 
-  if !strings.Contains(res, "You cannot use 'charge' in combat!") {
-    t.Errorf("Expected player to receive 'You cannot use 'charge' in combat!', but got %s", res)
+  if !strings.Contains(res, "You cannot use 'Charge' in combat!") {
+    t.Errorf("Expected player to receive 'You cannot use 'Charge' in combat!', but got %s", res)
   }
 
   sk := p.CmbSkill
