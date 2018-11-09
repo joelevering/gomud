@@ -1,6 +1,8 @@
 package classes
 
 import (
+  "strings"
+
   "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/stats"
 )
@@ -81,7 +83,7 @@ func (c *Class) GetSkill(s string, lvl int) *skills.Skill {
     c.generateSkillMap()
   }
 
-  cs := c.skillMap[s]
+  cs := c.skillMap[strings.Title(s)]
   if cs != nil && lvl >= cs.Level {
     return cs.Skill
   } else {

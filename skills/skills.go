@@ -1,6 +1,8 @@
 package skills
 
 import (
+  "strings"
+
   "github.com/joelevering/gomud/statfx"
   "github.com/joelevering/gomud/stats"
 )
@@ -43,7 +45,7 @@ func GetSkill(name string) *Skill {
     }
   }
 
-  return ByName[name]
+  return ByName[strings.Title(name)]
 }
 
 type Skill struct {
@@ -199,7 +201,7 @@ var(
     },
   }
   Shove = &Skill{
-    Name: "shove",
+    Name: "Shove",
     Desc: "Pushes an enemy back for partial damage, with a chance to surprise them.",
     CostType: stats.Stm,
     CostAmt: 10,
@@ -219,7 +221,7 @@ var(
     },
   }
   PowerNap = &Skill{
-    Name: "power nap",
+    Name: "Power Nap",
     Desc: "Fall asleep on your feet for a turn, healing a small percentage of health.",
     CostType: stats.Stm,
     CostAmt: 0,
@@ -231,7 +233,7 @@ var(
     },
   }
   Charge = &Skill{
-    Name: "charge",
+    Name: "Charge",
     Desc: "Close the gap to an enemy, dealing double damage.",
     CostType: stats.Stm,
     CostAmt: 10,
@@ -244,7 +246,7 @@ var(
     Rstcn: OOCOnly,
   }
   Conserve = &Skill{
-    Name: "conserve",
+    Name: "Conserve",
     Desc: "Save strength, reducing stamina consumption on future turns",
     CostType: stats.Stm,
     CostAmt: 0,
@@ -260,7 +262,7 @@ var(
     },
   }
   DesperateBlow = &Skill{
-    Name: "desperate blow",
+    Name: "Desperate Blow",
     Desc: "An easily read attack that will do a LOT of damage if it hits",
     CostType: stats.Stm,
     CostAmt: 20,
@@ -273,7 +275,7 @@ var(
     },
   }
   FreneticPace = &Skill{
-    Name: "frenetic pace",
+    Name: "Frenetic Pace",
     Desc: "Focus on attacking the enemy this turn and the next one for a chance to surprise.",
     CostType: stats.Stm,
     CostAmt: 10,
@@ -301,7 +303,7 @@ var(
     },
   }
   BackUp = &Skill{
-    Name: "back up",
+    Name: "Back Up",
     Desc: "Take a possibly-surprising step back to weaken the effectiveness of your enemy's next attack.",
     CostType: stats.Stm,
     CostAmt: 10,
@@ -324,7 +326,7 @@ var(
     },
   }
   Duck = &Skill{
-    Name: "duck",
+    Name: "Duck",
     Desc: "Attempt to dodge the enemy's next attack.",
     CostType: stats.Stm,
     CostAmt: 10,
@@ -340,7 +342,7 @@ var(
     },
   }
   Counter = &Skill{
-    Name: "counter",
+    Name: "Counter",
     Desc: "A powerful counter strike that must follow a dodge.",
     CostType: stats.Stm,
     CostAmt: 10,
@@ -356,7 +358,7 @@ var(
     },
   }
   Uppercut = &Skill{
-    Name: "uppercut",
+    Name: "Uppercut",
     Desc: "A powerful hit that must follow a surprise attack.",
     CostType: stats.Stm,
     CostAmt: 10,
@@ -372,7 +374,7 @@ var(
     },
   }
   WittyRetort = &Skill{
-    Name: "witty retort",
+    Name: "Witty Retort",
     Desc: "Mental warfare that could make your enemy vulnerable and/or weak for one turn.",
     CostType: stats.Foc,
     CostAmt: 10,
@@ -396,7 +398,7 @@ var(
     },
   }
   Ploy = &Skill{
-    Name: "ploy",
+    Name: "Ploy",
     Desc: "A clever-but-weak attack that has a chance to surprise the enemy",
     CostType: stats.Foc,
     CostAmt: 10,
@@ -416,7 +418,7 @@ var(
     },
   }
   Sideswipe = &Skill{
-    Name: "sideswipe",
+    Name: "Sideswipe",
     Desc: "A weaker attack with a decent chance to bleed the enemy",
     CostType: stats.Stm,
     CostAmt: 10,
@@ -438,7 +440,7 @@ var(
     },
   }
   Plan = &Skill{
-    Name: "plan",
+    Name: "Plan",
     Desc: "Spend the turn planning your next move, empowering future attacks and discovering enemy vulnerabilites",
     CostType: stats.Foc,
     CostAmt: 10,
@@ -462,7 +464,7 @@ var(
     },
   }
   Sidestep = &Skill{
-    Name: "sidestep",
+    Name: "Sidestep",
     Desc: "Attempt to dodge your enemy's next attack",
     CostType: stats.Stm,
     CostAmt: 10,
@@ -478,7 +480,7 @@ var(
     },
   }
   LowBlow = &Skill{
-    Name: "low blow",
+    Name: "Low Blow",
     Desc: "An uncouth strike with a chance to stun your enemy...or enrage them",
     CostType: stats.Foc,
     CostAmt: 10,
@@ -502,7 +504,7 @@ var(
     },
   }
   Concentrate = &Skill{
-    Name: "concentrate",
+    Name: "Concentrate",
     Desc: "Focus on empowering future attacks",
     CostType: stats.Foc,
     CostAmt: 10,
@@ -518,7 +520,7 @@ var(
     },
   }
   FirstAid = &Skill{
-    Name: "first aid",
+    Name: "First Aid",
     Desc: "Heal a moderate amount of health",
     CostType: stats.Foc,
     CostAmt: 10,
@@ -530,7 +532,7 @@ var(
     },
   }
   TargetedStrike = &Skill{
-    Name: "targeted strike",
+    Name: "Targeted Strike",
     Desc: "A regular attack with a good chance of making the enemy vulnerable to your follow-up",
     CostType: stats.Foc,
     CostAmt: 10,
@@ -550,7 +552,7 @@ var(
     },
   }
   Spark = &Skill{
-    Name: "spark",
+    Name: "Spark",
     Desc: "Strike an enemy with a firey burst",
     CostType: stats.Foc,
     CostAmt: 15,
@@ -562,7 +564,7 @@ var(
     },
   }
   CastDoubt = &Skill{
-    Name: "cast doubt",
+    Name: "Cast Doubt",
     Desc: "A biting word that can preoccupy an enemy, leaving them vulnerable for longer than you'd expect",
     CostType: stats.Foc,
     CostAmt: 10,
@@ -578,7 +580,7 @@ var(
     },
   }
   Benumb = &Skill{
-    Name: "benumb",
+    Name: "Benumb",
     Desc: "A chilly wind weakens the enemy's next attack.",
     CostType: stats.Foc,
     CostAmt: 10,
@@ -594,7 +596,7 @@ var(
     },
   }
   Radiate = &Skill{
-    Name: "radiate",
+    Name: "Radiate",
     Desc: "A deceptive attack that's lack of immediate effect is proceeded by multiple rounds of fire damage",
     CostType: stats.Foc,
     CostAmt: 10,
@@ -612,7 +614,7 @@ var(
     },
   }
   Redirect = &Skill{
-    Name: "redirect",
+    Name: "Redirect",
     Desc: "Reduce the impact of your enemy's next attack while causing the enemy to deal partial damage to themself",
     CostType: stats.Foc,
     CostAmt: 10,
@@ -628,7 +630,7 @@ var(
     },
   }
   CastOff = &Skill{
-    Name: "cast off",
+    Name: "Cast Off",
     Desc: "Shrug off physical fatigue, channeling focus to replenish stamina",
     CostType: stats.Foc,
     CostAmt: 20,
