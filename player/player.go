@@ -163,13 +163,21 @@ func (p Player) List() {
 
   for _, otherP := range p.Room.GetPlayers() {
     if otherP.GetName() != p.GetName() {
-      names = append(names, otherP.GetName())
+      if otherP.IsInCombat() {
+        names = append(names, fmt.Sprintf("%s (in combat)", otherP.GetName()))
+      } else {
+        names = append(names, otherP.GetName())
+      }
     }
   }
 
   for _, np := range p.Room.GetNPs() {
     if np.IsAlive() {
-    names = append(names, fmt.Sprintf("%s (NPC)", np.GetName()))
+      if np.IsInCombat() {
+        names = append(names, fmt.Sprintf("%s (NPC, in combat)", np.GetName()))
+      } else {
+        names = append(names, fmt.Sprintf("%s (NPC)", np.GetName()))
+      }
     }
   }
 
@@ -196,6 +204,9 @@ func (p Player) LookTarget(name string) {
         fmt.Sprintf("You look at %s and see:", np.GetName()),
         np.GetDesc(),
       )
+      if np.IsInCombat() {
+        p.SendMsg("They're in the middle of a fight!")
+      }
 
       return
     }
@@ -203,10 +214,13 @@ func (p Player) LookTarget(name string) {
 
   for _, pl := range p.Room.GetPlayers() {
     if strings.Contains(strings.ToUpper(pl.GetName()), strings.ToUpper(name)) {
-      p.SendMsg(
-        fmt.Sprintf("You look at %s and see:", pl.GetName()),
-        fmt.Sprintf("A level %d %s.", pl.GetLevel(), pl.GetClassName()),
-      )
+      p.SendMsg(fmt.Sprintf("You look at %s and see:", pl.GetName()))
+
+      if pl.IsInCombat() {
+        p.SendMsg(fmt.Sprintf("A level %d %s in the middle of a fight!.", pl.GetLevel(), pl.GetClassName()))
+      } else {
+        p.SendMsg(fmt.Sprintf("A level %d %s.", pl.GetLevel(), pl.GetClassName()))
+      }
 
       return
     }
@@ -274,7 +288,7 @@ func (p *Player) AttackNP(npName, skName string) {
   for _, np := range p.Room.GetNPs() {
     if np.IsAlive() && strings.Contains(strings.ToUpper(np.GetName()), strings.ToUpper(npName)) {
       p.useSkill(skName)
-      go combat.Start(p, np)
+      go combat.Start(p, np, p.Room)
       return
     }
   }
