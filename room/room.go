@@ -16,13 +16,6 @@ type Room struct {
   Players []interfaces.PlI
 }
 
-type Exit struct {
-  Desc   string `json:"description"`
-  Key    string `json:"key"`
-  RoomID int    `json:"room_id"`
-  Room   interfaces.RoomI
-}
-
 func (room Room) Message(msg string) {
   for _, player := range room.Players {
     player.SendMsg(msg)
@@ -80,24 +73,4 @@ func (room *Room) GetDesc() string {
 
 func (room *Room) GetID() int {
   return room.Id
-}
-
-func (e *Exit) GetRoom() interfaces.RoomI {
-  return e.Room
-}
-
-func (e *Exit) SetRoom(newRoom interfaces.RoomI) {
-  e.Room = newRoom
-}
-
-func (e *Exit) GetRoomID() int {
-  return e.RoomID
-}
-
-func (e *Exit) GetKey() string {
-  return e.Key
-}
-
-func (e *Exit) GetDesc() string {
-  return e.Desc
 }

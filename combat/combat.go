@@ -1,6 +1,7 @@
 package combat
 
 import (
+  "fmt"
   "time"
 
   "github.com/joelevering/gomud/interfaces"
@@ -9,17 +10,23 @@ import (
 
 const tickTime = 1500 * time.Millisecond
 
-func Start(pc interfaces.Combatant, npc interfaces.Combatant) {
+func Start(pc interfaces.Combatant, npc interfaces.Combatant, rm interfaces.RoomI) {
+  rm.Message(fmt.Sprintf("%s and %s start fighting!", pc.GetName(), npc.GetName()))
   pc.EnterCombat(npc)
   npc.EnterCombat(pc)
 
   for true {
     combatOver := TickCombat(pc, npc)
-    if combatOver { break }
+    if combatOver {
+      rm.Message(fmt.Sprintf("%s emerges victorious over %s!", pc.GetName(), npc.GetName()))
+      break
+    }
     time.Sleep(tickTime)
 
     combatOver = TickCombat(npc, pc)
-    if combatOver { break }
+    if combatOver {
+      break
+    }
     time.Sleep(tickTime)
   }
 }

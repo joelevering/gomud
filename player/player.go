@@ -274,7 +274,7 @@ func (p *Player) AttackNP(npName, skName string) {
   for _, np := range p.Room.GetNPs() {
     if np.IsAlive() && strings.Contains(strings.ToUpper(np.GetName()), strings.ToUpper(npName)) {
       p.useSkill(skName)
-      go combat.Start(p, np)
+      go combat.Start(p, np, p.Room)
       return
     }
   }
