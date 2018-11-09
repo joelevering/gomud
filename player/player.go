@@ -109,7 +109,7 @@ func (p *Player) Cmd(cmd string) {
     if len(words) == 1 {
       p.Look()
     } else if len(words) > 1 {
-      p.LookNP(words[1])
+      p.LookTarget(strings.Join(words[1:], " "))
     }
   case "m", "move":
     if len(words) == 2 {
@@ -189,12 +189,23 @@ func (p Player) Look() {
   p.List()
 }
 
-func (p Player) LookNP(npName string) {
+func (p Player) LookTarget(name string) {
   for _, np := range p.Room.GetNPs() {
-    if np.IsAlive() && strings.Contains(strings.ToUpper(np.GetName()), strings.ToUpper(npName)) {
+    if np.IsAlive() && strings.Contains(strings.ToUpper(np.GetName()), strings.ToUpper(name)) {
       p.SendMsg(
         fmt.Sprintf("You look at %s and see:", np.GetName()),
         np.GetDesc(),
+      )
+
+      return
+    }
+  }
+
+  for _, pl := range p.Room.GetPlayers() {
+    if strings.Contains(strings.ToUpper(pl.GetName()), strings.ToUpper(name)) {
+      p.SendMsg(
+        fmt.Sprintf("You look at %s and see:", pl.GetName()),
+        fmt.Sprintf("A level %d %s.", pl.GetLevel(), pl.GetClassName()),
       )
 
       return

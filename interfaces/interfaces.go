@@ -62,7 +62,7 @@ type PlI interface {
   GetRoom() RoomI
   List()
   Look()
-  LookNP(string)
+  LookTarget(string)
   Status()
   AttackNP(string, string)
   Move(string)
