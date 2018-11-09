@@ -3,13 +3,14 @@ package character
 import (
   "math/rand"
 
+  "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/statfx"
   "github.com/joelevering/gomud/structs"
   "github.com/joelevering/gomud/util"
 )
 
-func (ch *Character) EnterCombat(opp *Character) {
+func (ch *Character) EnterCombat(opp interfaces.Combatant) {
   ch.InCombat = true
 }
 

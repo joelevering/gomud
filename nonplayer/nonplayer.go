@@ -75,8 +75,6 @@ func (n *NonPlayer) Emote(emote string) {
   n.Room.Message(fmt.Sprintf("%s %s", n.GetName(), emote))
 }
 
-func (n *NonPlayer) EnterCombat(opp interfaces.Combatant) {}
-
 func (n *NonPlayer) ReportAtk(_ interfaces.Combatant, _ structs.CmbRep) {}
 
 func (n *NonPlayer) ReportDef(_ interfaces.Combatant, _ structs.CmbRep) {}
