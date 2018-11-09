@@ -64,7 +64,7 @@ func HelpSkill(skName string) string {
 
 Cost: %d %s`
 
-  return fmt.Sprintf(msg, strings.Title(skName), sk.Desc, sk.CostAmt, sk.CostType)
+  return fmt.Sprintf(msg, skName, sk.Desc, sk.CostAmt, sk.CostType)
 }
 
 func HelpClass(clName string) string {
@@ -84,11 +84,11 @@ Skills:
 
   skillLines := []string{}
   for _, sk := range cl.GetSkills() {
-    skillLines = append(skillLines, fmt.Sprintf("  * %s (%d)", strings.Title(sk.Skill.Name), sk.Level))
+    skillLines = append(skillLines, fmt.Sprintf("  * %s (%d)", sk.Skill.Name, sk.Level))
   }
   skillsMsg := strings.Join(skillLines, "\n")
 
-  return fmt.Sprintf(msg, strings.Title(clName), cl.GetDesc(), cl.GetAtkStats(), cl.GetDefStats(), skillsMsg)
+  return fmt.Sprintf(msg, cl.GetName(), cl.GetDesc(), cl.GetAtkStats(), cl.GetDefStats(), skillsMsg)
 }
 
 const helpMsg = `***************Help***************
