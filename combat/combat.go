@@ -8,7 +8,7 @@ import (
   "github.com/joelevering/gomud/structs"
 )
 
-const tickTime = 1500 * time.Millisecond
+const TickTime = 1500 * time.Millisecond
 
 func Start(pc interfaces.Combatant, npc interfaces.Combatant, rm interfaces.RoomI) {
   rm.Message(fmt.Sprintf("%s and %s start fighting!", pc.GetName(), npc.GetName()))
@@ -21,13 +21,13 @@ func Start(pc interfaces.Combatant, npc interfaces.Combatant, rm interfaces.Room
       rm.Message(fmt.Sprintf("%s emerges victorious over %s!", pc.GetName(), npc.GetName()))
       break
     }
-    time.Sleep(tickTime)
+    time.Sleep(TickTime)
 
     combatOver = TickCombat(npc, pc)
     if combatOver {
       break
     }
-    time.Sleep(tickTime)
+    time.Sleep(TickTime)
   }
 }
 
