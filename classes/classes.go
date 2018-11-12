@@ -214,6 +214,16 @@ var Crab = &Class{
   },
   atkStats: []stats.Stat{stats.Str},
   defStats: []stats.Stat{stats.Flo},
+  skills: []*ClassSkill{
+    &ClassSkill{
+      Skill: skills.Pince,
+      Level: 1,
+    },
+    &ClassSkill{
+      Skill: skills.Hide,
+      Level: 1,
+    },
+  },
 }
 
 // Slime Forest

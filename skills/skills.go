@@ -33,6 +33,9 @@ var All = []*Skill{
   Radiate,
   Redirect,
   CastOff,
+
+  Pince,
+  Hide,
 }
 
 var ByName map[string]*Skill
@@ -112,6 +115,7 @@ func (s *Skill) OppFollowUpReq() (bool, statfx.StatusEffect) {
   return false, ""
 }
 
+// Test Skills
 var(
   T_PctDmg = &Skill{
     Name: "t_pctdmg",
@@ -200,6 +204,10 @@ var(
       },
     },
   }
+)
+
+// Player Skills
+var(
   Shove = &Skill{
     Name: "Shove",
     Desc: "Pushes an enemy back for partial damage, with a chance to surprise them.",
@@ -638,6 +646,38 @@ var(
       Effect{
         Type: FlatStm,
         Value: 20,
+      },
+    },
+  }
+)
+
+// NPC Skills
+var(
+  Pince = &Skill{
+    Name: "Pince",
+    Desc: "Snip a foe for boosted damage",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: PctDmg,
+        Value: 1.5,
+      },
+    },
+  }
+  Hide = &Skill{
+    Name: "Hide",
+    Desc: "Retreat inward, steeling oneself defensively",
+    CostType: stats.Stm,
+    CostAmt: 10,
+    Effects: []Effect{
+      Effect{
+        Type: SelfFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Steeled,
+          Chance: 1,
+          Duration: 1,
+        },
       },
     },
   }

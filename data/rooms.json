@@ -35,7 +35,7 @@
           "level": 10,
           "exp_given": 999999
         },
-        "ooc_behavior": [
+        "behavior": [
           {
             "trigger": "pc-enters",
             "actions": [["say", "GREETINGS"]],
@@ -223,7 +223,7 @@
           "level": 5,
           "exp_given": 10
         },
-        "ooc_behavior": [
+        "behavior": [
           {
             "trigger": "pc-enters",
             "actions": [["emote", "snips its claws in the air."]],
@@ -233,6 +233,16 @@
             "trigger": "pc-leaves",
             "actions": [["say", "Phew"]],
             "chance": 1
+          }
+        ],
+        "combat_behavior": [
+          {
+            "skill": "Pince",
+            "chance": 0.20
+          },
+          {
+            "skill": "Hide",
+            "chance": 0.20
           }
         ]
       }
@@ -297,7 +307,7 @@
           "level": 1,
           "exp_given": 5
         },
-        "ooc_behavior": [
+        "behavior": [
           {
             "trigger": "pc-enters",
             "actions": [["emote", "looks away quickly."]],

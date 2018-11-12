@@ -2,11 +2,14 @@ package nonplayer
 
 import (
   "fmt"
+  "log"
   "time"
 
   "github.com/joelevering/gomud/character"
   "github.com/joelevering/gomud/classes"
+  "github.com/joelevering/gomud/combat"
   "github.com/joelevering/gomud/interfaces"
+  "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/statfx"
   "github.com/joelevering/gomud/stats"
   "github.com/joelevering/gomud/structs"
@@ -16,19 +19,25 @@ import (
 type NonPlayer struct {
   *character.Character   `json:"character"`
 
-  Id        int          `json:"id"`
-  Desc      string       `json:"description"`
-  ClassName string       `json:"class"`
-  AtkStats  []stats.Stat `json:"attack_stats"`
-  DefStats  []stats.Stat `json:"defense_stats"`
-  Behaviors []*Behavior  `json:"ooc_behavior"`
-  Alive     bool
+  Id           int            `json:"id"`
+  Desc         string         `json:"description"`
+  ClassName    string         `json:"class"`
+  AtkStats     []stats.Stat   `json:"attack_stats"`
+  DefStats     []stats.Stat   `json:"defense_stats"`
+  Behaviors    []*Behavior    `json:"behavior"`
+  CmbBehaviors []*CmbBehavior `json:"combat_behavior"`
+  Alive        bool
 }
 
 type Behavior struct {
   Trigger string     `json:"trigger"`
   Actions [][]string `json:"actions"`
   Chance  float64    `json:"chance"`
+}
+
+type CmbBehavior struct {
+  Skill  string  `json:"skill"`
+  Chance float64 `json:"chance"`
 }
 
 func (n *NonPlayer) Init(room interfaces.RoomI, queue interfaces.QueueI) {
@@ -56,6 +65,16 @@ func (n *NonPlayer) ResetStats() {
   }
 
   n.Exp = exp
+
+  if n.GetMaxStm() == 0 {
+    n.SetMaxStm(100)
+    n.SetStm(100)
+  }
+
+  if n.GetMaxFoc() == 0 {
+    n.SetMaxFoc(100)
+    n.SetFoc(100)
+  }
 }
 
 func (n *NonPlayer) GetDesc() string {
@@ -73,6 +92,33 @@ func (n *NonPlayer) Say(msg string) {
 
 func (n *NonPlayer) Emote(emote string) {
   n.Room.Message(fmt.Sprintf("%s %s", n.GetName(), emote))
+}
+
+func (n *NonPlayer) EnterCombat(opp interfaces.Combatant) {
+  n.InCombat = true
+  go n.setCmbBehavior()
+}
+
+func (n *NonPlayer) setCmbBehavior() {
+  for {
+    if !n.IsInCombat() {
+      break
+    }
+
+    for _, cb := range n.CmbBehaviors {
+      if (util.RandF() <= cb.Chance) {
+        sk := skills.GetSkill(cb.Skill)
+        if sk != nil {
+          n.SetCmbSkill(sk)
+          break
+        } else {
+          log.Printf("%s - Can't find skill %s", n.GetName(), cb.Skill)
+        }
+      }
+    }
+
+    time.Sleep(combat.TickTime)
+  }
 }
 
 func (n *NonPlayer) ReportAtk(_ interfaces.Combatant, _ structs.CmbRep) {}
