@@ -148,6 +148,7 @@ type CharI interface {
 
 type ClassI interface {
   GetName() string
+  GetTier() classes.Tier
   GetStatGrowth() classes.StatGrowth
   GetAtkStats() []stats.Stat
   GetDefStats() []stats.Stat

@@ -24,9 +24,20 @@ type ClassSkill struct {
   Level int
 }
 
+type Tier int
+
+const(
+  Tier1 = Tier(0)
+  Tier2 = Tier(1)
+  Tier3 = Tier(2)
+  Tier4 = Tier(3)
+  Tier5 = Tier(4)
+)
+
 type Class struct {
   name     string
-  desc string
+  desc     string
+  tier     Tier
   growth   StatGrowth
   atkStats []stats.Stat
   defStats []stats.Stat
@@ -40,6 +51,10 @@ func (c *Class) GetName() string {
 
 func (c *Class) GetDesc() string {
   return c.desc
+}
+
+func (c *Class) GetTier() Tier {
+  return c.tier
 }
 
 func (c *Class) GetStatGrowth() StatGrowth {

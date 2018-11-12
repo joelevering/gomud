@@ -35,6 +35,8 @@ func NewTestPlayer() (*Player, chan string, *mocks.MockQueue) {
 
 func Test_CmdSetsCombatSkillWithSkillName(t *testing.T) {
   p, ch, _ := NewTestPlayer()
+  p.Class = classes.Minder
+  p.Classes[classes.Tier2] = classes.Minder
   p.Level = 10
   defer close(ch)
   go p.EnterCombat(&mocks.MockNP{})

@@ -13,6 +13,7 @@ import (
   "github.com/joelevering/gomud/combat"
   "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/room"
+  "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/statfx"
   "github.com/joelevering/gomud/storage"
   "github.com/joelevering/gomud/structs"
@@ -146,7 +147,7 @@ func (p *Player) Cmd(cmd string) {
   case "st", "status":
     p.Status()
   case "cl", "classes":
-    p.Classes()
+    p.ListClasses()
   case "c", "change":
     if len(words) == 2 {
       p.ChangeClass(words[1])
@@ -253,7 +254,7 @@ func (p *Player) Status() {
   p.SendMsg(strings.Repeat("~", utf8.RuneCountInString(header)))
 }
 
-func (p *Player) Classes() {
+func (p *Player) ListClasses() {
   p.SendMsg("Your Classes:")
   for name, stats := range p.Store.LoadClasses(p.GetID()) {
     p.SendMsg("")
@@ -640,18 +641,31 @@ func (p *Player) loadChar() {
 func (p *Player) useSkill (skName string) {
   if skName == "" { return }
 
-  sk := p.Class.GetSkill(skName, p.Level)
-  if sk != nil {
-    if p.IsInCombat() && sk.IsOOCOnly() {
-      p.SendMsg(fmt.Sprintf("You cannot use '%s' in combat!", sk.Name))
-      return
+  var sk *skills.Skill
+
+  for t, cl := range p.Classes {
+    if cl == nil { continue }
+
+    if t < p.Class.GetTier() {
+      sk = cl.GetSkill(skName, 10)
+    } else { // it's the main class
+      sk = cl.GetSkill(skName, p.Level)
     }
 
-    p.SetCmbSkill(sk)
-    p.SendMsg(fmt.Sprintf("Preparing %s", sk.Name))
-  } else {
-    p.SendMsg(fmt.Sprintf("You don't know how to prepare '%s'!", skName))
+    if sk != nil {
+      if p.IsInCombat() && sk.IsOOCOnly() {
+        p.SendMsg(fmt.Sprintf("You cannot use '%s' in combat!", sk.Name))
+        return
+      }
+
+      p.SetCmbSkill(sk)
+      p.SendMsg(fmt.Sprintf("Preparing %s", sk.Name))
+
+      return
+    }
   }
+
+  p.SendMsg(fmt.Sprintf("You don't know how to prepare '%s'!", skName))
 }
 
 func (p *Player) log(msg string) {

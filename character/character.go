@@ -14,6 +14,7 @@ import (
 type Character struct {
   Name       string            `json:"name"`
   Class      interfaces.ClassI
+  Classes    map[classes.Tier]interfaces.ClassI
   Level      int               `json:"level"`
   ExpGiven   int               `json:"exp_given"`
   Exp        int
@@ -42,6 +43,7 @@ type Character struct {
 func NewCharacter() *Character {
   return &Character{
     Class:      classes.Conscript,
+    Classes:    map[classes.Tier]interfaces.ClassI{classes.Tier1: classes.Conscript},
     Level:      1,
     NextLvlExp: 10,
     MaxDet:     200,

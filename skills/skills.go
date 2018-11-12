@@ -649,6 +649,22 @@ var(
       },
     },
   }
+  Shield = &Skill{
+    Name: "Shield",
+    Desc: "",
+    CostType: stats.Foc,
+    CostAmt: 20,
+    Effects: []Effect{
+      Effect{
+        Type: SelfFx,
+        Value: statfx.SEInst{
+          Effect: statfx.Steeled,
+          Chance: 1,
+          Duration: 3,
+        },
+      },
+    },
+  }
 )
 
 // NPC Skills
