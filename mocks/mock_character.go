@@ -22,7 +22,6 @@ type MockCharacter struct {
   EnteredCombat    bool
   Healed           bool
   ExpGained        int
-  ShouldLevelUp    bool
   ShouldDie        bool
   ClearedCmbSkill  bool
   LockedCmbSkill   bool
@@ -87,7 +86,6 @@ func (m *MockCharacter) FullHeal() {
   m.Healed = true
 }
 
-func (m *MockCharacter) GainExp(exp int) bool {
+func (m *MockCharacter) GainExp(exp int) {
   m.ExpGained += exp
-  return m.ShouldLevelUp
 }

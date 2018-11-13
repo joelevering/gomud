@@ -47,7 +47,7 @@ func (p Player) StartWriter(conn net.Conn) {
 func (p *Player) Init() {
   if !p.Store.StoreExists(p.GetID()) {
     p.Store.InitPlayerData(p.GetID())
-    for _, class := range classes.PlayerClasses {
+    for _, class := range classes.StartingClasses {
       p.persistClass(class.GetName())
     }
   } else {
@@ -340,6 +340,16 @@ func (p *Player) ChangeClass(class string) {
     return
   }
 
+  // TODO If the class is still locked for the player, send a message
+  // TODO If the class is > Tier1, ask about subclasses
+  // TODO If we can't prompt a response (will probably be annoying to do, e.g. require a flag that overrides
+  // Player#Cmd to take the command and route it to ChangeSubclass method), here's a different system:
+  // ChangeClass changes main class and updates the Tier of that class in Classes map to be the new class
+  // Subclasses can be changed directly with `change t1 augur`.
+  // Without a tier specification, main class is changed.
+  // With a tier specification, only the Classes map is updated.
+  // It's OK for the map to have higher tier classes -- classes above the main class' tier should be ignored (in useSkill)
+
   p.loadClass(cl)
   p.SendMsg(fmt.Sprintf("Changed to %s!", p.Class.GetName()))
 }
@@ -555,17 +565,28 @@ func (p *Player) WinCombat(loser interfaces.Combatant) {
   p.SendMsg(fmt.Sprintf("%s is defeated!", loser.GetName()))
 
   expGained := loser.GetExpGiven()
-  leveledUp := p.GainExp(expGained)
+  p.GainExp(expGained)
+}
 
-  if leveledUp {
-    p.SendMsg(fmt.Sprintf("You gained %d experience and leveled up!", expGained))
+func (p *Player) GainExp(exp int) {
+  oldLvl := p.GetLevel()
+
+  p.Character.GainExp(exp)
+
+  if p.GetLevel() > oldLvl {
+    p.SendMsg(fmt.Sprintf("You gained %d experience and leveled up!", exp))
     p.SendMsg(fmt.Sprintf("You're now level %d!", p.GetLevel()))
     newSk := p.Class.SkillForLvl(p.Level)
     if newSk != nil {
       p.SendMsg(fmt.Sprintf("You gained the skill '%s'!", newSk.Name))
     }
+    if p.GetLevel() == character.MaxLevel {
+      p.SendMsg(fmt.Sprintf("You've reached the maximum level with the %s class!", p.GetClassName()))
+
+      p.unlockNewClasses()
+    }
   } else {
-    p.SendMsg(fmt.Sprintf("You gained %d experience! You need %d more experience to level up.", expGained, p.ExpToLvl()))
+    p.SendMsg(fmt.Sprintf("You gained %d experience! You need %d more experience to level up.", exp, p.ExpToLvl()))
   }
 }
 
@@ -638,6 +659,34 @@ func (p *Player) loadChar() {
   }
 }
 
+func (p *Player) unlockNewClasses() {
+  classStats := p.Store.LoadClasses(p.GetID())
+
+  for _, cl := range classes.PlayerClasses {
+    if cl.GetTier() != p.Class.GetTier() + 1 {
+      continue
+    }
+
+    var reqsMet int
+    for _, req := range cl.GetReqs() {
+      if req.GetName() == p.GetClassName() {
+        reqsMet += 1
+        continue
+      }
+
+      loadedClass := classStats[req.GetName()]
+      if loadedClass.Lvl == character.MaxLevel {
+        reqsMet += 1
+      }
+    }
+
+    if reqsMet == len(cl.GetReqs()) {
+      p.persistClass(cl.GetName())
+      p.SendMsg(fmt.Sprintf("You unlocked a new class: '%s'!", cl.GetName()))
+    }
+  }
+}
+
 func (p *Player) useSkill (skName string) {
   if skName == "" { return }
 
@@ -647,7 +696,7 @@ func (p *Player) useSkill (skName string) {
     if cl == nil { continue }
 
     if t < p.Class.GetTier() {
-      sk = cl.GetSkill(skName, 10)
+      sk = cl.GetSkill(skName, character.MaxLevel)
     } else { // it's the main class
       sk = cl.GetSkill(skName, p.Level)
     }

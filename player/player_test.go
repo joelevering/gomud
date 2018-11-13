@@ -9,6 +9,7 @@ import (
   "testing"
   "time"
 
+  "github.com/joelevering/gomud/character"
   "github.com/joelevering/gomud/classes"
   "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/mocks"
@@ -17,6 +18,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
+  os.RemoveAll("../test/")
   os.Mkdir("../test", 0755)
   room.LoadRooms("../data/rooms.json")
   r := m.Run()
@@ -37,7 +39,7 @@ func Test_CmdSetsCombatSkillWithSkillName(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   p.Class = classes.Minder
   p.Classes[classes.Tier2] = classes.Minder
-  p.Level = 10
+  p.Level = character.MaxLevel
   defer close(ch)
   go p.EnterCombat(&mocks.MockNP{})
   <-ch // "You attack %s!"
@@ -58,7 +60,7 @@ func Test_CmdSetsCombatSkillWithSkillName(t *testing.T) {
 
 func Test_CmdDoesNotSetOOCRestrictedSkillInCombat(t *testing.T) {
   p, ch, _ := NewTestPlayer()
-  p.Level = 10
+  p.Level = character.MaxLevel
   defer close(ch)
   go p.EnterCombat(&mocks.MockNP{})
   <-ch // "You attack %s!"
@@ -402,6 +404,8 @@ func Test_LoseCombat(t *testing.T) {
   }
 }
 
+// Also tests GainExp
+
 func Test_WinCombatEndsCombatAndGivesExp(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   defer close(ch)
@@ -437,7 +441,7 @@ func Test_WinCombatLevelsUpPC(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   rm := &mocks.MockRoom{}
   p.Room = rm
-  p.GainExp(p.NextLvlExp - 1)
+  p.Character.GainExp(p.NextLvlExp - 1)
 
   go func (ch chan string) {
     defer close(ch)
@@ -454,13 +458,44 @@ func Test_WinCombatLevelsUpPC(t *testing.T) {
   if !strings.Contains(res, "You're now level 2!") {
     t.Errorf("Expected 'You're now level 2!'' on defeating, but got '%s'", res)
   }
+
+  res = <-ch // Skill gain
+  if !strings.Contains(res, "You gained the skill 'Shove'") {
+    t.Errorf("Expected 'You gained the skill 'Shove'' on defeating, but got '%s'", res)
+  }
+}
+
+func Test_GainExpMaxesOutClassLevel(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  p.Init()
+  p.Level = character.MaxLevel
+  go p.ChangeClass("Augur") // Saves 10 Conscript
+  <- ch
+  p.Level = 9
+
+  go func (ch chan string) {
+    p.GainExp(p.NextLvlExp)
+  }(ch)
+
+  <-ch // Exp gain
+  <-ch // Level up
+  <-ch // Skill gain
+  res := <-ch
+  if !strings.Contains(res, "maximum level") {
+    t.Errorf("Expected 'maximum level' on maxing out Level via GainExp, but got '%s'", res)
+  }
+  res = <-ch
+  if !strings.Contains(res, "Minder") {
+    t.Errorf("Expected 'Minder' to be sent as new tier 2 class unlock, but got '%s'", res)
+  }
 }
 
 func Test_ChangeClassResetsStats(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   defer close(ch)
   p.Init()
-  p.GainExp(p.NextLvlExp + 1)
+  p.Character.GainExp(p.NextLvlExp + 1)
 
   go p.ChangeClass("athlete")
   <- ch
@@ -510,7 +545,7 @@ func Test_SavePersistsClassAndChar(t *testing.T) {
   p.SetName(name)
   p.Init()
   p.ChangeClass("athlete")
-  p.GainExp(p.NextLvlExp)
+  p.Character.GainExp(p.NextLvlExp)
   p.Save()
 
   ch2 := make(chan string)

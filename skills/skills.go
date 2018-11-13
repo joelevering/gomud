@@ -33,6 +33,7 @@ var All = []*Skill{
   Radiate,
   Redirect,
   CastOff,
+  Shield,
 
   Pince,
   Hide,

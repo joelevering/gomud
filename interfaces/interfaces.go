@@ -134,7 +134,7 @@ type CharI interface {
   SetSpawn(RoomI)
 
   FullHeal()
-  GainExp(int) bool
+  GainExp(int)
   ExpToLvl() int
   TickFx()
 

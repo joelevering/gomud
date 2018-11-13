@@ -43,6 +43,7 @@ type Class struct {
   defStats []stats.Stat
   skills   []*ClassSkill
   skillMap map[string]*ClassSkill
+  reqs     []*Class
 }
 
 func (c *Class) GetName() string {
@@ -71,6 +72,10 @@ func (c *Class) GetDefStats() []stats.Stat {
 
 func (c *Class) GetSkills() []*ClassSkill {
   return c.skills
+}
+
+func (c *Class) GetReqs() []*Class {
+  return c.reqs
 }
 
 func (c *Class) SkillForLvl(lvl int) *skills.Skill {

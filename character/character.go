@@ -11,6 +11,8 @@ import (
   "github.com/joelevering/gomud/stats"
 )
 
+const MaxLevel = 10
+
 type Character struct {
   Name       string            `json:"name"`
   Class      interfaces.ClassI
@@ -300,15 +302,12 @@ func (ch *Character) IsDefeated() bool {
   return false
 }
 
-func (ch *Character) GainExp(exp int) (leveledUp bool) {
+func (ch *Character) GainExp(exp int) {
   ch.Exp += exp
 
   if ch.Exp >= ch.NextLvlExp {
     ch.LevelUp()
-    return true
   }
-
-  return false
 }
 
 func (ch *Character) LevelUp() {
