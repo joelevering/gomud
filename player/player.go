@@ -149,8 +149,12 @@ func (p *Player) Cmd(cmd string) {
   case "cl", "classes":
     p.ListClasses()
   case "c", "change":
-    if len(words) == 2 {
-      p.ChangeClass(words[1])
+    if len(words) > 1 {
+      if words[1] == "subclass" || words[1] == "sc" {
+        p.ChangeSubclass(words[2])
+      } else {
+        p.ChangeClass(words[1])
+      }
     } else {
       p.SendMsg("I'm not sure how to interpret your class change. Use 'change <class name>' and try again.")
     }
@@ -336,24 +340,37 @@ func (p *Player) ChangeClass(class string) {
   p.Save()
   cl := classes.Find(class)
   if cl == nil {
-    p.SendMsg("Couldn't find class '%s'. Please use `classes` to confirm the spelling.", strings.Title(class))
+    p.SendMsg(fmt.Sprintf("Couldn't find class '%s'. Please use `classes` to confirm the spelling.", strings.Title(class)))
     return
   }
 
-  // TODO If the class is still locked for the player, send a message
-  // TODO If the class is > Tier1, ask about subclasses
-  // TODO If we can't prompt a response (will probably be annoying to do, e.g. require a flag that overrides
-  // Player#Cmd to take the command and route it to ChangeSubclass method), here's a different system:
-  // ChangeClass changes main class and updates the Tier of that class in Classes map to be the new class
-  // Subclasses can be changed directly with `change t1 augur`.
-  // Without a tier specification, main class is changed.
-  // With a tier specification, only the Classes map is updated.
-  // It's OK for the map to have higher tier classes -- classes above the main class' tier should be ignored (in useSkill)
+  if p.classIsLocked(cl.GetName()) {
+    log.Print("class locked")
+    p.SendMsg(fmt.Sprintf("You haven't unlocked '%s' yet!", cl.GetName()))
+    return
+  }
 
   p.loadClass(cl)
   p.SendMsg(fmt.Sprintf("Changed to %s!", p.Class.GetName()))
 }
 
+func (p *Player) ChangeSubclass(clName string) {
+  cl := classes.Find(clName)
+  if cl == nil {
+    p.SendMsg(fmt.Sprintf("Couldn't find subclass '%s'. Please use `classes` to confirm the spelling.", strings.Title(clName)))
+    return
+  }
+
+  if cl.GetTier() >= p.Class.GetTier() {
+    p.SendMsg(fmt.Sprintf("%s is in or above your current Tier. Change your main class with `change <class name>`.", cl.GetName()))
+    p.SendMsg(fmt.Sprintf("You're currently a %s", p.GetHybridClassName()))
+    return
+  }
+
+  p.Classes[cl.GetTier()] = cl
+  p.SendMsg(fmt.Sprintf("Set %s as a subclass.", cl.GetName()))
+  p.SendMsg(fmt.Sprintf("You're now a %s", p.GetHybridClassName()))
+}
 
 func (p *Player) SendMsg(msgs ...string) {
   stamp := time.Now().Format(time.Kitchen)
@@ -621,6 +638,7 @@ func (p *Player) loadClass(class *classes.Class) {
   stats := p.Store.LoadStats(p.GetID(), class.GetName())
 
   p.Class = class
+  p.Classes[class.GetTier()] = class
   p.Level = stats.Lvl
   p.MaxDet = stats.MaxDet
   if p.GetDet() > p.MaxDet {
@@ -715,6 +733,14 @@ func (p *Player) useSkill (skName string) {
   }
 
   p.SendMsg(fmt.Sprintf("You don't know how to prepare '%s'!", skName))
+}
+
+func (p *Player) loadClasses() map[string]storage.ClassStats {
+  return p.Store.LoadClasses(p.GetID())
+}
+
+func (p *Player) classIsLocked(clName string) bool {
+  return p.loadClasses()[clName].Lvl == 0
 }
 
 func (p *Player) log(msg string) {

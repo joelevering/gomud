@@ -1,6 +1,7 @@
 package character
 
 import (
+  "fmt"
   "math"
   "sync"
 
@@ -66,6 +67,14 @@ func NewCharacter() *Character {
 
 func (ch *Character) GetClassName() string {
   return ch.Class.GetName()
+}
+
+func (ch *Character) GetHybridClassName() string {
+  hybrid := ch.Classes[classes.Tier1].GetName()
+  for i := 0; i < int(ch.Class.GetTier()); i++ {
+    hybrid = fmt.Sprintf("%s/%s", ch.Classes[classes.Tier(i+1)].GetName(), hybrid)
+  }
+  return hybrid
 }
 
 func (ch *Character) GetName() string {

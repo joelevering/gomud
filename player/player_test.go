@@ -473,10 +473,7 @@ func Test_GainExpMaxesOutClassLevel(t *testing.T) {
   go p.ChangeClass("Augur") // Saves 10 Conscript
   <- ch
   p.Level = 9
-
-  go func (ch chan string) {
-    p.GainExp(p.NextLvlExp)
-  }(ch)
+  go p.GainExp(p.NextLvlExp)
 
   <-ch // Exp gain
   <-ch // Level up
@@ -502,6 +499,10 @@ func Test_ChangeClassResetsStats(t *testing.T) {
 
   if p.GetClassName() != classes.Athlete.GetName() {
     t.Errorf("Expected class name to be Athlete on change, but it's %s", p.GetClassName())
+  }
+
+  if p.Classes[classes.Tier1] != classes.Athlete {
+    t.Errorf("Expected tier 1 in classes map to be updated on class change to Athlete, but got %s", p.Classes[classes.Tier1].GetName())
   }
 
   if p.GetLevel() != 1 {
@@ -532,6 +533,87 @@ func Test_ChangeClassKeepsDet(t *testing.T) {
 
   if p.GetDet() != 33 {
     t.Errorf("Expected determination to remain 33 on class change, but it's %d", p.GetDet())
+  }
+}
+
+func Test_ChangeClassDoesNotWorkForLockedClasses(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  p.Init()
+
+  go p.ChangeClass("minder")
+  res := <- ch
+  if !strings.Contains(res, "You haven't unlocked") {
+    t.Errorf("Expected changing to a locked class to send 'You haven't unlocked', but got '%s'", res)
+  }
+
+  if p.GetClassName() != "Conscript" {
+    t.Error("Expected class to remain Conscript when attempting to change to locked class")
+  }
+}
+
+func Test_ChangeSubclassSuccess(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  p.Init()
+  p.Level = character.MaxLevel
+  go p.ChangeClass("Augur") // Saves 10 Conscript
+  <- ch
+  p.Level = 9
+  go p.GainExp(p.GetNextLvlExp())
+  <-ch // Exp gain
+  <-ch // Level up
+  <-ch // Skill gain
+  <-ch // Max level
+  <-ch // Unlock Minder
+  go p.ChangeClass("Minder")
+  <- ch
+
+  if p.Classes[classes.Tier1] != classes.Augur || p.Classes[classes.Tier2] != classes.Minder {
+    t.Errorf("Expected T1 to be Augur and T2 to be Minder but got T1 %s and T2 %s", p.Classes[classes.Tier1].GetName(), p.Classes[classes.Tier2].GetName())
+  }
+
+  go p.ChangeSubclass(classes.Conscript.GetName())
+  res := <-ch
+  if !strings.Contains(res, "Set Conscript as a subclass") {
+    t.Errorf("Expected 'Set Conscript as a subclass', but got '%s'", res)
+  }
+
+  res = <-ch
+  if !strings.Contains(res, "Minder/Conscript") {
+    t.Errorf("Expected 'Minder/Conscript' as hybrid class desc, but got '%s'", res)
+  }
+
+  if p.Class != classes.Minder || p.Classes[classes.Tier1] != classes.Conscript {
+    t.Errorf("Expected to be Minder (T2)/Conscript (T1) but got %s (T2)/%s (T1)", p.GetClassName(), p.Classes[classes.Tier1].GetName())
+  }
+}
+
+func Test_ChangeSubclassUnknownClass(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  p.Init()
+
+  go p.ChangeSubclass("fakeclass")
+  res := <- ch
+  if !strings.Contains(res, "Couldn't find subclass") {
+    t.Errorf("Expected changing to an unknown subclass to send 'Couldn't find sublclass', but got '%s'", res)
+  }
+}
+
+func Test_ChangeSubclassSameTier(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  p.Init()
+
+  go p.ChangeSubclass("Augur")
+  res := <- ch
+  if !strings.Contains(res, "Augur is in or above your current Tier. Change your main class with `change <class name>`.") {
+    t.Errorf("Unexpected result when attempting subclass change to same tier: %s", res)
+  }
+  res = <- ch
+  if !strings.Contains(res, "You're currently a Conscript") {
+    t.Errorf("Expected 'You're currently a Conscript' when trying to subclass same-tier class, but got %s", res)
   }
 }
 
