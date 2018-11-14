@@ -312,6 +312,10 @@ func (ch *Character) IsDefeated() bool {
 }
 
 func (ch *Character) GainExp(exp int) {
+  if ch.Level == MaxLevel {
+    return
+  }
+
   ch.Exp += exp
 
   if ch.Exp >= ch.NextLvlExp {
