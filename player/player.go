@@ -19,6 +19,13 @@ import (
   "github.com/joelevering/gomud/structs"
 )
 
+var DefaultClassStats = storage.ClassStats{
+  Lvl: 1,
+  MaxDet: 200,
+  Exp: 0,
+  NextLvlExp: 10,
+}
+
 type Player struct {
   *character.Character
 
@@ -48,7 +55,7 @@ func (p *Player) Init() {
   if !p.Store.StoreExists(p.GetID()) {
     p.Store.InitPlayerData(p.GetID())
     for _, class := range classes.StartingClasses {
-      p.persistClass(class.GetName())
+      p.unlockClass(class.GetName())
     }
   } else {
     p.loadClass(classes.Conscript)
@@ -237,7 +244,7 @@ func (p Player) LookTarget(name string) {
 func (p *Player) Status() {
   header := fmt.Sprintf("~~~~~~~~~~*%s*~~~~~~~~~~", p.GetName())
   p.SendMsg(header)
-  p.SendMsg(fmt.Sprintf("Class: %s", p.GetClassName()))
+  p.SendMsg(fmt.Sprintf("Class: %s", p.GetHybridClassName()))
   if p.IsMaxLevel() {
     p.SendMsg(fmt.Sprintf("Level: %d (MAX)", character.MaxLevel))
     p.SendMsg(fmt.Sprintf("Experience: %d/MAX", p.GetExp()))
@@ -381,24 +388,24 @@ func (p *Player) ChangeSubclass(clName string) {
 
   if cl.GetTier() >= p.Class.GetTier() {
     p.SendMsg(fmt.Sprintf("%s is in or above your current Tier. Change your main class with `change <class name>`.", cl.GetName()))
-    p.SendMsg(fmt.Sprintf("You're still a %s", p.GetHybridClassName()))
+    p.SendMsg(fmt.Sprintf("Your class is still %s", p.GetHybridClassName()))
     return
   }
 
   pCl := p.loadClasses()[cl.GetName()]
   if pCl.Lvl == 0 {
     p.SendMsg(fmt.Sprintf("You need to unlock %s to use it as a subclass.", cl.GetName()))
-    p.SendMsg(fmt.Sprintf("You're still a %s", p.GetHybridClassName()))
+    p.SendMsg(fmt.Sprintf("Your class is still %s", p.GetHybridClassName()))
     return
   } else if pCl.Lvl != character.MaxLevel {
     p.SendMsg(fmt.Sprintf("You need to reach maximum level with %s to use it as a subclass.", cl.GetName()))
-    p.SendMsg(fmt.Sprintf("You're still a %s", p.GetHybridClassName()))
+    p.SendMsg(fmt.Sprintf("Your class is still %s", p.GetHybridClassName()))
     return
   }
 
   p.Classes[cl.GetTier()] = cl
   p.SendMsg(fmt.Sprintf("Set %s as a subclass.", cl.GetName()))
-  p.SendMsg(fmt.Sprintf("You're now a %s", p.GetHybridClassName()))
+  p.SendMsg(fmt.Sprintf("Your class is now %s", p.GetHybridClassName()))
 }
 
 func (p *Player) SendMsg(msgs ...string) {
@@ -663,6 +670,10 @@ func (p *Player) persistClass(className string) {
   p.Store.PersistClass(p.GetID(), className, stats)
 }
 
+func (p *Player) unlockClass(className string) {
+  p.Store.PersistClass(p.GetID(), className, DefaultClassStats)
+}
+
 func (p *Player) loadClass(class *classes.Class) {
   stats := p.Store.LoadStats(p.GetID(), class.GetName())
 
@@ -728,7 +739,7 @@ func (p *Player) unlockNewClasses() {
     }
 
     if reqsMet == len(cl.GetReqs()) {
-      p.persistClass(cl.GetName())
+      p.unlockClass(cl.GetName())
       p.SendMsg(fmt.Sprintf("You unlocked a new class: '%s'!", cl.GetName()))
     }
   }

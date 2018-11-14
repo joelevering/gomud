@@ -244,7 +244,17 @@ func (ch *Character) GetDef() int {
 }
 
 func (ch *Character) GetSkills() []*skills.Skill {
-  return ch.Class.SkillsForLvl(ch.Level)
+  allSk := ch.Class.SkillsForLvl(ch.Level)
+
+  for _, cl := range ch.Classes {
+    if cl.GetTier() < ch.Class.GetTier() {
+      for _, sk := range cl.SkillsForLvl(MaxLevel) {
+        allSk = append(allSk, sk)
+      }
+    }
+  }
+
+  return allSk
 }
 
 func (ch *Character) SetCmbSkill(sk *skills.Skill) {
@@ -322,7 +332,7 @@ func (ch *Character) GainExp(exp int) {
 
   ch.Exp += exp
 
-  if ch.Exp >= ch.NextLvlExp {
+  for ch.Exp >= ch.NextLvlExp && !ch.IsMaxLevel() {
     ch.LevelUp()
   }
 }

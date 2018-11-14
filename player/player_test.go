@@ -645,8 +645,8 @@ func Test_ChangeSubclassSameTier(t *testing.T) {
     t.Errorf("Unexpected result when attempting subclass change to same tier: %s", res)
   }
   res = <- ch
-  if !strings.Contains(res, "You're still a Conscript") {
-    t.Errorf("Expected 'You're still a Conscript' when trying to subclass same-tier class, but got %s", res)
+  if !strings.Contains(res, "Your class is still Conscript") {
+    t.Errorf("Expected 'Your class is still Conscript' when trying to subclass same-tier class, but got %s", res)
   }
 }
 
