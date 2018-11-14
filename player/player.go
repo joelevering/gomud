@@ -238,8 +238,13 @@ func (p *Player) Status() {
   header := fmt.Sprintf("~~~~~~~~~~*%s*~~~~~~~~~~", p.GetName())
   p.SendMsg(header)
   p.SendMsg(fmt.Sprintf("Class: %s", p.GetClassName()))
-  p.SendMsg(fmt.Sprintf("Level: %d", p.GetLevel()))
-  p.SendMsg(fmt.Sprintf("Experience: %d/%d", p.GetExp(), p.GetNextLvlExp()))
+  if p.IsMaxLevel() {
+    p.SendMsg(fmt.Sprintf("Level: %d (MAX)", character.MaxLevel))
+    p.SendMsg(fmt.Sprintf("Experience: %d/MAX", p.GetExp()))
+  } else {
+    p.SendMsg(fmt.Sprintf("Level: %d", p.GetLevel()))
+    p.SendMsg(fmt.Sprintf("Experience: %d/%d", p.GetExp(), p.GetNextLvlExp()))
+  }
   p.SendMsg("")
   p.SendMsg(fmt.Sprintf("Determination: %d/%d", p.GetDet(), p.GetMaxDet()))
   p.SendMsg(fmt.Sprintf("Stamina: %d/%d", p.GetStm(), p.GetMaxStm()))
@@ -275,14 +280,28 @@ func (p *Player) ListClasses() {
     p.SendMsg(subheader)
     p.SendMsg("")
 
+    var lvl, maxDet, exp, nextLvlExp int
+
     if name == p.GetClassName() {
-      p.SendMsg(fmt.Sprintf("Level: %d", p.GetLevel()))
-      p.SendMsg(fmt.Sprintf("Max. Determination: %d", p.GetMaxDet()))
-      p.SendMsg(fmt.Sprintf("Experience: %d/%d", p.GetExp(), p.GetNextLvlExp()))
+      lvl = p.GetLevel()
+      maxDet = p.GetMaxDet()
+      exp = p.GetExp()
+      nextLvlExp = p.GetNextLvlExp()
     } else {
-      p.SendMsg(fmt.Sprintf("Level: %d", stats.Lvl))
-      p.SendMsg(fmt.Sprintf("Max. Determination: %d", stats.MaxDet))
-      p.SendMsg(fmt.Sprintf("Experience: %d/%d", stats.Exp, stats.NextLvlExp))
+      lvl = stats.Lvl
+      maxDet = stats.MaxDet
+      exp = stats.Exp
+      nextLvlExp = stats.NextLvlExp
+    }
+
+    if lvl == character.MaxLevel {
+      p.SendMsg(fmt.Sprintf("Level: %d (MAX)", lvl))
+      p.SendMsg(fmt.Sprintf("Max. Determination: %d", maxDet))
+      p.SendMsg(fmt.Sprintf("Experience: %d/MAX", exp))
+    } else {
+      p.SendMsg(fmt.Sprintf("Level: %d", lvl))
+      p.SendMsg(fmt.Sprintf("Max. Determination: %d", maxDet))
+      p.SendMsg(fmt.Sprintf("Experience: %d/%d", exp, nextLvlExp))
     }
 
     p.SendMsg(strings.Repeat("~", utf8.RuneCountInString(header)))
@@ -607,7 +626,7 @@ func (p *Player) GainExp(exp int) {
     if newSk != nil {
       p.SendMsg(fmt.Sprintf("You gained the skill '%s'!", newSk.Name))
     }
-    if p.GetLevel() == character.MaxLevel {
+    if p.IsMaxLevel() {
       p.SendMsg(fmt.Sprintf("You've reached the maximum level with the %s class!", p.GetClassName()))
 
       p.unlockNewClasses()

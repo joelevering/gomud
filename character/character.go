@@ -89,6 +89,10 @@ func (ch *Character) GetLevel() int {
   return ch.Level
 }
 
+func (ch *Character) IsMaxLevel() bool {
+  return ch.Level == MaxLevel
+}
+
 func (ch *Character) GetExp() int {
   return ch.Exp
 }
@@ -312,7 +316,7 @@ func (ch *Character) IsDefeated() bool {
 }
 
 func (ch *Character) GainExp(exp int) {
-  if ch.Level == MaxLevel {
+  if ch.IsMaxLevel() {
     return
   }
 
