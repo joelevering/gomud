@@ -7,12 +7,21 @@ import (
   "github.com/joelevering/gomud/stats"
 )
 
+var StartingClasses = []*Class{
+  Conscript,
+  Athlete,
+  Charmer,
+  Augur,
+  Sophist,
+}
+
 var PlayerClasses = []*Class{
   Conscript,
   Athlete,
   Charmer,
   Augur,
   Sophist,
+  Minder,
 }
 
 var ByName = map[string]*Class{
@@ -21,6 +30,7 @@ var ByName = map[string]*Class{
   "Charmer":     Charmer,
   "Augur":       Augur,
   "Sophist":     Sophist,
+  "Minder":      Minder,
   "Slime":       Slime,
   "Slime King":  SlimeKing,
   "Slime Chef":  SlimeChef,
@@ -202,6 +212,29 @@ var Sophist = &Class{
       Skill: skills.CastOff,
       Level: 10,
     },
+  },
+}
+
+var Minder = &Class{
+  name: "Minder",
+  desc: "This defensive class focuses on protection and healing",
+  tier: Tier2,
+  growth: StatGrowth{
+    Det: 25,
+    Foc: 10,
+    Kno: 10,
+  },
+  atkStats: []stats.Stat{stats.Kno},
+  defStats: []stats.Stat{stats.Kno},
+  skills: []*ClassSkill{
+    &ClassSkill{
+      Skill: skills.Shield,
+      Level: 2,
+    },
+  },
+  reqs: []*Class{
+    Conscript,
+    Augur,
   },
 }
 

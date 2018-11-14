@@ -1,6 +1,7 @@
 package character
 
 import (
+  "fmt"
   "math"
   "sync"
 
@@ -11,9 +12,12 @@ import (
   "github.com/joelevering/gomud/stats"
 )
 
+const MaxLevel = 10
+
 type Character struct {
   Name       string            `json:"name"`
   Class      interfaces.ClassI
+  Classes    map[classes.Tier]interfaces.ClassI
   Level      int               `json:"level"`
   ExpGiven   int               `json:"exp_given"`
   Exp        int
@@ -42,6 +46,7 @@ type Character struct {
 func NewCharacter() *Character {
   return &Character{
     Class:      classes.Conscript,
+    Classes:    map[classes.Tier]interfaces.ClassI{classes.Tier1: classes.Conscript},
     Level:      1,
     NextLvlExp: 10,
     MaxDet:     200,
@@ -64,6 +69,14 @@ func (ch *Character) GetClassName() string {
   return ch.Class.GetName()
 }
 
+func (ch *Character) GetHybridClassName() string {
+  hybrid := ch.Classes[classes.Tier1].GetName()
+  for i := 0; i < int(ch.Class.GetTier()); i++ {
+    hybrid = fmt.Sprintf("%s/%s", ch.Classes[classes.Tier(i+1)].GetName(), hybrid)
+  }
+  return hybrid
+}
+
 func (ch *Character) GetName() string {
   return ch.Name
 }
@@ -74,6 +87,10 @@ func (ch *Character) SetName(name string) {
 
 func (ch *Character) GetLevel() int {
   return ch.Level
+}
+
+func (ch *Character) IsMaxLevel() bool {
+  return ch.Level == MaxLevel
 }
 
 func (ch *Character) GetExp() int {
@@ -227,7 +244,17 @@ func (ch *Character) GetDef() int {
 }
 
 func (ch *Character) GetSkills() []*skills.Skill {
-  return ch.Class.SkillsForLvl(ch.Level)
+  allSk := ch.Class.SkillsForLvl(ch.Level)
+
+  for _, cl := range ch.Classes {
+    if cl.GetTier() < ch.Class.GetTier() {
+      for _, sk := range cl.SkillsForLvl(MaxLevel) {
+        allSk = append(allSk, sk)
+      }
+    }
+  }
+
+  return allSk
 }
 
 func (ch *Character) SetCmbSkill(sk *skills.Skill) {
@@ -298,15 +325,16 @@ func (ch *Character) IsDefeated() bool {
   return false
 }
 
-func (ch *Character) GainExp(exp int) (leveledUp bool) {
-  ch.Exp += exp
-
-  if ch.Exp >= ch.NextLvlExp {
-    ch.LevelUp()
-    return true
+func (ch *Character) GainExp(exp int) {
+  if ch.IsMaxLevel() {
+    return
   }
 
-  return false
+  ch.Exp += exp
+
+  for ch.Exp >= ch.NextLvlExp && !ch.IsMaxLevel() {
+    ch.LevelUp()
+  }
 }
 
 func (ch *Character) LevelUp() {

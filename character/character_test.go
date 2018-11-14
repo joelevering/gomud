@@ -25,6 +25,20 @@ func Test_GainExpIncreasesExp(t *testing.T) {
   }
 }
 
+func Test_GainExpDoesNothingIfMaxLevel(t *testing.T) {
+  ch := &Character{
+    Level: MaxLevel,
+    Exp: 0,
+    NextLvlExp: 1000,
+  }
+
+  ch.GainExp(10)
+
+  if ch.Exp != 0 {
+    t.Errorf("Expected GainExp to give max level char no exp, but it gave it %d", ch.Exp)
+  }
+}
+
 func Test_GainExpLevelsUp(t *testing.T) {
   class := &mocks.MockClass{}
   pc := &Character{

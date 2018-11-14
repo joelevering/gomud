@@ -245,6 +245,15 @@
             "chance": 0.20
           }
         ]
+      },
+      {
+        "id": 17,
+        "class": "Crab",
+        "character": {
+          "name": "Level Up Guy",
+          "level": 1,
+          "exp_given": 1000
+        }
       }
     ]
   },

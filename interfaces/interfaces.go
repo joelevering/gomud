@@ -134,7 +134,7 @@ type CharI interface {
   SetSpawn(RoomI)
 
   FullHeal()
-  GainExp(int) bool
+  GainExp(int)
   ExpToLvl() int
   TickFx()
 
@@ -148,6 +148,7 @@ type CharI interface {
 
 type ClassI interface {
   GetName() string
+  GetTier() classes.Tier
   GetStatGrowth() classes.StatGrowth
   GetAtkStats() []stats.Stat
   GetDefStats() []stats.Stat

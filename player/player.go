@@ -13,10 +13,18 @@ import (
   "github.com/joelevering/gomud/combat"
   "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/room"
+  "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/statfx"
   "github.com/joelevering/gomud/storage"
   "github.com/joelevering/gomud/structs"
 )
+
+var DefaultClassStats = storage.ClassStats{
+  Lvl: 1,
+  MaxDet: 200,
+  Exp: 0,
+  NextLvlExp: 10,
+}
 
 type Player struct {
   *character.Character
@@ -46,8 +54,8 @@ func (p Player) StartWriter(conn net.Conn) {
 func (p *Player) Init() {
   if !p.Store.StoreExists(p.GetID()) {
     p.Store.InitPlayerData(p.GetID())
-    for _, class := range classes.PlayerClasses {
-      p.persistClass(class.GetName())
+    for _, class := range classes.StartingClasses {
+      p.unlockClass(class.GetName())
     }
   } else {
     p.loadClass(classes.Conscript)
@@ -146,10 +154,14 @@ func (p *Player) Cmd(cmd string) {
   case "st", "status":
     p.Status()
   case "cl", "classes":
-    p.Classes()
+    p.ListClasses()
   case "c", "change":
-    if len(words) == 2 {
-      p.ChangeClass(words[1])
+    if len(words) > 1 {
+      if words[1] == "subclass" || words[1] == "sc" {
+        p.ChangeSubclass(words[2])
+      } else {
+        p.ChangeClass(words[1])
+      }
     } else {
       p.SendMsg("I'm not sure how to interpret your class change. Use 'change <class name>' and try again.")
     }
@@ -232,9 +244,14 @@ func (p Player) LookTarget(name string) {
 func (p *Player) Status() {
   header := fmt.Sprintf("~~~~~~~~~~*%s*~~~~~~~~~~", p.GetName())
   p.SendMsg(header)
-  p.SendMsg(fmt.Sprintf("Class: %s", p.GetClassName()))
-  p.SendMsg(fmt.Sprintf("Level: %d", p.GetLevel()))
-  p.SendMsg(fmt.Sprintf("Experience: %d/%d", p.GetExp(), p.GetNextLvlExp()))
+  p.SendMsg(fmt.Sprintf("Class: %s", p.GetHybridClassName()))
+  if p.IsMaxLevel() {
+    p.SendMsg(fmt.Sprintf("Level: %d (MAX)", character.MaxLevel))
+    p.SendMsg(fmt.Sprintf("Experience: %d/MAX", p.GetExp()))
+  } else {
+    p.SendMsg(fmt.Sprintf("Level: %d", p.GetLevel()))
+    p.SendMsg(fmt.Sprintf("Experience: %d/%d", p.GetExp(), p.GetNextLvlExp()))
+  }
   p.SendMsg("")
   p.SendMsg(fmt.Sprintf("Determination: %d/%d", p.GetDet(), p.GetMaxDet()))
   p.SendMsg(fmt.Sprintf("Stamina: %d/%d", p.GetStm(), p.GetMaxStm()))
@@ -253,9 +270,9 @@ func (p *Player) Status() {
   p.SendMsg(strings.Repeat("~", utf8.RuneCountInString(header)))
 }
 
-func (p *Player) Classes() {
+func (p *Player) ListClasses() {
   p.SendMsg("Your Classes:")
-  for name, stats := range p.Store.LoadClasses(p.GetID()) {
+  for name, stats := range p.loadClasses() {
     p.SendMsg("")
 
     subheader := classes.Find(name).GetDesc()
@@ -270,14 +287,28 @@ func (p *Player) Classes() {
     p.SendMsg(subheader)
     p.SendMsg("")
 
+    var lvl, maxDet, exp, nextLvlExp int
+
     if name == p.GetClassName() {
-      p.SendMsg(fmt.Sprintf("Level: %d", p.GetLevel()))
-      p.SendMsg(fmt.Sprintf("Max. Determination: %d", p.GetMaxDet()))
-      p.SendMsg(fmt.Sprintf("Experience: %d/%d", p.GetExp(), p.GetNextLvlExp()))
+      lvl = p.GetLevel()
+      maxDet = p.GetMaxDet()
+      exp = p.GetExp()
+      nextLvlExp = p.GetNextLvlExp()
     } else {
-      p.SendMsg(fmt.Sprintf("Level: %d", stats.Lvl))
-      p.SendMsg(fmt.Sprintf("Max. Determination: %d", stats.MaxDet))
-      p.SendMsg(fmt.Sprintf("Experience: %d/%d", stats.Exp, stats.NextLvlExp))
+      lvl = stats.Lvl
+      maxDet = stats.MaxDet
+      exp = stats.Exp
+      nextLvlExp = stats.NextLvlExp
+    }
+
+    if lvl == character.MaxLevel {
+      p.SendMsg(fmt.Sprintf("Level: %d (MAX)", lvl))
+      p.SendMsg(fmt.Sprintf("Max. Determination: %d", maxDet))
+      p.SendMsg(fmt.Sprintf("Experience: %d/MAX", exp))
+    } else {
+      p.SendMsg(fmt.Sprintf("Level: %d", lvl))
+      p.SendMsg(fmt.Sprintf("Max. Determination: %d", maxDet))
+      p.SendMsg(fmt.Sprintf("Experience: %d/%d", exp, nextLvlExp))
     }
 
     p.SendMsg(strings.Repeat("~", utf8.RuneCountInString(header)))
@@ -335,7 +366,12 @@ func (p *Player) ChangeClass(class string) {
   p.Save()
   cl := classes.Find(class)
   if cl == nil {
-    p.SendMsg("Couldn't find class '%s'. Please use `classes` to confirm the spelling.", strings.Title(class))
+    p.SendMsg(fmt.Sprintf("Couldn't find class '%s'. Please use `classes` to confirm the spelling.", strings.Title(class)))
+    return
+  }
+
+  if p.classIsLocked(cl.GetName()) {
+    p.SendMsg(fmt.Sprintf("You haven't unlocked '%s' yet!", cl.GetName()))
     return
   }
 
@@ -343,6 +379,34 @@ func (p *Player) ChangeClass(class string) {
   p.SendMsg(fmt.Sprintf("Changed to %s!", p.Class.GetName()))
 }
 
+func (p *Player) ChangeSubclass(clName string) {
+  cl := classes.Find(clName)
+  if cl == nil {
+    p.SendMsg(fmt.Sprintf("Couldn't find subclass '%s'. Please use `classes` to confirm the spelling.", strings.Title(clName)))
+    return
+  }
+
+  if cl.GetTier() >= p.Class.GetTier() {
+    p.SendMsg(fmt.Sprintf("%s is in or above your current Tier. Change your main class with `change <class name>`.", cl.GetName()))
+    p.SendMsg(fmt.Sprintf("Your class is still %s", p.GetHybridClassName()))
+    return
+  }
+
+  pCl := p.loadClasses()[cl.GetName()]
+  if pCl.Lvl == 0 {
+    p.SendMsg(fmt.Sprintf("You need to unlock %s to use it as a subclass.", cl.GetName()))
+    p.SendMsg(fmt.Sprintf("Your class is still %s", p.GetHybridClassName()))
+    return
+  } else if pCl.Lvl != character.MaxLevel {
+    p.SendMsg(fmt.Sprintf("You need to reach maximum level with %s to use it as a subclass.", cl.GetName()))
+    p.SendMsg(fmt.Sprintf("Your class is still %s", p.GetHybridClassName()))
+    return
+  }
+
+  p.Classes[cl.GetTier()] = cl
+  p.SendMsg(fmt.Sprintf("Set %s as a subclass.", cl.GetName()))
+  p.SendMsg(fmt.Sprintf("Your class is now %s", p.GetHybridClassName()))
+}
 
 func (p *Player) SendMsg(msgs ...string) {
   stamp := time.Now().Format(time.Kitchen)
@@ -554,17 +618,28 @@ func (p *Player) WinCombat(loser interfaces.Combatant) {
   p.SendMsg(fmt.Sprintf("%s is defeated!", loser.GetName()))
 
   expGained := loser.GetExpGiven()
-  leveledUp := p.GainExp(expGained)
+  p.GainExp(expGained)
+}
 
-  if leveledUp {
-    p.SendMsg(fmt.Sprintf("You gained %d experience and leveled up!", expGained))
+func (p *Player) GainExp(exp int) {
+  oldLvl := p.GetLevel()
+
+  p.Character.GainExp(exp)
+
+  if p.GetLevel() > oldLvl {
+    p.SendMsg(fmt.Sprintf("You gained %d experience and leveled up!", exp))
     p.SendMsg(fmt.Sprintf("You're now level %d!", p.GetLevel()))
     newSk := p.Class.SkillForLvl(p.Level)
     if newSk != nil {
       p.SendMsg(fmt.Sprintf("You gained the skill '%s'!", newSk.Name))
     }
+    if p.IsMaxLevel() {
+      p.SendMsg(fmt.Sprintf("You've reached the maximum level with the %s class!", p.GetClassName()))
+
+      p.unlockNewClasses()
+    }
   } else {
-    p.SendMsg(fmt.Sprintf("You gained %d experience! You need %d more experience to level up.", expGained, p.ExpToLvl()))
+    p.SendMsg(fmt.Sprintf("You gained %d experience! You need %d more experience to level up.", exp, p.ExpToLvl()))
   }
 }
 
@@ -595,10 +670,15 @@ func (p *Player) persistClass(className string) {
   p.Store.PersistClass(p.GetID(), className, stats)
 }
 
+func (p *Player) unlockClass(className string) {
+  p.Store.PersistClass(p.GetID(), className, DefaultClassStats)
+}
+
 func (p *Player) loadClass(class *classes.Class) {
   stats := p.Store.LoadStats(p.GetID(), class.GetName())
 
   p.Class = class
+  p.Classes[class.GetTier()] = class
   p.Level = stats.Lvl
   p.MaxDet = stats.MaxDet
   if p.GetDet() > p.MaxDet {
@@ -637,21 +717,70 @@ func (p *Player) loadChar() {
   }
 }
 
+func (p *Player) unlockNewClasses() {
+  classStats := p.loadClasses()
+
+  for _, cl := range classes.PlayerClasses {
+    if cl.GetTier() != p.Class.GetTier() + 1 {
+      continue
+    }
+
+    var reqsMet int
+    for _, req := range cl.GetReqs() {
+      if req.GetName() == p.GetClassName() {
+        reqsMet += 1
+        continue
+      }
+
+      loadedClass := classStats[req.GetName()]
+      if loadedClass.Lvl == character.MaxLevel {
+        reqsMet += 1
+      }
+    }
+
+    if reqsMet == len(cl.GetReqs()) {
+      p.unlockClass(cl.GetName())
+      p.SendMsg(fmt.Sprintf("You unlocked a new class: '%s'!", cl.GetName()))
+    }
+  }
+}
+
 func (p *Player) useSkill (skName string) {
   if skName == "" { return }
 
-  sk := p.Class.GetSkill(skName, p.Level)
-  if sk != nil {
-    if p.IsInCombat() && sk.IsOOCOnly() {
-      p.SendMsg(fmt.Sprintf("You cannot use '%s' in combat!", sk.Name))
-      return
+  var sk *skills.Skill
+
+  for t, cl := range p.Classes {
+    if cl == nil { continue }
+
+    if t < p.Class.GetTier() {
+      sk = cl.GetSkill(skName, character.MaxLevel)
+    } else { // it's the main class
+      sk = cl.GetSkill(skName, p.Level)
     }
 
-    p.SetCmbSkill(sk)
-    p.SendMsg(fmt.Sprintf("Preparing %s", sk.Name))
-  } else {
-    p.SendMsg(fmt.Sprintf("You don't know how to prepare '%s'!", skName))
+    if sk != nil {
+      if p.IsInCombat() && sk.IsOOCOnly() {
+        p.SendMsg(fmt.Sprintf("You cannot use '%s' in combat!", sk.Name))
+        return
+      }
+
+      p.SetCmbSkill(sk)
+      p.SendMsg(fmt.Sprintf("Preparing %s", sk.Name))
+
+      return
+    }
   }
+
+  p.SendMsg(fmt.Sprintf("You don't know how to prepare '%s'!", skName))
+}
+
+func (p *Player) loadClasses() map[string]storage.ClassStats {
+  return p.Store.LoadClasses(p.GetID())
+}
+
+func (p *Player) classIsLocked(clName string) bool {
+  return p.loadClasses()[clName].Lvl == 0
 }
 
 func (p *Player) log(msg string) {

@@ -12,6 +12,7 @@ type MockClass struct {
 }
 
 func (m *MockClass) GetName() string { return "Mock Class" }
+func (m *MockClass) GetTier() classes.Tier { return 0 }
 
 func (m *MockClass) GetStatGrowth() classes.StatGrowth {
   return classes.StatGrowth{

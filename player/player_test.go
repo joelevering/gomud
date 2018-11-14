@@ -9,6 +9,7 @@ import (
   "testing"
   "time"
 
+  "github.com/joelevering/gomud/character"
   "github.com/joelevering/gomud/classes"
   "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/mocks"
@@ -17,6 +18,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
+  os.RemoveAll("../test/")
   os.Mkdir("../test", 0755)
   room.LoadRooms("../data/rooms.json")
   r := m.Run()
@@ -35,7 +37,9 @@ func NewTestPlayer() (*Player, chan string, *mocks.MockQueue) {
 
 func Test_CmdSetsCombatSkillWithSkillName(t *testing.T) {
   p, ch, _ := NewTestPlayer()
-  p.Level = 10
+  p.Class = classes.Minder
+  p.Classes[classes.Tier2] = classes.Minder
+  p.Level = character.MaxLevel
   defer close(ch)
   go p.EnterCombat(&mocks.MockNP{})
   <-ch // "You attack %s!"
@@ -56,7 +60,7 @@ func Test_CmdSetsCombatSkillWithSkillName(t *testing.T) {
 
 func Test_CmdDoesNotSetOOCRestrictedSkillInCombat(t *testing.T) {
   p, ch, _ := NewTestPlayer()
-  p.Level = 10
+  p.Level = character.MaxLevel
   defer close(ch)
   go p.EnterCombat(&mocks.MockNP{})
   <-ch // "You attack %s!"
@@ -400,6 +404,8 @@ func Test_LoseCombat(t *testing.T) {
   }
 }
 
+// Also tests GainExp
+
 func Test_WinCombatEndsCombatAndGivesExp(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   defer close(ch)
@@ -435,7 +441,7 @@ func Test_WinCombatLevelsUpPC(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   rm := &mocks.MockRoom{}
   p.Room = rm
-  p.GainExp(p.NextLvlExp - 1)
+  p.Character.GainExp(p.NextLvlExp - 1)
 
   go func (ch chan string) {
     defer close(ch)
@@ -452,19 +458,51 @@ func Test_WinCombatLevelsUpPC(t *testing.T) {
   if !strings.Contains(res, "You're now level 2!") {
     t.Errorf("Expected 'You're now level 2!'' on defeating, but got '%s'", res)
   }
+
+  res = <-ch // Skill gain
+  if !strings.Contains(res, "You gained the skill 'Shove'") {
+    t.Errorf("Expected 'You gained the skill 'Shove'' on defeating, but got '%s'", res)
+  }
+}
+
+func Test_GainExpMaxesOutClassLevel(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  p.Init()
+  p.Level = character.MaxLevel
+  go p.ChangeClass("Augur") // Saves 10 Conscript
+  <- ch
+  p.Level = 9
+  go p.GainExp(p.NextLvlExp)
+
+  <-ch // Exp gain
+  <-ch // Level up
+  <-ch // Skill gain
+  res := <-ch
+  if !strings.Contains(res, "maximum level") {
+    t.Errorf("Expected 'maximum level' on maxing out Level via GainExp, but got '%s'", res)
+  }
+  res = <-ch
+  if !strings.Contains(res, "Minder") {
+    t.Errorf("Expected 'Minder' to be sent as new tier 2 class unlock, but got '%s'", res)
+  }
 }
 
 func Test_ChangeClassResetsStats(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   defer close(ch)
   p.Init()
-  p.GainExp(p.NextLvlExp + 1)
+  p.Character.GainExp(p.NextLvlExp + 1)
 
   go p.ChangeClass("athlete")
   <- ch
 
   if p.GetClassName() != classes.Athlete.GetName() {
     t.Errorf("Expected class name to be Athlete on change, but it's %s", p.GetClassName())
+  }
+
+  if p.Classes[classes.Tier1] != classes.Athlete {
+    t.Errorf("Expected tier 1 in classes map to be updated on class change to Athlete, but got %s", p.Classes[classes.Tier1].GetName())
   }
 
   if p.GetLevel() != 1 {
@@ -498,6 +536,120 @@ func Test_ChangeClassKeepsDet(t *testing.T) {
   }
 }
 
+func Test_ChangeClassDoesNotWorkForLockedClasses(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  p.Init()
+
+  go p.ChangeClass("minder")
+  res := <- ch
+  if !strings.Contains(res, "You haven't unlocked") {
+    t.Errorf("Expected changing to a locked class to send 'You haven't unlocked', but got '%s'", res)
+  }
+
+  if p.GetClassName() != "Conscript" {
+    t.Error("Expected class to remain Conscript when attempting to change to locked class")
+  }
+}
+
+func Test_ChangeSubclassSuccess(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  p.Init()
+  p.Level = character.MaxLevel
+  go p.ChangeClass("Augur") // Saves 10 Conscript
+  <- ch
+  p.Level = 9
+  go p.GainExp(p.GetNextLvlExp())
+  <-ch // Exp gain
+  <-ch // Level up
+  <-ch // Skill gain
+  <-ch // Max level
+  <-ch // Unlock Minder
+  go p.ChangeClass("Minder")
+  <- ch
+
+  if p.Classes[classes.Tier1] != classes.Augur || p.Classes[classes.Tier2] != classes.Minder {
+    t.Errorf("Expected T1 to be Augur and T2 to be Minder but got T1 %s and T2 %s", p.Classes[classes.Tier1].GetName(), p.Classes[classes.Tier2].GetName())
+  }
+
+  go p.ChangeSubclass(classes.Conscript.GetName())
+  res := <-ch
+  if !strings.Contains(res, "Set Conscript as a subclass") {
+    t.Errorf("Expected 'Set Conscript as a subclass', but got '%s'", res)
+  }
+
+  res = <-ch
+  if !strings.Contains(res, "Minder/Conscript") {
+    t.Errorf("Expected 'Minder/Conscript' as hybrid class desc, but got '%s'", res)
+  }
+
+  if p.Class != classes.Minder || p.Classes[classes.Tier1] != classes.Conscript {
+    t.Errorf("Expected to be Minder (T2)/Conscript (T1) but got %s (T2)/%s (T1)", p.GetClassName(), p.Classes[classes.Tier1].GetName())
+  }
+}
+
+func Test_ChangeSubclassNonMaxedClass(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  p.Init()
+  p.Level = character.MaxLevel
+  go p.ChangeClass("Augur") // Saves 10 Conscript
+  <- ch
+  p.Level = 9
+  go p.GainExp(p.GetNextLvlExp())
+  <-ch // Exp gain
+  <-ch // Level up
+  <-ch // Skill gain
+  <-ch // Max level
+  <-ch // Unlock Minder
+  go p.ChangeClass("Minder")
+  <- ch
+
+  go p.ChangeSubclass(classes.Athlete.GetName())
+  res := <-ch
+  if !strings.Contains(res, "You need to reach maximum level with Athlete") {
+    t.Errorf("Expected 'You need to reach maximum level with Athlete', but got '%s'", res)
+  }
+
+  res = <-ch
+  if !strings.Contains(res, "Minder/Augur") {
+    t.Errorf("Expected 'Minder/Augur' as hybrid class desc, but got '%s'", res)
+  }
+
+  if p.Class != classes.Minder || p.Classes[classes.Tier1] != classes.Augur {
+    t.Errorf("Expected to be Minder (T2)/Augur (T1) but got %s (T2)/%s (T1)", p.GetClassName(), p.Classes[classes.Tier1].GetName())
+  }
+}
+
+func Test_ChangeSubclassUnknownClass(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  p.Init()
+
+  go p.ChangeSubclass("fakeclass")
+  res := <- ch
+  if !strings.Contains(res, "Couldn't find subclass") {
+    t.Errorf("Expected changing to an unknown subclass to send 'Couldn't find sublclass', but got '%s'", res)
+  }
+}
+
+func Test_ChangeSubclassSameTier(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  p.Init()
+
+  go p.ChangeSubclass("Augur")
+  res := <- ch
+  if !strings.Contains(res, "Augur is in or above your current Tier. Change your main class with `change <class name>`.") {
+    t.Errorf("Unexpected result when attempting subclass change to same tier: %s", res)
+  }
+  res = <- ch
+  if !strings.Contains(res, "Your class is still Conscript") {
+    t.Errorf("Expected 'Your class is still Conscript' when trying to subclass same-tier class, but got %s", res)
+  }
+}
+
 func Test_SavePersistsClassAndChar(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   defer close(ch)
@@ -508,7 +660,7 @@ func Test_SavePersistsClassAndChar(t *testing.T) {
   p.SetName(name)
   p.Init()
   p.ChangeClass("athlete")
-  p.GainExp(p.NextLvlExp)
+  p.Character.GainExp(p.NextLvlExp)
   p.Save()
 
   ch2 := make(chan string)

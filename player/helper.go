@@ -28,6 +28,10 @@ func Help(words []string) string {
     return statusMsg
   case "classes":
     return classesMsg
+  case "change subclass":
+    return changeSubclassMsg
+  case "tier", "tiers":
+    return tierMsg
   case "change":
     return changeMsg
   case "attack":
@@ -192,6 +196,49 @@ More classes can be unlocked by playing the game. Don't forget to use this comma
 
 Shortcut: 'cl'`
 
+const changeSubclassMsg = `**************Change Subclass**************
+
+Use 'change subclass' followed by the name of a class to update your subclasses.
+
+You can only use the name of a class in the tier below your main class tier.
+For instance if your current class is Tier 2, you can only use a Tier 1 class name with this command.
+
+Your subclass can be changed at anytime outside of combat.
+Changing your subclass will change your skills.
+Use 'classes' to see the classes available to you.
+
+See 'help change' for information on changing your main class.
+See 'help class tiers' for information on the class system itself.
+
+Shortcut: 'c sc'`
+
+const tierMsg = `**************Tiers**************
+
+All classes have a Tier based on their power. Characters start with access to Tier 1 classes.
+
+Higher-Tier classes can be unlocked by reaching maximum level with a specific class or classes from lower tiers.
+For instance, the Tier 2 class Minder can be unlocked by reaching maximum level in
+the Tier 1 classes Conscript and Augur.
+
+After gaining access to Tier 2 classes, a character has the ability to equip multiple classes simultaneously.
+Each class that is equipped gives access to that classes skills. The main class (highest Tier class) also controls
+what stats are used for attack and defense and the maximum determination of a character.
+
+A character can equip a class from each Tier they've unlocked a class for. For instance, if a character has access
+to Tier 3 classes, they can equip a Tier 3, a Tier 2, and a Tier 1 class at the same time.
+
+However, classes can only be equipped "on top" of a class of maximum level from the Tier below. For example, if
+you unlocked the Tier 2 class Minder, you could equip it on top of your maxed out Conscript or Augur classes, but
+if you wanted to use another Tier 1 class like Athlete, that class would need to be at maximum level to also equip
+Minder.
+
+Note: You can always equip classes in a lower Tier than your most powerful class by using the 'change' command.
+If you unlocked Minder but want to level up Athlete, use 'change athlete' to set Athlete as your main class.
+
+See 'help change' for information on changing your main class.
+See 'help change subclass' for information on changing your subclasses.
+`
+
 const changeMsg = `**************Change**************
 
 Use 'change' followed by the name of a class to change your current class to the named one.
@@ -199,6 +246,9 @@ Use 'change' followed by the name of a class to change your current class to the
 Your class can be changed at anytime outside of combat.
 Changing your class will change your maximum determination, your level, and your skills.
 Use 'classes' to see the classes available to you.
+
+See 'help change subclass' for information on changing subclasses.
+See 'help class tiers' for information on the class system itself.
 
 Shortcut: 'c'`
 
