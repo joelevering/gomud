@@ -260,7 +260,7 @@ func (p *Player) Status() {
 
 func (p *Player) ListClasses() {
   p.SendMsg("Your Classes:")
-  for name, stats := range p.Store.LoadClasses(p.GetID()) {
+  for name, stats := range p.loadClasses() {
     p.SendMsg("")
 
     subheader := classes.Find(name).GetDesc()
@@ -345,7 +345,6 @@ func (p *Player) ChangeClass(class string) {
   }
 
   if p.classIsLocked(cl.GetName()) {
-    log.Print("class locked")
     p.SendMsg(fmt.Sprintf("You haven't unlocked '%s' yet!", cl.GetName()))
     return
   }
@@ -363,7 +362,18 @@ func (p *Player) ChangeSubclass(clName string) {
 
   if cl.GetTier() >= p.Class.GetTier() {
     p.SendMsg(fmt.Sprintf("%s is in or above your current Tier. Change your main class with `change <class name>`.", cl.GetName()))
-    p.SendMsg(fmt.Sprintf("You're currently a %s", p.GetHybridClassName()))
+    p.SendMsg(fmt.Sprintf("You're still a %s", p.GetHybridClassName()))
+    return
+  }
+
+  pCl := p.loadClasses()[cl.GetName()]
+  if pCl.Lvl == 0 {
+    p.SendMsg(fmt.Sprintf("You need to unlock %s to use it as a subclass.", cl.GetName()))
+    p.SendMsg(fmt.Sprintf("You're still a %s", p.GetHybridClassName()))
+    return
+  } else if pCl.Lvl != character.MaxLevel {
+    p.SendMsg(fmt.Sprintf("You need to reach maximum level with %s to use it as a subclass.", cl.GetName()))
+    p.SendMsg(fmt.Sprintf("You're still a %s", p.GetHybridClassName()))
     return
   }
 
@@ -678,7 +688,7 @@ func (p *Player) loadChar() {
 }
 
 func (p *Player) unlockNewClasses() {
-  classStats := p.Store.LoadClasses(p.GetID())
+  classStats := p.loadClasses()
 
   for _, cl := range classes.PlayerClasses {
     if cl.GetTier() != p.Class.GetTier() + 1 {

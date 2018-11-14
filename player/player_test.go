@@ -589,6 +589,39 @@ func Test_ChangeSubclassSuccess(t *testing.T) {
   }
 }
 
+func Test_ChangeSubclassNonMaxedClass(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  p.Init()
+  p.Level = character.MaxLevel
+  go p.ChangeClass("Augur") // Saves 10 Conscript
+  <- ch
+  p.Level = 9
+  go p.GainExp(p.GetNextLvlExp())
+  <-ch // Exp gain
+  <-ch // Level up
+  <-ch // Skill gain
+  <-ch // Max level
+  <-ch // Unlock Minder
+  go p.ChangeClass("Minder")
+  <- ch
+
+  go p.ChangeSubclass(classes.Athlete.GetName())
+  res := <-ch
+  if !strings.Contains(res, "You need to reach maximum level with Athlete") {
+    t.Errorf("Expected 'You need to reach maximum level with Athlete', but got '%s'", res)
+  }
+
+  res = <-ch
+  if !strings.Contains(res, "Minder/Augur") {
+    t.Errorf("Expected 'Minder/Augur' as hybrid class desc, but got '%s'", res)
+  }
+
+  if p.Class != classes.Minder || p.Classes[classes.Tier1] != classes.Augur {
+    t.Errorf("Expected to be Minder (T2)/Augur (T1) but got %s (T2)/%s (T1)", p.GetClassName(), p.Classes[classes.Tier1].GetName())
+  }
+}
+
 func Test_ChangeSubclassUnknownClass(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   defer close(ch)
@@ -612,8 +645,8 @@ func Test_ChangeSubclassSameTier(t *testing.T) {
     t.Errorf("Unexpected result when attempting subclass change to same tier: %s", res)
   }
   res = <- ch
-  if !strings.Contains(res, "You're currently a Conscript") {
-    t.Errorf("Expected 'You're currently a Conscript' when trying to subclass same-tier class, but got %s", res)
+  if !strings.Contains(res, "You're still a Conscript") {
+    t.Errorf("Expected 'You're still a Conscript' when trying to subclass same-tier class, but got %s", res)
   }
 }
 
