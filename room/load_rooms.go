@@ -3,6 +3,8 @@ package room
 import(
   "encoding/json"
   "io/ioutil"
+  "os"
+  "strconv"
 )
 
 var RoomStore *RoomFinder
@@ -35,6 +37,23 @@ func (r *RoomFinder) Find(roomID int) *Room {
   return r.Rooms[index]
 }
 
+func (r *RoomFinder) SetDefault() {
+  var defaultID int
+  envDefault := os.Getenv("DEFAULT_ROOM_ID")
+
+  if envDefault == "" {
+    defaultID = 15
+  } else {
+    var err error
+    defaultID, err = strconv.Atoi(envDefault)
+    if err != nil {
+      panic("Couldn't load ENV-based default room!")
+    }
+  }
+
+  r.Default = r.Find(defaultID)
+}
+
 func LoadRooms(path string) (error) {
   var rooms []*Room
 
@@ -49,7 +68,7 @@ func LoadRooms(path string) (error) {
   }
 
   RoomStore = newRoomFinder(rooms)
-  RoomStore.Default = RoomStore.Find(9)
+  RoomStore.SetDefault()
   attachRoomsToExits(rooms)
 
   return nil

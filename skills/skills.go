@@ -562,7 +562,7 @@ var(
   }
   Spark = &Skill{
     Name: "Spark",
-    Desc: "Strike an enemy with a firey burst",
+    Desc: "Strike an enemy with a fiery burst",
     CostType: stats.Foc,
     CostAmt: 15,
     Effects: []Effect{
