@@ -62,6 +62,44 @@ func Test_SetAliasReservedCollision(t *testing.T) {
   }
 }
 
+func Test_SetAliasRejectsUnknownCommand(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  p.Store.InitPlayerData(p.GetID())
+
+  go p.SetAlias("x", "bogus gibberish")
+  res := <-ch
+
+  if !strings.Contains(res, "'bogus gibberish' isn't a recognized command or skill, so that alias wouldn't do anything.") {
+    t.Errorf("Expected unknown-command rejection, but got '%s'", res)
+  }
+
+  if _, ok := p.Aliases["x"]; ok {
+    t.Error("Expected 'x' to not be added as an alias, but it was")
+  }
+
+  if _, ok := p.Store.LoadAliases(p.GetID())["x"]; ok {
+    t.Error("Expected the rejected alias to not be persisted, but it was")
+  }
+}
+
+func Test_SetAliasAllowsSkillName(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  p.Store.InitPlayerData(p.GetID())
+
+  go p.SetAlias("db", "Desperate Blow")
+  res := <-ch
+
+  if !strings.Contains(res, "Alias set: 'db' now runs 'Desperate Blow'") {
+    t.Errorf("Expected a multi-word skill name to be a valid alias target, but got '%s'", res)
+  }
+
+  if p.Aliases["db"] != "Desperate Blow" {
+    t.Errorf("Expected p.Aliases['db'] to be set, but got '%s'", p.Aliases["db"])
+  }
+}
+
 func Test_SetAliasOverwritesDefault(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   defer close(ch)
@@ -312,6 +350,23 @@ func Test_CmdAliasTooFewArgs(t *testing.T) {
 
   if _, ok := p.Aliases["x"]; ok {
     t.Error("Expected malformed 'alias' command to not create an alias, but it did")
+  }
+}
+
+func Test_CmdAliasRejectsUnknownCommand(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  p.Store.InitPlayerData(p.GetID())
+
+  go p.Cmd("alias x bogus gibberish")
+  res := <-ch
+
+  if !strings.Contains(res, "'bogus gibberish' isn't a recognized command or skill, so that alias wouldn't do anything.") {
+    t.Errorf("Expected unknown-command rejection via Cmd(), but got '%s'", res)
+  }
+
+  if _, ok := p.Aliases["x"]; ok {
+    t.Error("Expected 'x' to not be added as an alias via Cmd(), but it was")
   }
 }
 

@@ -3,6 +3,8 @@ package player
 import (
   "fmt"
   "strings"
+
+  "github.com/joelevering/gomud/skills"
 )
 
 // DefaultAliases mirrors the shorthand letters gomud has always supported
@@ -27,11 +29,18 @@ var DefaultAliases = map[string]string{
 // dispatches on. These can never be used as an alias name, so a player can't
 // shadow a real command. Default alias letters are NOT in this set on
 // purpose -- they're just data and can be freely reassigned or removed.
-var reservedCmds = map[string]bool{
-  "list": true, "look": true, "move": true, "help": true,
-  "say": true, "yell": true, "attack": true, "status": true,
-  "classes": true, "change": true, "alias": true, "unalias": true,
-  "exit": true, "quit": true,
+var reservedCmds = []string{
+  "list", "look", "move", "help", "say", "yell", "attack",
+  "status", "classes", "change", "alias", "unalias", "exit", "quit",
+}
+
+func isReservedCmd(cmd string) bool {
+  for _, c := range reservedCmds {
+    if c == cmd {
+      return true
+    }
+  }
+  return false
 }
 
 func copyDefaultAliases() map[string]string {
@@ -45,8 +54,24 @@ func copyDefaultAliases() map[string]string {
 func (p *Player) SetAlias(name, expansion string) {
   key := strings.ToLower(name)
 
-  if reservedCmds[key] {
+  if isReservedCmd(key) {
     p.SendMsg(fmt.Sprintf("'%s' is a reserved command and can't be used as an alias name.", name))
+    return
+  }
+
+  fields := strings.Fields(expansion)
+  if len(fields) == 0 {
+    p.SendMsg("An alias needs to run something -- use 'alias <name> <command>'.")
+    return
+  }
+
+  // A regular command is "verb + args", so only the first word matters
+  // (e.g. the NPC name in "attack slime" is unchecked, as expected). A
+  // skill name has no such structure -- it's a single multi-word proper
+  // noun (e.g. "Desperate Blow"), so it's checked as a whole.
+  cmdWord := strings.ToLower(fields[0])
+  if !isReservedCmd(cmdWord) && skills.GetSkill(expansion) == nil {
+    p.SendMsg(fmt.Sprintf("'%s' isn't a recognized command or skill, so that alias wouldn't do anything.", expansion))
     return
   }
 

@@ -320,11 +320,11 @@ const aliasMsg = `**************Alias**************
 Aliases let you define your own shortcuts for commands.
 
 Use 'alias <name> <command>' to create or update an alias. For instance,
-'alias gs attack slime shove' lets you type 'gs' to run 'attack slime shove'.
+'alias as attack slime shove' lets you type 'as' to run 'attack slime shove'.
 
 If you type an alias followed by extra words, those words are appended to
-the command it expands to. For instance, if 'gs' is aliased to 'attack slime',
-typing 'gs shove' will run 'attack slime shove'.
+the command it expands to. For instance, if 'as' is aliased to 'attack slime',
+typing 'as shove' will run 'attack slime shove'.
 
 Aliases also work while you're in combat, so you can alias a skill name to
 something shorter, e.g. 'alias db Desperate Blow'.
