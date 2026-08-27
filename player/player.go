@@ -10,6 +10,7 @@ import (
 
   "github.com/joelevering/gomud/character"
   "github.com/joelevering/gomud/classes"
+  "github.com/joelevering/gomud/color"
   "github.com/joelevering/gomud/combat"
   "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/room"
@@ -466,7 +467,7 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
     } else if rep.FollowUpReq != "" {
       p.SendMsg(fmt.Sprintf("%s failed! It has to follow up %s", rep.Skill.Name, rep.FollowUpReq))
     } else {
-      p.SendMsg(fmt.Sprintf("You used %s!", rep.Skill.Name))
+      p.SendMsg(color.Skill(fmt.Sprintf("You used %s!", rep.Skill.Name)))
     }
   }
 
@@ -483,81 +484,81 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
   }
 
   if rep.Heal > 0 {
-    p.SendMsg(fmt.Sprintf("You healed %d damage!", rep.Heal))
+    p.SendMsg(color.Heal(fmt.Sprintf("You healed %d damage!", rep.Heal)))
   }
 
   if rep.StmRec > 0 {
-    p.SendMsg(fmt.Sprintf("You recovered %d stamina!", rep.StmRec))
+    p.SendMsg(color.Heal(fmt.Sprintf("You recovered %d stamina!", rep.StmRec)))
   }
 
   if rep.Empowered {
-    p.SendMsg("You dealt increased damage!")
+    p.SendMsg(color.Buff("You dealt increased damage!"))
   }
 
   if rep.Weak {
-    p.SendMsg("You dealt lowered damage!")
+    p.SendMsg(color.Debuff("You dealt lowered damage!"))
   }
 
   if rep.Steeled {
-    p.SendMsg(fmt.Sprintf("%s steeled themselves, taking lowered damage!", opp.GetName()))
+    p.SendMsg(color.Buff(fmt.Sprintf("%s steeled themselves, taking lowered damage!", opp.GetName())))
   }
 
   if rep.Vulnerable {
-    p.SendMsg(fmt.Sprintf("%s is vulnerable. They took increased damage!", opp.GetName()))
+    p.SendMsg(color.Debuff(fmt.Sprintf("%s is vulnerable. They took increased damage!", opp.GetName())))
   }
 
   if rep.Dmg > 0 {
     if opp.GetDet() == 0 {
-      p.SendMsg(fmt.Sprintf("%s took %d damage!", opp.GetName(), rep.Dmg))
+      p.SendMsg(color.Dmg(fmt.Sprintf("%s took %d damage!", opp.GetName(), rep.Dmg)))
     } else {
-      p.SendMsg(fmt.Sprintf("%s took %d damage! %s has %d/%d health left!", opp.GetName(), rep.Dmg, opp.GetName(), opp.GetDet(), opp.GetMaxDet()))
+      p.SendMsg(color.Dmg(fmt.Sprintf("%s took %d damage! %s has %d/%d health left!", opp.GetName(), rep.Dmg, opp.GetName(), opp.GetDet(), opp.GetMaxDet())))
     }
   }
 
   if rep.SelfDmg > 0 {
-    p.SendMsg(fmt.Sprintf("You took %d damage from the redirection! You have %d/%d health left!", rep.SelfDmg, p.GetDet(), p.GetMaxDet()))
+    p.SendMsg(color.Dmg(fmt.Sprintf("You took %d damage from the redirection! You have %d/%d health left!", rep.SelfDmg, p.GetDet(), p.GetMaxDet())))
   }
 
   for _, e := range rep.SFx {
     switch e.Effect {
     case statfx.Stun:
-      p.SendMsg(fmt.Sprintf("%s was stunned!", opp.GetName()))
+      p.SendMsg(color.Debuff(fmt.Sprintf("%s was stunned!", opp.GetName())))
     }
   }
 
   for _, e := range rep.Dots {
     switch e.Type {
     case statfx.Bleed:
-      p.SendMsg(fmt.Sprintf("%s started bleeding!", opp.GetName()))
+      p.SendMsg(color.Debuff(fmt.Sprintf("%s started bleeding!", opp.GetName())))
     case statfx.Fire:
-      p.SendMsg(fmt.Sprintf("%s caught on fire!", opp.GetName()))
+      p.SendMsg(color.Debuff(fmt.Sprintf("%s caught on fire!", opp.GetName())))
     }
   }
 
   if rep.Surprised != (structs.SurpriseRep{}) {
     if rep.Surprised.Stunned {
-      p.SendMsg(fmt.Sprintf("You surprised %s! They're stunned!", opp.GetName()))
+      p.SendMsg(color.Debuff(fmt.Sprintf("You surprised %s! They're stunned!", opp.GetName())))
     }
     if rep.Surprised.Weak {
-      p.SendMsg(fmt.Sprintf("You surprised %s! They're off-balance!", opp.GetName()))
+      p.SendMsg(color.Debuff(fmt.Sprintf("You surprised %s! They're off-balance!", opp.GetName())))
     }
     if rep.Surprised.Vulnerable {
-      p.SendMsg(fmt.Sprintf("You surprised %s! They're vulnerable!", opp.GetName()))
+      p.SendMsg(color.Debuff(fmt.Sprintf("You surprised %s! They're vulnerable!", opp.GetName())))
     }
   }
 }
 
 func (p *Player) ReportDef(opp interfaces.Combatant, rep structs.CmbRep) {
   if rep.Skill.Name != "" {
-    p.SendMsg(fmt.Sprintf("%s used %s!", opp.GetName(), rep.Skill.Name))
+    p.SendMsg(color.Skill(fmt.Sprintf("%s used %s!", opp.GetName(), rep.Skill.Name)))
   }
 
   for _, d := range rep.DotDmgs {
-    p.SendMsg(fmt.Sprintf("%s took %d %s damage!", opp.GetName(), d.Dmg, d.Type))
+    p.SendMsg(color.Dmg(fmt.Sprintf("%s took %d %s damage!", opp.GetName(), d.Dmg, d.Type)))
   }
 
   if rep.Missed {
-    p.SendMsg("%s missed their attack!", opp.GetName())
+    p.SendMsg(fmt.Sprintf("%s missed their attack!", opp.GetName()))
   }
 
   if rep.Dodged {
@@ -569,44 +570,44 @@ func (p *Player) ReportDef(opp interfaces.Combatant, rep structs.CmbRep) {
   }
 
   if rep.Heal > 0 {
-    p.SendMsg(fmt.Sprintf("%s healed %d damage!", opp.GetName(), rep.Heal))
+    p.SendMsg(color.Heal(fmt.Sprintf("%s healed %d damage!", opp.GetName(), rep.Heal)))
   }
 
   if rep.StmRec > 0 {
-    p.SendMsg(fmt.Sprintf("%s recovered stamina!", opp.GetName()))
+    p.SendMsg(color.Heal(fmt.Sprintf("%s recovered stamina!", opp.GetName())))
   }
 
   if rep.Empowered {
-    p.SendMsg(fmt.Sprintf("%s dealt increased damage!", opp.GetName()))
+    p.SendMsg(color.Buff(fmt.Sprintf("%s dealt increased damage!", opp.GetName())))
   }
 
   if rep.Weak {
-    p.SendMsg(fmt.Sprintf("%s dealt lowered damage!", opp.GetName()))
+    p.SendMsg(color.Debuff(fmt.Sprintf("%s dealt lowered damage!", opp.GetName())))
   }
 
   if rep.Steeled {
-    p.SendMsg("You steeled yourself, taking lowered damage!")
+    p.SendMsg(color.Buff("You steeled yourself, taking lowered damage!"))
   }
 
   if rep.Vulnerable {
-    p.SendMsg("You're vulnerable. You took increased damage!")
+    p.SendMsg(color.Debuff("You're vulnerable. You took increased damage!"))
   }
 
   if rep.Dmg > 0 {
-    p.SendMsg(fmt.Sprintf("You were attacked for %d damage! You have %d/%d health left!", rep.Dmg, p.GetDet(), p.GetMaxDet()))
+    p.SendMsg(color.Dmg(fmt.Sprintf("You were attacked for %d damage! You have %d/%d health left!", rep.Dmg, p.GetDet(), p.GetMaxDet())))
   }
 
   if rep.SelfDmg > 0 {
-    p.SendMsg(fmt.Sprintf("%s took %d damage from the redirection!", opp.GetName(), rep.SelfDmg))
+    p.SendMsg(color.Dmg(fmt.Sprintf("%s took %d damage from the redirection!", opp.GetName(), rep.SelfDmg)))
   }
 
   if len(rep.SFx) > 0 {
     for _, e := range rep.SFx {
       switch e.Effect {
       case statfx.Stun:
-        p.SendMsg("You were stunned into inaction!")
+        p.SendMsg(color.Debuff("You were stunned into inaction!"))
       case statfx.Surprise:
-        p.SendMsg("You were surprised by the attack!")
+        p.SendMsg(color.Debuff("You were surprised by the attack!"))
       }
     }
   }
