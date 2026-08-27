@@ -52,6 +52,8 @@ func Help(words []string) string {
     return HelpClass(strings.Join(words[2:], " "))
   case "exit", "quit":
     return exitMsg
+  case "alias", "unalias":
+    return aliasMsg
   }
 
   return "Sorry, I'm not sure what you need help with."
@@ -108,10 +110,13 @@ Available commands:
 'attack <npc name> <skill name>' to start combat by using a skill
 'classes' for information on your character's available classes
 'change <class name>' to change your class
+'alias <name> <command>' to create your own shortcut for a command
+'unalias <name>' to remove a shortcut
 'exit' or 'quit' to log out
 'help' to repeat this message
 
-Most commands have their first letter as a shortcut (e.g. 'l' for look, 'a' for attack)
+Most commands have their first letter set up as a default alias (e.g. 'l' for look, 'a' for attack).
+These are just regular aliases -- see 'help alias' for how to view, change, or remove them.
 
 When you are in combat, prepare a skill for your next action by inputting its name
 
@@ -309,3 +314,30 @@ const exitMsg = `***************Exit***************
 
 Use 'exit' (or 'quit') to safely disconnect from the game.
 Using this command will ensure your progress is saved.`
+
+const aliasMsg = `**************Alias**************
+
+Aliases let you define your own shortcuts for commands.
+
+Use 'alias <name> <command>' to create or update an alias. For instance,
+'alias gs attack slime shove' lets you type 'gs' to run 'attack slime shove'.
+
+If you type an alias followed by extra words, those words are appended to
+the command it expands to. For instance, if 'gs' is aliased to 'attack slime',
+typing 'gs shove' will run 'attack slime shove'.
+
+Aliases also work while you're in combat, so you can alias a skill name to
+something shorter, e.g. 'alias db Desperate Blow'.
+
+Use 'alias' by itself to list your current aliases.
+Use 'unalias <name>' to remove one.
+
+The real command names (like 'look', 'attack', 'change', etc.) can never be
+used as an alias name, so you can't accidentally lose access to them.
+
+Note that the familiar one-letter shortcuts (like 'l' for look or 'a' for
+attack) are just default aliases every character starts with -- nothing
+special. You're free to reassign or remove them with 'alias'/'unalias' like
+any other alias.
+
+Shortcut: 'al' for alias, 'ua' for unalias`

@@ -33,6 +33,7 @@ type Player struct {
   Queue   interfaces.QueueI
   Store   storage.StorageI
   Logout  chan string
+  Aliases map[string]string
 }
 
 func NewPlayer(ch chan string, q interfaces.QueueI, s storage.StorageI) *Player {
@@ -42,6 +43,7 @@ func NewPlayer(ch chan string, q interfaces.QueueI, s storage.StorageI) *Player 
     Queue:     q,
     Store:     s,
     Logout:    make(chan string),
+    Aliases:   copyDefaultAliases(),
   }
 }
 
@@ -57,9 +59,11 @@ func (p *Player) Init() {
     for _, class := range classes.StartingClasses {
       p.unlockClass(class.GetName())
     }
+    p.Store.PersistAliases(p.GetID(), p.Aliases)
   } else {
     p.loadClass(classes.Conscript)
     p.loadChar()
+    p.loadAliases()
   }
 
   if p.GetSpawn() == nil {
@@ -103,6 +107,8 @@ func (p *Player) Save() {
 
 func (p *Player) Cmd(cmd string) {
   p.log(fmt.Sprintf("Cmd %s", cmd))
+  cmd = p.expandAlias(cmd)
+
   if p.IsInCombat() {
     p.useSkill(cmd)
     return
@@ -111,38 +117,38 @@ func (p *Player) Cmd(cmd string) {
   words := strings.Split(cmd, " ")
 
   switch strings.ToLower(words[0]) {
-  case "ls", "list":
+  case "list":
     p.List()
-  case "l", "look":
+  case "look":
     if len(words) == 1 {
       p.Look()
     } else if len(words) > 1 {
       p.LookTarget(strings.Join(words[1:], " "))
     }
-  case "m", "move":
+  case "move":
     if len(words) == 2 {
       p.Move(words[1])
     } else {
       p.SendMsg("I'm not sure where you're trying to go. Try again with a correct exit key.")
     }
-  case "h", "help":
+  case "help":
     helpMsg := Help(words)
     for _, ln := range strings.Split(helpMsg, "\n") {
       p.SendMsg(ln)
     }
-  case "s", "say":
+  case "say":
     if len(words) > 1 {
       p.Say(strings.Join(words[1:], " "))
     } else {
       p.SendMsg("If you want to say something, include a message. E.g. 'say hello there!'")
     }
-  case "y", "yell":
+  case "yell":
     if len(words) > 1 {
       p.Yell(strings.Join(words[1:], " "))
     } else {
       p.SendMsg("If you want to yell something, include a message. E.g. 'yell HELLO THERE!'")
     }
-  case "a", "attack":
+  case "attack":
     if len(words) == 2 {
       p.AttackNP(words[1], "")
     } else if len(words) > 2 {
@@ -151,11 +157,11 @@ func (p *Player) Cmd(cmd string) {
     } else {
       p.SendMsg("I'm not sure how to interpret your attack. Use either 'attack <first name of enemy> <skill name>' or omit the skill name.")
     }
-  case "st", "status":
+  case "status":
     p.Status()
-  case "cl", "classes":
+  case "classes":
     p.ListClasses()
-  case "c", "change":
+  case "change":
     if len(words) > 1 {
       if words[1] == "subclass" || words[1] == "sc" {
         p.ChangeSubclass(words[2])
@@ -164,6 +170,20 @@ func (p *Player) Cmd(cmd string) {
       }
     } else {
       p.SendMsg("I'm not sure how to interpret your class change. Use 'change <class name>' and try again.")
+    }
+  case "alias":
+    if len(words) == 1 {
+      p.ListAliases()
+    } else if len(words) < 3 {
+      p.SendMsg("Use 'alias <name> <command>' to create an alias, or 'alias' alone to list your aliases.")
+    } else {
+      p.SetAlias(words[1], strings.Join(words[2:], " "))
+    }
+  case "unalias":
+    if len(words) != 2 {
+      p.SendMsg("Use 'unalias <name>' to remove an alias.")
+    } else {
+      p.RemoveAlias(words[1])
     }
   default:
     p.SendMsg("I'm not sure what you mean. Type 'help' for assistance.")

@@ -14,9 +14,11 @@ type StorageI interface {
   InitPlayerData(string)
   PersistClass(string, string, ClassStats)
   PersistChar(string, *character.Character)
+  PersistAliases(string, map[string]string)
   LoadStats(string, string) ClassStats
   LoadClasses(string) map[string]ClassStats
   LoadChar(string) CharStats
+  LoadAliases(string) map[string]string
   PersistStore(string)
 }
 
@@ -52,6 +54,7 @@ type Storage struct {
 type PlayerData struct {
   Classes   map[string]ClassStats `json:"classes"`
   Character CharStats             `json:"character"`
+  Aliases   map[string]string     `json:"aliases"`
 }
 
 func LoadStore(filename string) *Storage {
@@ -96,6 +99,7 @@ func (s *Storage) InitPlayerData(pID string) {
         Room: -1,
         Spawn: -1,
       },
+      Aliases: make(map[string]string),
     }
   }
 }
@@ -126,6 +130,12 @@ func (s *Storage) PersistChar(pID string, ch *character.Character) {
   s.PersistStore(s.Filename)
 }
 
+func (s *Storage) PersistAliases(pID string, aliases map[string]string) {
+  s.PlayersData[pID].Aliases = aliases
+
+  s.PersistStore(s.Filename)
+}
+
 func (s *Storage) LoadStats(pID, className string) ClassStats {
   return s.PlayersData[pID].Classes[className]
 }
@@ -136,6 +146,10 @@ func (s *Storage) LoadClasses(pID string) map[string]ClassStats {
 
 func (s *Storage) LoadChar(pID string) CharStats {
   return s.PlayersData[pID].Character
+}
+
+func (s *Storage) LoadAliases(pID string) map[string]string {
+  return s.PlayersData[pID].Aliases
 }
 
 func (s *Storage) PersistStore(filename string) {
