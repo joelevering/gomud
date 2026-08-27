@@ -50,8 +50,8 @@ type Storage struct {
 }
 
 type PlayerData struct {
-  Classes   map[string]ClassStats `json:classes`
-  Character CharStats             `json:character`
+  Classes   map[string]ClassStats `json:"classes"`
+  Character CharStats             `json:"character"`
 }
 
 func LoadStore(filename string) *Storage {
