@@ -294,6 +294,63 @@ func Test_Say(t *testing.T) {
   }
 }
 
+func Test_Emote(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  room := &mocks.MockRoom{}
+  p.Room = room
+
+  p.Emote("waves excitedly")
+
+  if !strings.Contains(room.Messages[0], "waves excitedly") {
+    t.Error("Expected Emote to send 'waves excitedly' to the room, but it didn't")
+  }
+}
+
+func Test_EmoteRequiresMessage(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  room := &mocks.MockRoom{}
+  p.Room = room
+
+  p.Emote("")
+
+  if len(room.Messages) != 0 {
+    t.Errorf("Expected an empty emote to send nothing to the room, but it sent %v", room.Messages)
+  }
+}
+
+func Test_CmdEmote(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  room := &mocks.MockRoom{}
+  p.Room = room
+
+  p.Cmd("emote waves excitedly")
+
+  if !strings.Contains(room.Messages[0], "waves excitedly") {
+    t.Error("Expected 'emote waves excitedly' to send 'waves excitedly' to the room, but it didn't")
+  }
+}
+
+func Test_CmdEmoteRequiresMessage(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  room := &mocks.MockRoom{}
+  p.Room = room
+
+  go p.Cmd("emote")
+  res := <-ch
+
+  if !strings.Contains(res, "If you want to emote an action, include a description.") {
+    t.Errorf("Expected usage message, but got '%s'", res)
+  }
+
+  if len(room.Messages) != 0 {
+    t.Errorf("Expected no room message when emote is called with no action, but got %v", room.Messages)
+  }
+}
+
 func Test_Yell(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   defer close(ch)

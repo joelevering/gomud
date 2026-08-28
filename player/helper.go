@@ -18,6 +18,8 @@ func Help(words []string) string {
     return sayMsg
   case "yell":
     return yellMsg
+  case "emote":
+    return emoteMsg
   case "look":
     return lookMsg
   case "list":
@@ -102,6 +104,7 @@ const helpMsg = `***************Help***************
 Available commands:
 'status' to see details about your character including available skills
 'say <message>' to communicate with people in your room
+'emote <action>' to perform an action for others in your room to see
 'move <exit key>' to move to a new room
 'list' to see who is currently in your room
 'look' to see where you are
@@ -140,6 +143,13 @@ Yell can be helpful if you become separated from someone and are trying to find 
 It can also help guide a nearby player to your location.
 
 Shortcut: 'y'`
+
+const emoteMsg = `***************Emote***************
+
+Type 'emote' followed by a description of an action to perform that action for everyone in your current location to see.
+For instance, 'emote waves excitedly' will show everyone in your room "<your name> waves excitedly".
+
+Shortcut: 'em'`
 
 const listMsg = `***************List***************
 

@@ -17,6 +17,7 @@ var DefaultAliases = map[string]string{
   "h":  "help",
   "s":  "say",
   "y":  "yell",
+  "em": "emote",
   "a":  "attack",
   "st": "status",
   "cl": "classes",
@@ -30,7 +31,7 @@ var DefaultAliases = map[string]string{
 // shadow a real command. Default alias letters are NOT in this set on
 // purpose -- they're just data and can be freely reassigned or removed.
 var reservedCmds = []string{
-  "list", "look", "move", "help", "say", "yell", "attack",
+  "list", "look", "move", "help", "say", "yell", "emote", "attack",
   "status", "classes", "change", "alias", "unalias", "exit", "quit",
 }
 

@@ -149,6 +149,12 @@ func (p *Player) Cmd(cmd string) {
     } else {
       p.SendMsg("If you want to yell something, include a message. E.g. 'yell HELLO THERE!'")
     }
+  case "emote":
+    if len(words) > 1 {
+      p.Emote(strings.Join(words[1:], " "))
+    } else {
+      p.SendMsg("If you want to emote an action, include a description. E.g. 'emote waves excitedly'")
+    }
   case "attack":
     if len(words) == 2 {
       p.AttackNP(words[1], "")
@@ -380,6 +386,12 @@ func (p *Player) Yell(msg string) {
     for _, exit := range p.Room.GetExits() {
       exit.GetRoom().Message(fullMsg)
     }
+  }
+}
+
+func (p *Player) Emote(action string) {
+  if action != "" {
+    p.Room.Message(fmt.Sprintf("%s %s", p.GetName(), action))
   }
 }
 
