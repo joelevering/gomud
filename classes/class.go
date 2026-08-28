@@ -35,15 +35,17 @@ const(
 )
 
 type Class struct {
-  name     string
-  desc     string
-  tier     Tier
-  growth   StatGrowth
-  atkStats []stats.Stat
-  defStats []stats.Stat
-  skills   []*ClassSkill
-  skillMap map[string]*ClassSkill
-  reqs     []*Class
+  name       string
+  desc       string
+  tier       Tier
+  growth     StatGrowth
+  atkStats   []stats.Stat
+  defStats   []stats.Stat
+  skills     []*ClassSkill
+  skillMap   map[string]*ClassSkill
+  reqs       []*Class
+  fleeChance float64
+  fleeCost   int // stamina cost to attempt fleeing
 }
 
 func (c *Class) GetName() string {
@@ -76,6 +78,14 @@ func (c *Class) GetSkills() []*ClassSkill {
 
 func (c *Class) GetReqs() []*Class {
   return c.reqs
+}
+
+func (c *Class) GetFleeChance() float64 {
+  return c.fleeChance
+}
+
+func (c *Class) GetFleeCost() int {
+  return c.fleeCost
 }
 
 func (c *Class) SkillForLvl(lvl int) *skills.Skill {

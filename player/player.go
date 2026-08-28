@@ -111,6 +111,12 @@ func (p *Player) Cmd(cmd string) {
   cmd = p.expandAlias(cmd)
 
   if p.IsInCombat() {
+    if strings.ToLower(cmd) == "flee" {
+      p.SetWantsFlee()
+      p.SendMsg("You prepare to flee!")
+      return
+    }
+
     p.useSkill(cmd)
     return
   }
@@ -192,6 +198,8 @@ func (p *Player) Cmd(cmd string) {
     } else {
       p.RemoveAlias(words[1])
     }
+  case "flee":
+    p.SendMsg("You're not in combat!")
   default:
     p.SendMsg("I'm not sure what you mean. Type 'help' for assistance.")
   }
@@ -652,6 +660,12 @@ func (p *Player) WinCombat(loser interfaces.Combatant) {
 
   expGained := loser.GetExpGiven()
   p.GainExp(expGained)
+}
+
+func (p *Player) Flee(opp interfaces.Combatant) {
+  p.log(fmt.Sprintf("Flee vs %s", opp.GetName()))
+  p.LeaveCombat()
+  p.SendMsg(fmt.Sprintf("You escape from the fight with %s!", opp.GetName()))
 }
 
 func (p *Player) GainExp(exp int) {

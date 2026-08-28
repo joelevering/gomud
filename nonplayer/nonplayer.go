@@ -130,6 +130,8 @@ func (n *NonPlayer) WinCombat(_ interfaces.Combatant) {
   n.FullHeal()
 }
 
+func (n *NonPlayer) Flee(_ interfaces.Combatant) {}
+
 func (n *NonPlayer) LoseCombat(_ interfaces.Combatant) {
   n.LeaveCombat()
 

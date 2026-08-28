@@ -51,6 +51,7 @@ type NPI interface {
   ReportDef(Combatant, structs.CmbRep)
   WinCombat(Combatant)
   LoseCombat(Combatant)
+  Flee(Combatant)
 }
 
 type PlI interface {
@@ -76,6 +77,7 @@ type PlI interface {
   ReportDef(Combatant, structs.CmbRep)
   WinCombat(Combatant)
   LoseCombat(Combatant)
+  Flee(Combatant)
 }
 
 type Combatant interface {
@@ -90,6 +92,10 @@ type Combatant interface {
   IsDefeated() bool
   WinCombat(Combatant)
   LoseCombat(Combatant)
+  LeaveCombat()
+  WantsToFlee() bool
+  AttemptFlee() bool
+  Flee(Combatant)
 
   GetName() string
   GetExpGiven() int
@@ -144,6 +150,9 @@ type CharI interface {
   ApplyAtk(structs.CmbFx, *structs.CmbRep)
   ApplyDef(structs.CmbFx, *structs.CmbRep)
   IsDefeated() bool
+  LeaveCombat()
+  WantsToFlee() bool
+  AttemptFlee() bool
 }
 
 type ClassI interface {
@@ -155,4 +164,6 @@ type ClassI interface {
   SkillForLvl(int) *skills.Skill
   SkillsForLvl(int) []*skills.Skill
   GetSkill(string, int) *skills.Skill
+  GetFleeChance() float64
+  GetFleeCost() int
 }

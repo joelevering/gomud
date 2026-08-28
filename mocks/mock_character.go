@@ -26,6 +26,8 @@ type MockCharacter struct {
   ClearedCmbSkill  bool
   LockedCmbSkill   bool
   UnlockedCmbSkill bool
+  WantsFlee        bool
+  FleeSucceeds     bool
 }
 
 func (m *MockCharacter) GetClassName() string { return "Superstar" }
@@ -78,9 +80,15 @@ func (m *MockCharacter) ResistAtk(fx structs.CmbFx, _ *structs.CmbRep) structs.C
 }
 func (m *MockCharacter) ApplyAtk(_ structs.CmbFx, _ *structs.CmbRep) {}
 func (m *MockCharacter) ApplyDef(_ structs.CmbFx, _ *structs.CmbRep) {}
-func (m *MockCharacter) IsDefeated() bool { return false }
+func (m *MockCharacter) IsDefeated() bool { return m.ShouldDie }
 func (m *MockCharacter) ExpToLvl() int { return 100 }
 func (m *MockCharacter) TickFx() {}
+func (m *MockCharacter) LeaveCombat() { m.LeftCombat = true }
+func (m *MockCharacter) WantsToFlee() bool { return m.WantsFlee }
+func (m *MockCharacter) AttemptFlee() bool {
+  m.WantsFlee = false
+  return m.FleeSucceeds
+}
 
 func (m *MockCharacter) FullHeal() {
   m.Healed = true

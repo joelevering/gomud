@@ -5,9 +5,12 @@ import (
 
   "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/statfx"
+  "github.com/joelevering/gomud/stats"
   "github.com/joelevering/gomud/structs"
   "github.com/joelevering/gomud/util"
 )
+
+const FleeBoost = 0.25
 
 func (ch *Character) LeaveCombat() {
   for e := range ch.Fx {
@@ -23,6 +26,25 @@ func (ch *Character) LeaveCombat() {
 
 func (ch *Character) IsInCombat() bool {
   return ch.InCombat
+}
+
+func (ch *Character) fleeChance() float64 {
+  chance := ch.Class.GetFleeChance()
+  if ch.hasEffect(statfx.FleetFooted) {
+    chance += FleeBoost
+  }
+  return chance
+}
+
+func (ch *Character) AttemptFlee() bool {
+  ch.clearWantsFlee()
+
+  cost := ch.Class.GetFleeCost()
+  if cost > 0 && !ch.payFor(stats.Stm, cost) {
+    return false
+  }
+
+  return util.RandF() <= ch.fleeChance()
 }
 
 // Based on current combat skill, locks/retrieves/clears skill and figures out what the effects are (taking status effects into account)

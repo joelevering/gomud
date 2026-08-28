@@ -3,6 +3,7 @@ package character
 import (
   "testing"
 
+  "github.com/joelevering/gomud/mocks"
   "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/statfx"
   "github.com/joelevering/gomud/structs"
@@ -607,6 +608,84 @@ func Test_ApplyAtkAppliesDoTDmg(t *testing.T) {
 
   if ch.GetDet() == ch.GetMaxDet() {
     t.Errorf("Expected ApplyAtk to apply bleed dmg, but det is %d/%d", ch.GetDet(), ch.GetMaxDet())
+  }
+}
+
+func Test_FleeChanceUsesClassBaseline(t *testing.T) {
+  ch := NewCharacter()
+  ch.Class = &mocks.MockClass{FleeChance: 0.7}
+
+  if ch.fleeChance() != 0.7 {
+    t.Errorf("Expected fleeChance() to use the class baseline of 0.7, but got %f", ch.fleeChance())
+  }
+}
+
+func Test_FleeChanceBoostedByFleetFooted(t *testing.T) {
+  ch := NewCharacter()
+  ch.Class = &mocks.MockClass{FleeChance: 0.7}
+  ch.addFx(statfx.SEInst{Effect: statfx.FleetFooted})
+
+  want := 0.7 + FleeBoost
+  if ch.fleeChance() != want {
+    t.Errorf("Expected fleeChance() with FleetFooted to be %f, but got %f", want, ch.fleeChance())
+  }
+}
+
+func Test_AttemptFleeSucceedsWithFullChance(t *testing.T) {
+  ch := NewCharacter()
+  ch.Class = &mocks.MockClass{FleeChance: 1}
+
+  if !ch.AttemptFlee() {
+    t.Error("Expected AttemptFlee to succeed with a 100% chance, but it failed")
+  }
+}
+
+func Test_AttemptFleeFailsWithNoChance(t *testing.T) {
+  ch := NewCharacter()
+  ch.Class = &mocks.MockClass{FleeChance: 0}
+
+  if ch.AttemptFlee() {
+    t.Error("Expected AttemptFlee to fail with a 0% chance, but it succeeded")
+  }
+}
+
+func Test_AttemptFleeClearsWantsFlee(t *testing.T) {
+  ch := NewCharacter()
+  ch.Class = &mocks.MockClass{FleeChance: 0}
+  ch.SetWantsFlee()
+
+  ch.AttemptFlee()
+
+  if ch.WantsToFlee() {
+    t.Error("Expected AttemptFlee to clear WantsFlee regardless of outcome, but it's still true")
+  }
+}
+
+func Test_AttemptFleeDeductsStaminaCost(t *testing.T) {
+  ch := NewCharacter()
+  ch.Class = &mocks.MockClass{FleeChance: 1, FleeCost: 10}
+  startingStm := ch.GetStm()
+
+  if !ch.AttemptFlee() {
+    t.Fatal("Expected AttemptFlee to succeed with a 100% chance")
+  }
+
+  if ch.GetStm() != startingStm-10 {
+    t.Errorf("Expected stamina to drop by 10, but it's %d/%d", ch.GetStm(), startingStm)
+  }
+}
+
+func Test_AttemptFleeFailsWithoutEnoughStamina(t *testing.T) {
+  ch := NewCharacter()
+  ch.Class = &mocks.MockClass{FleeChance: 1, FleeCost: ch.GetMaxStm() + 1}
+  startingStm := ch.GetStm()
+
+  if ch.AttemptFlee() {
+    t.Error("Expected AttemptFlee to fail without enough stamina even with a 100% chance, but it succeeded")
+  }
+
+  if ch.GetStm() != startingStm {
+    t.Errorf("Expected stamina to be untouched on a failed-to-afford attempt, but it's %d/%d", ch.GetStm(), startingStm)
   }
 }
 

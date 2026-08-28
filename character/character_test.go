@@ -4,6 +4,7 @@ import (
   "testing"
 
   "github.com/joelevering/gomud/mocks"
+  "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/statfx"
 )
 
@@ -143,6 +144,32 @@ func Test_RefocusDoesntAllowOverhealing(t *testing.T) {
 
   if ch.GetFoc() != ch.GetMaxFoc() {
     t.Errorf("Refocus should not allow focus over max, but it allowed %d/%d", ch.GetFoc(), ch.GetMaxFoc())
+  }
+}
+
+func Test_SetWantsFleeClearsCmbSkill(t *testing.T) {
+  ch := NewCharacter()
+  ch.SetCmbSkill(skills.Shove)
+
+  ch.SetWantsFlee()
+
+  if ch.CmbSkill != nil {
+    t.Errorf("Expected SetWantsFlee to clear any prepared skill, but CmbSkill is %v", ch.CmbSkill)
+  }
+
+  if !ch.WantsToFlee() {
+    t.Error("Expected SetWantsFlee to set WantsToFlee to true, but it didn't")
+  }
+}
+
+func Test_SetCmbSkillClearsWantsFlee(t *testing.T) {
+  ch := NewCharacter()
+  ch.SetWantsFlee()
+
+  ch.SetCmbSkill(skills.Shove)
+
+  if ch.WantsToFlee() {
+    t.Error("Expected SetCmbSkill to clear a pending flee, but WantsToFlee is still true")
   }
 }
 

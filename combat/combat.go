@@ -16,15 +16,22 @@ func Start(pc interfaces.Combatant, npc interfaces.Combatant, rm interfaces.Room
   npc.EnterCombat(pc)
 
   for true {
-    combatOver := TickCombat(pc, npc)
-    if combatOver {
+    if pc.WantsToFlee() {
+      if pc.AttemptFlee() {
+        pc.Flee(npc)
+        npc.LeaveCombat()
+        rm.Message(fmt.Sprintf("%s flees from the fight with %s!", pc.GetName(), npc.GetName()))
+        break
+      }
+      rm.Message(fmt.Sprintf("%s tries to flee, but fails!", pc.GetName()))
+    } else if TickCombat(pc, npc) {
       rm.Message(fmt.Sprintf("%s emerges victorious over %s!", pc.GetName(), npc.GetName()))
       break
     }
+
     time.Sleep(TickTime)
 
-    combatOver = TickCombat(npc, pc)
-    if combatOver {
+    if TickCombat(npc, pc) {
       break
     }
     time.Sleep(TickTime)

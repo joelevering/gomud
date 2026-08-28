@@ -12,6 +12,7 @@ type MockPlayer struct {
 
   Defeated  interfaces.Combatant
   DefeatedBy  interfaces.Combatant
+  Fled      bool
 }
 
 func NewMockPlayer() *MockPlayer {
@@ -40,7 +41,7 @@ func (m *MockPlayer) GetID() string { return "mock ID" }
 func (m *MockPlayer) GetRoom() interfaces.RoomI { return nil }
 
 func (m *MockPlayer) EnterCombat(opp interfaces.Combatant) {}
-func (m *MockPlayer) IsDefeated() bool { return false }
+func (m *MockPlayer) IsDefeated() bool { return m.ShouldDie }
 func (m *MockPlayer) LoseCombat(winner interfaces.Combatant) {
   m.DefeatedBy = winner
 }
@@ -48,6 +49,8 @@ func (m *MockPlayer) LoseCombat(winner interfaces.Combatant) {
 func (m *MockPlayer) WinCombat(loser interfaces.Combatant) {
   m.Defeated = loser
 }
+
+func (m *MockPlayer) Flee(opp interfaces.Combatant) { m.Fled = true }
 
 func (m *MockPlayer) ReportAtk(_ interfaces.Combatant, _ structs.CmbRep) {}
 func (m *MockPlayer) ReportDef(_ interfaces.Combatant, _ structs.CmbRep) {}
