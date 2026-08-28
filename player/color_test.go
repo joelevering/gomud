@@ -4,13 +4,14 @@ import (
   "strings"
   "testing"
 
+  "github.com/joelevering/gomud/color"
   "github.com/joelevering/gomud/mocks"
   "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/structs"
 )
 
 // One case per category (damage/heal/buff/debuff/skill) for each of
-// ReportAtk and ReportDef, confirming the right ANSI wrapper was applied.
+// ReportAtk and ReportDef, confirming the right color wrapper was applied.
 
 func Test_ReportAtkColorsDamageRed(t *testing.T) {
   p, ch, _ := NewTestPlayer()
@@ -20,8 +21,9 @@ func Test_ReportAtkColorsDamageRed(t *testing.T) {
   go p.ReportAtk(opp, structs.CmbRep{CmbFx: structs.CmbFx{Dmg: 42}})
   res := <-ch
 
-  if !strings.Contains(res, "\x1b[31mmock np name took 42 damage!") || !strings.Contains(res, "\x1b[0m") {
-    t.Errorf("Expected damage line wrapped in red, but got '%s'", res)
+  want := color.Dmg("mock np name took 42 damage! mock np name has 150/200 health left!")
+  if !strings.Contains(res, want) {
+    t.Errorf("Expected damage line wrapped in red (%q), but got '%s'", want, res)
   }
 }
 
@@ -33,8 +35,9 @@ func Test_ReportAtkColorsHealGreen(t *testing.T) {
   go p.ReportAtk(opp, structs.CmbRep{CmbFx: structs.CmbFx{Heal: 15}})
   res := <-ch
 
-  if !strings.Contains(res, "\x1b[32mYou healed 15 damage!\x1b[0m") {
-    t.Errorf("Expected heal line wrapped in green, but got '%s'", res)
+  want := color.Heal("You healed 15 damage!")
+  if !strings.Contains(res, want) {
+    t.Errorf("Expected heal line wrapped in green (%q), but got '%s'", want, res)
   }
 }
 
@@ -46,8 +49,9 @@ func Test_ReportAtkColorsBuffGreen(t *testing.T) {
   go p.ReportAtk(opp, structs.CmbRep{Empowered: true})
   res := <-ch
 
-  if !strings.Contains(res, "\x1b[32mYou dealt increased damage!\x1b[0m") {
-    t.Errorf("Expected buff line wrapped in green, but got '%s'", res)
+  want := color.Buff("You dealt increased damage!")
+  if !strings.Contains(res, want) {
+    t.Errorf("Expected buff line wrapped in green (%q), but got '%s'", want, res)
   }
 }
 
@@ -59,8 +63,9 @@ func Test_ReportAtkColorsDebuffYellow(t *testing.T) {
   go p.ReportAtk(opp, structs.CmbRep{Vulnerable: true})
   res := <-ch
 
-  if !strings.Contains(res, "\x1b[33mmock np name is vulnerable. They took increased damage!\x1b[0m") {
-    t.Errorf("Expected debuff line wrapped in yellow, but got '%s'", res)
+  want := color.Debuff("mock np name is vulnerable. They took increased damage!")
+  if !strings.Contains(res, want) {
+    t.Errorf("Expected debuff line wrapped in yellow (%q), but got '%s'", want, res)
   }
 }
 
@@ -72,8 +77,9 @@ func Test_ReportAtkColorsSkillCyan(t *testing.T) {
   go p.ReportAtk(opp, structs.CmbRep{CmbFx: structs.CmbFx{Skill: skills.Skill{Name: "Shove"}}})
   res := <-ch
 
-  if !strings.Contains(res, "\x1b[36mYou used Shove!\x1b[0m") {
-    t.Errorf("Expected skill line wrapped in cyan, but got '%s'", res)
+  want := color.Skill("You used Shove!")
+  if !strings.Contains(res, want) {
+    t.Errorf("Expected skill line wrapped in cyan (%q), but got '%s'", want, res)
   }
 }
 
@@ -85,8 +91,9 @@ func Test_ReportDefColorsDamageRed(t *testing.T) {
   go p.ReportDef(opp, structs.CmbRep{CmbFx: structs.CmbFx{Dmg: 30}})
   res := <-ch
 
-  if !strings.Contains(res, "\x1b[31mYou were attacked for 30 damage!") || !strings.Contains(res, "\x1b[0m") {
-    t.Errorf("Expected damage line wrapped in red, but got '%s'", res)
+  want := color.Dmg("You were attacked for 30 damage! You have 200/200 health left!")
+  if !strings.Contains(res, want) {
+    t.Errorf("Expected damage line wrapped in red (%q), but got '%s'", want, res)
   }
 }
 
@@ -98,8 +105,9 @@ func Test_ReportDefColorsHealGreen(t *testing.T) {
   go p.ReportDef(opp, structs.CmbRep{CmbFx: structs.CmbFx{Heal: 20}})
   res := <-ch
 
-  if !strings.Contains(res, "\x1b[32mmock np name healed 20 damage!\x1b[0m") {
-    t.Errorf("Expected heal line wrapped in green, but got '%s'", res)
+  want := color.Heal("mock np name healed 20 damage!")
+  if !strings.Contains(res, want) {
+    t.Errorf("Expected heal line wrapped in green (%q), but got '%s'", want, res)
   }
 }
 
@@ -111,8 +119,9 @@ func Test_ReportDefColorsBuffGreen(t *testing.T) {
   go p.ReportDef(opp, structs.CmbRep{Steeled: true})
   res := <-ch
 
-  if !strings.Contains(res, "\x1b[32mYou steeled yourself, taking lowered damage!\x1b[0m") {
-    t.Errorf("Expected buff line wrapped in green, but got '%s'", res)
+  want := color.Buff("You steeled yourself, taking lowered damage!")
+  if !strings.Contains(res, want) {
+    t.Errorf("Expected buff line wrapped in green (%q), but got '%s'", want, res)
   }
 }
 
@@ -124,8 +133,9 @@ func Test_ReportDefColorsDebuffYellow(t *testing.T) {
   go p.ReportDef(opp, structs.CmbRep{Weak: true})
   res := <-ch
 
-  if !strings.Contains(res, "\x1b[33mmock np name dealt lowered damage!\x1b[0m") {
-    t.Errorf("Expected debuff line wrapped in yellow, but got '%s'", res)
+  want := color.Debuff("mock np name dealt lowered damage!")
+  if !strings.Contains(res, want) {
+    t.Errorf("Expected debuff line wrapped in yellow (%q), but got '%s'", want, res)
   }
 }
 
@@ -137,8 +147,9 @@ func Test_ReportDefColorsSkillCyan(t *testing.T) {
   go p.ReportDef(opp, structs.CmbRep{CmbFx: structs.CmbFx{Skill: skills.Skill{Name: "Charge"}}})
   res := <-ch
 
-  if !strings.Contains(res, "\x1b[36mmock np name used Charge!\x1b[0m") {
-    t.Errorf("Expected skill line wrapped in cyan, but got '%s'", res)
+  want := color.Skill("mock np name used Charge!")
+  if !strings.Contains(res, want) {
+    t.Errorf("Expected skill line wrapped in cyan (%q), but got '%s'", want, res)
   }
 }
 
@@ -162,7 +173,7 @@ func Test_ReportDefFormatsMissedAttackCorrectly(t *testing.T) {
     t.Errorf("Expected the missed-attack message to be formatted, but it still contains a literal '%%s': '%s'", res)
   }
 
-  if strings.Contains(res, "\x1b[") {
+  if strings.Contains(res, color.Reset) {
     t.Errorf("Expected the missed-attack message to be uncolored, but got '%s'", res)
   }
 }
