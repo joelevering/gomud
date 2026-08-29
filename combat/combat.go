@@ -2,6 +2,7 @@ package combat
 
 import (
   "fmt"
+  "log"
   "time"
 
   "github.com/joelevering/gomud/interfaces"
@@ -11,6 +12,12 @@ import (
 const TickTime = 1500 * time.Millisecond
 
 func Start(pc interfaces.Combatant, npc interfaces.Combatant, rm interfaces.RoomI) {
+  defer func() {
+    if r := recover(); r != nil {
+      log.Printf("Recovered from panic in combat between %s and %s: %v", pc.GetName(), npc.GetName(), r)
+    }
+  }()
+
   rm.Message(fmt.Sprintf("%s and %s start fighting!", pc.GetName(), npc.GetName()))
   pc.EnterCombat(npc)
   npc.EnterCombat(pc)
