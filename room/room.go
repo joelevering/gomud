@@ -20,6 +20,9 @@ type Room struct {
   mu sync.Mutex
 }
 
+// Message copies the player list under lock, then broadcasts without holding
+// it -- SendMsg can block (e.g. a slow or disconnected client), and blocking
+// here would stall every other operation on this room for as long as it did.
 func (room *Room) Message(msg string) {
   room.mu.Lock()
   players := make([]interfaces.PlI, len(room.Players))
@@ -42,7 +45,7 @@ func (room *Room) RemovePlayer(pl interfaces.PlI, msg string) {
       break
     }
   }
-  room.mu.Unlock()
+  room.mu.Unlock() // released before broadcasting -- see Message's comment
 
   room.Message(msg)
 }

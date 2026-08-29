@@ -32,3 +32,19 @@ func Test_Start_RecoversFromPanic(t *testing.T) {
 
   Start(pc, npc, rm)
 }
+
+func Test_Start_RecoveryClearsCombatState(t *testing.T) {
+  pc := &panickyPlayer{MockPlayer: mocks.NewMockPlayer()}
+  npc := mocks.NewMockNP()
+  rm := &mocks.MockRoom{}
+
+  Start(pc, npc, rm)
+
+  if !pc.LeftCombat {
+    t.Error("Expected pc's combat state to be cleared after the panic was recovered, but LeftCombat is false")
+  }
+
+  if !npc.LeftCombat {
+    t.Error("Expected npc's combat state to be cleared after the panic was recovered, but LeftCombat is false")
+  }
+}

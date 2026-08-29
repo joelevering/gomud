@@ -70,6 +70,7 @@ func (m *MockCharacter) GetSpawn() interfaces.RoomI { return m.Spawn }
 func (m *MockCharacter) SetSpawn(spawn interfaces.RoomI) {}
 
 func (m *MockCharacter) IsInCombat() bool { return false }
+func (m *MockCharacter) LeaveCombat() { m.LeftCombat = true }
 func (m *MockCharacter) AtkFx(_ *structs.CmbRep) structs.CmbFx {
   return structs.CmbFx{}
 }
