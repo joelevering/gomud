@@ -16,26 +16,45 @@ func Start(pc interfaces.Combatant, npc interfaces.Combatant, rm interfaces.Room
   npc.EnterCombat(pc)
 
   for true {
-    if pc.WantsToFlee() {
-      if pc.AttemptFlee() {
-        pc.Flee(npc)
-        npc.LeaveCombat()
-        rm.Message(fmt.Sprintf("%s flees from the fight with %s!", pc.GetName(), npc.GetName()))
-        break
-      }
-      rm.Message(fmt.Sprintf("%s tries to flee, but fails!", pc.GetName()))
-    } else if TickCombat(pc, npc) {
-      rm.Message(fmt.Sprintf("%s emerges victorious over %s!", pc.GetName(), npc.GetName()))
+    // Victory is only announced to the room on the pc's turn -- when the npc
+    // wins, LoseCombat already narrates the pc's defeat to the room itself.
+    if takeTurn(pc, npc, rm, true) {
       break
     }
-
     time.Sleep(TickTime)
 
-    if TickCombat(npc, pc) {
+    if takeTurn(npc, pc, rm, false) {
       break
     }
     time.Sleep(TickTime)
   }
+}
+
+// takeTurn resolves one combatant's turn against their opponent, checking a
+// flee attempt before falling back to a normal combat tick. It returns
+// whether combat is now over. Since it operates purely on the Combatant
+// interface, it works unmodified if a non-pc combatant is ever given the
+// ability to flee.
+func takeTurn(actor, opponent interfaces.Combatant, rm interfaces.RoomI, announceVictory bool) (combatOver bool) {
+  if actor.WantsToFlee() {
+    if actor.AttemptFlee() {
+      actor.Flee(opponent)
+      opponent.LeaveCombat()
+      rm.Message(fmt.Sprintf("%s flees from the fight with %s!", actor.GetName(), opponent.GetName()))
+      return true
+    }
+    rm.Message(fmt.Sprintf("%s tries to flee, but fails!", actor.GetName()))
+    return false
+  }
+
+  if TickCombat(actor, opponent) {
+    if announceVictory {
+      rm.Message(fmt.Sprintf("%s emerges victorious over %s!", actor.GetName(), opponent.GetName()))
+    }
+    return true
+  }
+
+  return false
 }
 
 func TickCombat(agg, def interfaces.Combatant) (combatOver bool) {

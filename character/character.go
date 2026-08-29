@@ -38,7 +38,7 @@ type Character struct {
   Spawn      interfaces.RoomI
   InCombat   bool
   CmbSkill   *skills.Skill
-  CmbSkillMu sync.Mutex
+  IntentMu   sync.Mutex
   WantsFlee  bool
   Fx         map[statfx.StatusEffect]*statfx.SEInst
   Dots       map[statfx.DotType]*statfx.DotInst
@@ -259,29 +259,29 @@ func (ch *Character) GetSkills() []*skills.Skill {
 }
 
 func (ch *Character) SetCmbSkill(sk *skills.Skill) {
-  ch.CmbSkillMu.Lock()
+  ch.IntentMu.Lock()
   ch.CmbSkill = sk
   ch.WantsFlee = false
-  ch.CmbSkillMu.Unlock()
+  ch.IntentMu.Unlock()
 }
 
 func (ch *Character) SetWantsFlee() {
-  ch.CmbSkillMu.Lock()
+  ch.IntentMu.Lock()
   ch.CmbSkill = nil
   ch.WantsFlee = true
-  ch.CmbSkillMu.Unlock()
+  ch.IntentMu.Unlock()
 }
 
 func (ch *Character) WantsToFlee() bool {
-  ch.CmbSkillMu.Lock()
-  defer ch.CmbSkillMu.Unlock()
+  ch.IntentMu.Lock()
+  defer ch.IntentMu.Unlock()
   return ch.WantsFlee
 }
 
 func (ch *Character) clearWantsFlee() {
-  ch.CmbSkillMu.Lock()
+  ch.IntentMu.Lock()
   ch.WantsFlee = false
-  ch.CmbSkillMu.Unlock()
+  ch.IntentMu.Unlock()
 }
 
 func (ch *Character) GetSpawn() interfaces.RoomI {
@@ -404,8 +404,8 @@ func (ch *Character) TickFx() {
 // private
 
 func (ch *Character) getAndClearCmbSkill() *skills.Skill {
-  ch.CmbSkillMu.Lock()
-  defer ch.CmbSkillMu.Unlock()
+  ch.IntentMu.Lock()
+  defer ch.IntentMu.Unlock()
   sk := ch.CmbSkill
   ch.CmbSkill = nil
 

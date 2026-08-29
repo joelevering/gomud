@@ -33,7 +33,7 @@ func (ch *Character) fleeChance() float64 {
   if ch.hasEffect(statfx.FleetFooted) {
     chance += FleeBoost
   }
-  return chance
+  return chance // intentionally unclamped -- util.RandF() <= chance still just means "always succeeds" past 1.0
 }
 
 func (ch *Character) AttemptFlee() bool {
