@@ -7,7 +7,6 @@ import (
   "strconv"
   "strings"
   "testing"
-  "time"
 
   "github.com/joelevering/gomud/character"
   "github.com/joelevering/gomud/classes"
@@ -440,16 +439,19 @@ func Test_LoseCombat(t *testing.T) {
     p.LoseCombat(p.Room.GetNPs()[0])
   }(ch)
 
-  res := <-ch
-
-  time.Sleep(1600 * time.Millisecond) // matches sleep in code
-
-  if !strings.Contains(res, "You were defeated by mock np name") {
-    t.Errorf("Expected 'You were defeated by mock np name' on death, but got '%s'", res)
+  var messages []string
+  for msg := range ch {
+    messages = append(messages, msg)
   }
 
-  if strings.Contains(res, "was defeated by mock char name") {
-    t.Error("Expected player to not receive death notice to room, but it did")
+  if len(messages) == 0 || !strings.Contains(messages[0], "You were defeated by mock np name") {
+    t.Errorf("Expected 'You were defeated by mock np name' on death, but got '%v'", messages)
+  }
+
+  for _, msg := range messages {
+    if strings.Contains(msg, "was defeated by mock char name") {
+      t.Error("Expected player to not receive death notice to room, but it did")
+    }
   }
 
   if p.Room != spawn {
