@@ -138,8 +138,8 @@ func Test_CmdAttackWhileInCombatCancelsFleeAndSkill(t *testing.T) {
   go p.Cmd("attack")
   res := <-ch
 
-  if !strings.Contains(res, "You ready a plain attack!") {
-    t.Errorf("Expected 'You ready a plain attack!', but got '%s'", res)
+  if !strings.Contains(res, "You make ready to attack!") {
+    t.Errorf("Expected 'You make ready to attack!', but got '%s'", res)
   }
 
   if p.WantsToFlee() {

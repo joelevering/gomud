@@ -320,11 +320,10 @@ Type 'flee' while in combat to attempt to disengage from the fight.
 
 Fleeing isn't guaranteed to work -- your chance of success depends on your class, and may also cost
 stamina. If it fails, you don't get to attack that turn, so the enemy still gets its normal turn
-against you. If you don't have enough stamina to attempt it, you'll be told you're too tired to flee.
+against you. If you don't have enough stamina to attempt it, you'll fail to flee.
 
 Once you start fleeing, you'll keep trying automatically every turn until you succeed, are defeated,
-or choose a skill (or a plain 'attack'), which cancels the attempt. You don't need to keep re-typing
-'flee' -- doing so just confirms you're still trying.
+or choose a skill (or a plain 'attack'), which cancels the attempt.
 
 If you succeed, combat ends immediately. You stay in the same location, at whatever health you
 had when you fled -- you aren't teleported anywhere and the enemy isn't defeated.

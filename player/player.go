@@ -124,7 +124,7 @@ func (p *Player) Cmd(cmd string) {
 
     if strings.ToLower(cmd) == "attack" {
       p.SetCmbSkill(nil)
-      p.SendMsg("You ready a plain attack!")
+      p.SendMsg("You make ready to attack!")
       return
     }
 
