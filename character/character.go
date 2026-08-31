@@ -34,14 +34,14 @@ type Character struct {
   Kno        int               `json:"knowledge"`
   Sag        int               `json:"sagacity"`
 
-  Room       interfaces.RoomI
-  Spawn      interfaces.RoomI
-  InCombat   bool
-  CmbSkill   *skills.Skill
-  IntentMu   sync.Mutex
-  WantsFlee  bool
-  Fx         map[statfx.StatusEffect]*statfx.SEInst
-  Dots       map[statfx.DotType]*statfx.DotInst
+  Room        interfaces.RoomI
+  Spawn       interfaces.RoomI
+  InCombat    bool
+  CmbSkill    *skills.Skill
+  CmbActionMu sync.Mutex
+  WantsFlee   bool
+  Fx          map[statfx.StatusEffect]*statfx.SEInst
+  Dots        map[statfx.DotType]*statfx.DotInst
 }
 
 func NewCharacter() *Character {
@@ -259,29 +259,29 @@ func (ch *Character) GetSkills() []*skills.Skill {
 }
 
 func (ch *Character) SetCmbSkill(sk *skills.Skill) {
-  ch.IntentMu.Lock()
+  ch.CmbActionMu.Lock()
   ch.CmbSkill = sk
   ch.WantsFlee = false
-  ch.IntentMu.Unlock()
+  ch.CmbActionMu.Unlock()
 }
 
 func (ch *Character) SetWantsFlee() {
-  ch.IntentMu.Lock()
+  ch.CmbActionMu.Lock()
   ch.CmbSkill = nil
   ch.WantsFlee = true
-  ch.IntentMu.Unlock()
+  ch.CmbActionMu.Unlock()
 }
 
 func (ch *Character) WantsToFlee() bool {
-  ch.IntentMu.Lock()
-  defer ch.IntentMu.Unlock()
+  ch.CmbActionMu.Lock()
+  defer ch.CmbActionMu.Unlock()
   return ch.WantsFlee
 }
 
 func (ch *Character) clearWantsFlee() {
-  ch.IntentMu.Lock()
+  ch.CmbActionMu.Lock()
   ch.WantsFlee = false
-  ch.IntentMu.Unlock()
+  ch.CmbActionMu.Unlock()
 }
 
 func (ch *Character) GetSpawn() interfaces.RoomI {
@@ -404,8 +404,8 @@ func (ch *Character) TickFx() {
 // private
 
 func (ch *Character) getAndClearCmbSkill() *skills.Skill {
-  ch.IntentMu.Lock()
-  defer ch.IntentMu.Unlock()
+  ch.CmbActionMu.Lock()
+  defer ch.CmbActionMu.Unlock()
   sk := ch.CmbSkill
   ch.CmbSkill = nil
 

@@ -10,6 +10,9 @@ import (
   "github.com/joelevering/gomud/util"
 )
 
+// FleeBoost is a flat bonus for now since FleetFooted has no use case yet.
+// Ideally this scales with stats or is class-specific (e.g. slower classes
+// get a smaller boost) once something actually grants the effect.
 const FleeBoost = 0.25
 
 func (ch *Character) LeaveCombat() {
@@ -39,8 +42,7 @@ func (ch *Character) fleeChance() float64 {
 func (ch *Character) AttemptFlee() bool {
   ch.clearWantsFlee()
 
-  cost := ch.Class.GetFleeCost()
-  if cost > 0 && !ch.payFor(stats.Stm, cost) {
+  if !ch.payFor(stats.Stm, ch.Class.GetFleeCost()) {
     return false
   }
 
