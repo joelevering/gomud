@@ -4,8 +4,51 @@ import (
   "strings"
   "testing"
 
+  "github.com/joelevering/gomud/interfaces"
   "github.com/joelevering/gomud/mocks"
+  "github.com/joelevering/gomud/structs"
 )
+
+// panickyPlayer simulates a player who disconnected mid-combat: sending them
+// a message (e.g. via ReportAtk) panics, the way sending on a closed
+// Player.Channel does in the real game.
+type panickyPlayer struct {
+  *mocks.MockPlayer
+}
+
+func (p *panickyPlayer) ReportAtk(_ interfaces.Combatant, _ structs.CmbRep) {
+  panic("send on closed channel")
+}
+
+func Test_Start_RecoversFromPanic(t *testing.T) {
+  pc := &panickyPlayer{MockPlayer: mocks.NewMockPlayer()}
+  npc := mocks.NewMockNP()
+  rm := &mocks.MockRoom{}
+
+  defer func() {
+    if r := recover(); r != nil {
+      t.Fatalf("Expected combat.Start to recover from panic, but it propagated: %v", r)
+    }
+  }()
+
+  Start(pc, npc, rm)
+}
+
+func Test_Start_RecoveryClearsCombatState(t *testing.T) {
+  pc := &panickyPlayer{MockPlayer: mocks.NewMockPlayer()}
+  npc := mocks.NewMockNP()
+  rm := &mocks.MockRoom{}
+
+  Start(pc, npc, rm)
+
+  if !pc.LeftCombat {
+    t.Error("Expected pc's combat state to be cleared after the panic was recovered, but LeftCombat is false")
+  }
+
+  if !npc.LeftCombat {
+    t.Error("Expected npc's combat state to be cleared after the panic was recovered, but LeftCombat is false")
+  }
+}
 
 func Test_StartEndsOnSuccessfulFlee(t *testing.T) {
   pc := mocks.NewMockPlayer()
@@ -70,8 +113,10 @@ func Test_StartAnnouncesTirednessOnOutOfStaminaFlee(t *testing.T) {
   pc.WantsFlee = true
   pc.FleeSucceeds = false
   pc.FleeOutOfStamina = true
-  // Same trick as above: guarantees the npc's turn ends combat, proving it
-  // still ran even though the pc's flee attempt failed.
+  // WantsFlee is sticky and never succeeds here, so nothing else in this
+  // loop ever ends combat -- Start blocks until IsDefeated is true for one
+  // side, and the mock only reports that via ShouldDie, not real health
+  // tracking. Without this, the test would hang instead of returning.
   pc.ShouldDie = true
   npc := mocks.NewMockNP()
   rm := &mocks.MockRoom{}

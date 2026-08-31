@@ -73,6 +73,7 @@ func (m *MockCharacter) GetSpawn() interfaces.RoomI { return m.Spawn }
 func (m *MockCharacter) SetSpawn(spawn interfaces.RoomI) {}
 
 func (m *MockCharacter) IsInCombat() bool { return false }
+func (m *MockCharacter) LeaveCombat() { m.LeftCombat = true }
 func (m *MockCharacter) AtkFx(_ *structs.CmbRep) structs.CmbFx {
   return structs.CmbFx{}
 }
@@ -84,7 +85,6 @@ func (m *MockCharacter) ApplyDef(_ structs.CmbFx, _ *structs.CmbRep) {}
 func (m *MockCharacter) IsDefeated() bool { return m.ShouldDie }
 func (m *MockCharacter) ExpToLvl() int { return 100 }
 func (m *MockCharacter) TickFx() {}
-func (m *MockCharacter) LeaveCombat() { m.LeftCombat = true }
 func (m *MockCharacter) WantsToFlee() bool { return m.WantsFlee }
 func (m *MockCharacter) AttemptFlee() (succeeded, outOfStamina bool) {
   if m.FleeSucceeds {
