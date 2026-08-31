@@ -22,4 +22,5 @@ const(
   Redirecting = StatusEffect("redirect") // take partial damage and the reduced dmg goes to enemy
   Empowered = StatusEffect("empowered") // more damage dealt
   Steeled = StatusEffect("steeled") // less damage taken
+  FleetFooted = StatusEffect("fleetFooted") // better chance to flee combat
 )

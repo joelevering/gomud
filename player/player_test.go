@@ -78,6 +78,91 @@ func Test_CmdDoesNotSetOOCRestrictedSkillInCombat(t *testing.T) {
   }
 }
 
+func Test_CmdFleeSetsIntent(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  p.Level = character.MaxLevel
+  defer close(ch)
+  go p.EnterCombat(&mocks.MockNP{})
+  <-ch // "You attack %s!"
+
+  go p.Cmd("flee")
+  res := <-ch
+
+  if !strings.Contains(res, "You prepare to flee!") {
+    t.Errorf("Expected 'You prepare to flee!', but got '%s'", res)
+  }
+
+  if !p.WantsToFlee() {
+    t.Error("Expected WantsToFlee to be true after 'flee' in combat, but it's false")
+  }
+
+  if p.CmbSkill != nil {
+    t.Errorf("Expected no combat skill to be set when fleeing, but got %v", p.CmbSkill)
+  }
+}
+
+func Test_CmdFleeWhileAlreadyFleeingSendsContinueMessage(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  p.Level = character.MaxLevel
+  defer close(ch)
+  go p.EnterCombat(&mocks.MockNP{})
+  <-ch // "You attack %s!"
+
+  go p.Cmd("flee")
+  <-ch // "You prepare to flee!"
+
+  go p.Cmd("flee")
+  res := <-ch
+
+  if !strings.Contains(res, "You continue to try to flee!") {
+    t.Errorf("Expected 'You continue to try to flee!', but got '%s'", res)
+  }
+
+  if !p.WantsToFlee() {
+    t.Error("Expected WantsToFlee to remain true after re-typing 'flee', but it's false")
+  }
+}
+
+func Test_CmdAttackWhileInCombatCancelsFleeAndSkill(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  p.Class = classes.Minder
+  p.Classes[classes.Tier2] = classes.Minder
+  p.Level = character.MaxLevel
+  defer close(ch)
+  go p.EnterCombat(&mocks.MockNP{})
+  <-ch // "You attack %s!"
+
+  go p.Cmd("flee")
+  <-ch // "You prepare to flee!"
+
+  go p.Cmd("attack")
+  res := <-ch
+
+  if !strings.Contains(res, "You make ready to attack!") {
+    t.Errorf("Expected 'You make ready to attack!', but got '%s'", res)
+  }
+
+  if p.WantsToFlee() {
+    t.Error("Expected 'attack' to cancel a pending flee, but WantsToFlee is still true")
+  }
+
+  if p.CmbSkill != nil {
+    t.Errorf("Expected 'attack' to leave no combat skill queued, but got %v", p.CmbSkill)
+  }
+}
+
+func Test_CmdFleeOutOfCombat(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+
+  go p.Cmd("flee")
+  res := <-ch
+
+  if !strings.Contains(res, "You're not in combat!") {
+    t.Errorf("Expected \"You're not in combat!\", but got '%s'", res)
+  }
+}
+
 func Test_EnterRoom(t *testing.T) {
   p, ch, q := NewTestPlayer()
   defer close(ch)
@@ -460,6 +545,26 @@ func Test_LoseCombat(t *testing.T) {
 
   if pc.GetDet() != pc.GetMaxDet() {
     t.Error("Expected PC to be healed on combat loss/respawn, but it wasn't")
+  }
+}
+
+func Test_Flee(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+
+  room := &mocks.MockRoom{}
+  p.Room = room
+  p.InCombat = true
+
+  go p.Flee(p.Room.GetNPs()[0])
+  res := <-ch
+
+  if !strings.Contains(res, "You escape from the fight with mock np name!") {
+    t.Errorf("Expected 'You escape from the fight with mock np name!', but got '%s'", res)
+  }
+
+  if p.IsInCombat() {
+    t.Error("Expected Flee to leave combat, but IsInCombat is still true")
   }
 }
 

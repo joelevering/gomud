@@ -5,9 +5,15 @@ import (
 
   "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/statfx"
+  "github.com/joelevering/gomud/stats"
   "github.com/joelevering/gomud/structs"
   "github.com/joelevering/gomud/util"
 )
+
+// FleeBoost is a flat bonus for now since FleetFooted has no use case yet.
+// Ideally this scales with stats or is class-specific (e.g. slower classes
+// get a smaller boost) once something actually grants the effect.
+const FleeBoost = 0.25
 
 func (ch *Character) LeaveCombat() {
   for e := range ch.Fx {
@@ -23,6 +29,33 @@ func (ch *Character) LeaveCombat() {
 
 func (ch *Character) IsInCombat() bool {
   return ch.InCombat
+}
+
+func (ch *Character) fleeChance() float64 {
+  chance := ch.Class.GetFleeChance()
+  if ch.hasEffect(statfx.FleetFooted) {
+    chance += FleeBoost
+  }
+  return chance // intentionally unclamped -- util.RandF() <= chance still just means "always succeeds" past 1.0
+}
+
+// AttemptFlee rolls a single flee attempt. WantsFlee is intentionally left
+// set on failure (including running out of stamina) so combat keeps
+// retrying automatically each tick -- the player shouldn't have to keep
+// re-typing 'flee'. It's only cleared here on success; anything that should
+// cancel an in-progress flee (e.g. queuing a skill) does so separately via
+// SetCmbSkill.
+func (ch *Character) AttemptFlee() (succeeded, outOfStamina bool) {
+  if !ch.payFor(stats.Stm, ch.Class.GetFleeCost()) {
+    return false, true
+  }
+
+  if util.RandF() <= ch.fleeChance() {
+    ch.clearWantsFlee()
+    return true, false
+  }
+
+  return false, false
 }
 
 // Based on current combat skill, locks/retrieves/clears skill and figures out what the effects are (taking status effects into account)

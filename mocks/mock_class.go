@@ -9,6 +9,8 @@ import (
 
 type MockClass struct {
   LeveledUpChar interfaces.CharI
+  FleeChance    float64
+  FleeCost      int
 }
 
 func (m *MockClass) GetName() string { return "Mock Class" }
@@ -40,4 +42,12 @@ func (m *MockClass) SkillsForLvl(_ int) []*skills.Skill {
 
 func (m *MockClass) GetSkill(_ string, _ int) *skills.Skill {
   return skills.Shove
+}
+
+func (m *MockClass) GetFleeChance() float64 {
+  return m.FleeChance
+}
+
+func (m *MockClass) GetFleeCost() int {
+  return m.FleeCost
 }

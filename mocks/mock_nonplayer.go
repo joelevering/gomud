@@ -42,4 +42,5 @@ func (m *MockNP) LoseCombat(opp interfaces.Combatant) {
   m.DefeatedBy = opp
 }
 func (m *MockNP) WinCombat(opp interfaces.Combatant) {}
+func (m *MockNP) Flee(opp interfaces.Combatant) {}
 

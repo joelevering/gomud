@@ -34,13 +34,14 @@ type Character struct {
   Kno        int               `json:"knowledge"`
   Sag        int               `json:"sagacity"`
 
-  Room       interfaces.RoomI
-  Spawn      interfaces.RoomI
-  InCombat   bool
-  CmbSkill   *skills.Skill
-  CmbSkillMu sync.Mutex
-  Fx         map[statfx.StatusEffect]*statfx.SEInst
-  Dots       map[statfx.DotType]*statfx.DotInst
+  Room        interfaces.RoomI
+  Spawn       interfaces.RoomI
+  InCombat    bool
+  CmbSkill    *skills.Skill
+  CmbActionMu sync.Mutex
+  WantsFlee   bool
+  Fx          map[statfx.StatusEffect]*statfx.SEInst
+  Dots        map[statfx.DotType]*statfx.DotInst
 }
 
 func NewCharacter() *Character {
@@ -258,9 +259,29 @@ func (ch *Character) GetSkills() []*skills.Skill {
 }
 
 func (ch *Character) SetCmbSkill(sk *skills.Skill) {
-  ch.CmbSkillMu.Lock()
+  ch.CmbActionMu.Lock()
   ch.CmbSkill = sk
-  ch.CmbSkillMu.Unlock()
+  ch.WantsFlee = false
+  ch.CmbActionMu.Unlock()
+}
+
+func (ch *Character) SetWantsFlee() {
+  ch.CmbActionMu.Lock()
+  ch.CmbSkill = nil
+  ch.WantsFlee = true
+  ch.CmbActionMu.Unlock()
+}
+
+func (ch *Character) WantsToFlee() bool {
+  ch.CmbActionMu.Lock()
+  defer ch.CmbActionMu.Unlock()
+  return ch.WantsFlee
+}
+
+func (ch *Character) clearWantsFlee() {
+  ch.CmbActionMu.Lock()
+  ch.WantsFlee = false
+  ch.CmbActionMu.Unlock()
 }
 
 func (ch *Character) GetSpawn() interfaces.RoomI {
@@ -383,8 +404,8 @@ func (ch *Character) TickFx() {
 // private
 
 func (ch *Character) getAndClearCmbSkill() *skills.Skill {
-  ch.CmbSkillMu.Lock()
-  defer ch.CmbSkillMu.Unlock()
+  ch.CmbActionMu.Lock()
+  defer ch.CmbActionMu.Unlock()
   sk := ch.CmbSkill
   ch.CmbSkill = nil
 
@@ -392,8 +413,12 @@ func (ch *Character) getAndClearCmbSkill() *skills.Skill {
 }
 
 func (ch *Character) payForSkill(sk skills.Skill) bool {
-  if sk.CostType == stats.Stm {
-    cost := sk.CostAmt
+  return ch.payFor(sk.CostType, sk.CostAmt)
+}
+
+func (ch *Character) payFor(costType stats.Stat, costAmt int) bool {
+  if costType == stats.Stm {
+    cost := costAmt
     if ch.isConserving() {
       cost = int(float64(cost) * 0.5)
     }
@@ -407,8 +432,8 @@ func (ch *Character) payForSkill(sk skills.Skill) bool {
     return true
   }
 
-  if sk.CostType == stats.Foc {
-    newFoc := ch.GetFoc() - sk.CostAmt
+  if costType == stats.Foc {
+    newFoc := ch.GetFoc() - costAmt
     if newFoc < 0 {
       return false
     }

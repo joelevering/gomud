@@ -38,6 +38,8 @@ func Help(words []string) string {
     return changeMsg
   case "attack":
     return attackMsg
+  case "flee":
+    return fleeMsg
   case "combat":
     return combatMsg
   case "skill", "skills":
@@ -111,6 +113,7 @@ Available commands:
 'look <npc name>' to see more details about an NPC
 'attack <npc name>' to start combat
 'attack <npc name> <skill name>' to start combat by using a skill
+'flee' to attempt to disengage from combat
 'classes' for information on your character's available classes
 'change <class name>' to change your class
 'alias <name> <command>' to create your own shortcut for a command
@@ -292,7 +295,8 @@ During combat you will default to doing a standard attack on your enemy.
 
 Alternatively, you can use a skill by typing the name of the skill. This will prepare the skill to be used
 in lieu of an attack on your next turn. You can replace your prepared skill with a new one by typing the
-name of a different skill before your turn.
+name of a different skill before your turn. Typing 'attack' with no target reverts you to a standard attack,
+canceling any prepared skill or in-progress flee attempt.
 
 Using skills usually consumes stamina, focus, or both. If you do not have enough of a particular resource
 the chosen skill will not be executed.
@@ -301,9 +305,32 @@ Combat ends automatically when one of the combatants runs out of determination.
 If you are victorious, you'll gain experience which moves you closer to leveling up.
 If you are defeated, you'll be respawned momentarily in your last established spawn location.
 
+You can also try to disengage early by typing 'flee'. This isn't guaranteed to work, and a failed
+attempt still costs you your turn, so the enemy gets a free hit. Unlike a skill, once you start
+fleeing you'll keep trying automatically every turn -- you don't need to keep re-typing 'flee'.
+See 'help flee' for details.
+
 Defeated enemies respawn after some time has passed.
 
 See 'help attack' for more information on initiating combat.`
+
+const fleeMsg = `***************Flee***************
+
+Type 'flee' while in combat to attempt to disengage from the fight.
+
+Fleeing isn't guaranteed to work -- your chance of success depends on your class, and may also cost
+stamina. If it fails, you don't get to attack that turn, so the enemy still gets its normal turn
+against you. If you don't have enough stamina to attempt it, you'll fail to flee.
+
+Once you start fleeing, you'll keep trying automatically every turn until you succeed, are defeated,
+or choose a skill (or a plain 'attack'), which cancels the attempt.
+
+If you succeed, combat ends immediately. You stay in the same location, at whatever health you
+had when you fled -- you aren't teleported anywhere and the enemy isn't defeated.
+
+Using 'flee' outside of combat does nothing, since there's nothing to flee from.
+
+Shortcut: 'fl'`
 
 const skillMsg = `**************Skills**************
 
