@@ -2,6 +2,7 @@ package combat
 
 import (
   "fmt"
+  "log"
   "time"
 
   "github.com/joelevering/gomud/interfaces"
@@ -11,6 +12,18 @@ import (
 const TickTime = 1500 * time.Millisecond
 
 func Start(pc interfaces.Combatant, npc interfaces.Combatant, rm interfaces.RoomI) {
+  // If a panic aborts the fight early (e.g. pc disconnected mid-combat),
+  // neither combatant's WinCombat/LoseCombat -- and thus LeaveCombat -- ever
+  // runs, so reset combat state manually to avoid leaving either one stuck
+  // "in combat" for the rest of the process.
+  defer func() {
+    if r := recover(); r != nil {
+      log.Printf("Recovered from panic in combat between %s and %s: %v", pc.GetName(), npc.GetName(), r)
+      clearCombatState(pc)
+      clearCombatState(npc)
+    }
+  }()
+
   rm.Message(fmt.Sprintf("%s and %s start fighting!", pc.GetName(), npc.GetName()))
   pc.EnterCombat(npc)
   npc.EnterCombat(pc)
@@ -28,6 +41,16 @@ func Start(pc interfaces.Combatant, npc interfaces.Combatant, rm interfaces.Room
       break
     }
     time.Sleep(TickTime)
+  }
+}
+
+// clearCombatState resets a combatant's in-combat state via LeaveCombat, if
+// it has one. Combatant doesn't expose LeaveCombat itself since it's only
+// needed here, on the panic-recovery path, so a type assertion avoids
+// widening the interface for every other caller.
+func clearCombatState(c interfaces.Combatant) {
+  if lc, ok := c.(interface{ LeaveCombat() }); ok {
+    lc.LeaveCombat()
   }
 }
 
