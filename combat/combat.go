@@ -37,13 +37,18 @@ func Start(pc interfaces.Combatant, npc interfaces.Combatant, rm interfaces.Room
 // ability to flee.
 func takeTurn(actor, opponent interfaces.Combatant, rm interfaces.RoomI, announceVictory bool) (combatOver bool) {
   if actor.WantsToFlee() {
-    if actor.AttemptFlee() {
+    succeeded, outOfStamina := actor.AttemptFlee()
+    if succeeded {
       actor.Flee(opponent)
       opponent.LeaveCombat()
       rm.Message(fmt.Sprintf("%s flees from the fight with %s!", actor.GetName(), opponent.GetName()))
       return true
     }
-    rm.Message(fmt.Sprintf("%s tries to flee, but fails!", actor.GetName()))
+    if outOfStamina {
+      rm.Message(fmt.Sprintf("%s is too tired to flee!", actor.GetName()))
+    } else {
+      rm.Message(fmt.Sprintf("%s tries to flee, but fails!", actor.GetName()))
+    }
     return false
   }
 

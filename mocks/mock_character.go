@@ -28,6 +28,7 @@ type MockCharacter struct {
   UnlockedCmbSkill bool
   WantsFlee        bool
   FleeSucceeds     bool
+  FleeOutOfStamina bool
 }
 
 func (m *MockCharacter) GetClassName() string { return "Superstar" }
@@ -85,9 +86,11 @@ func (m *MockCharacter) ExpToLvl() int { return 100 }
 func (m *MockCharacter) TickFx() {}
 func (m *MockCharacter) LeaveCombat() { m.LeftCombat = true }
 func (m *MockCharacter) WantsToFlee() bool { return m.WantsFlee }
-func (m *MockCharacter) AttemptFlee() bool {
-  m.WantsFlee = false
-  return m.FleeSucceeds
+func (m *MockCharacter) AttemptFlee() (succeeded, outOfStamina bool) {
+  if m.FleeSucceeds {
+    m.WantsFlee = false
+  }
+  return m.FleeSucceeds, m.FleeOutOfStamina
 }
 
 func (m *MockCharacter) FullHeal() {

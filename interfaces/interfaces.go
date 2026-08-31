@@ -94,7 +94,7 @@ type Combatant interface {
   LoseCombat(Combatant)
   LeaveCombat()
   WantsToFlee() bool
-  AttemptFlee() bool
+  AttemptFlee() (succeeded, outOfStamina bool)
   Flee(Combatant)
 
   GetName() string
@@ -152,7 +152,7 @@ type CharI interface {
   IsDefeated() bool
   LeaveCombat()
   WantsToFlee() bool
-  AttemptFlee() bool
+  AttemptFlee() (succeeded, outOfStamina bool)
 }
 
 type ClassI interface {

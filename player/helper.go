@@ -295,7 +295,8 @@ During combat you will default to doing a standard attack on your enemy.
 
 Alternatively, you can use a skill by typing the name of the skill. This will prepare the skill to be used
 in lieu of an attack on your next turn. You can replace your prepared skill with a new one by typing the
-name of a different skill before your turn.
+name of a different skill before your turn. Typing 'attack' with no target reverts you to a standard attack,
+canceling any prepared skill or in-progress flee attempt.
 
 Using skills usually consumes stamina, focus, or both. If you do not have enough of a particular resource
 the chosen skill will not be executed.
@@ -305,7 +306,9 @@ If you are victorious, you'll gain experience which moves you closer to leveling
 If you are defeated, you'll be respawned momentarily in your last established spawn location.
 
 You can also try to disengage early by typing 'flee'. This isn't guaranteed to work, and a failed
-attempt still costs you your turn, so the enemy gets a free hit. See 'help flee' for details.
+attempt still costs you your turn, so the enemy gets a free hit. Unlike a skill, once you start
+fleeing you'll keep trying automatically every turn -- you don't need to keep re-typing 'flee'.
+See 'help flee' for details.
 
 Defeated enemies respawn after some time has passed.
 
@@ -315,8 +318,13 @@ const fleeMsg = `***************Flee***************
 
 Type 'flee' while in combat to attempt to disengage from the fight.
 
-Fleeing isn't guaranteed to work -- your chance of success depends on your class. If it fails,
-you don't get to attack that turn, so the enemy still gets its normal turn against you.
+Fleeing isn't guaranteed to work -- your chance of success depends on your class, and may also cost
+stamina. If it fails, you don't get to attack that turn, so the enemy still gets its normal turn
+against you. If you don't have enough stamina to attempt it, you'll be told you're too tired to flee.
+
+Once you start fleeing, you'll keep trying automatically every turn until you succeed, are defeated,
+or choose a skill (or a plain 'attack'), which cancels the attempt. You don't need to keep re-typing
+'flee' -- doing so just confirms you're still trying.
 
 If you succeed, combat ends immediately. You stay in the same location, at whatever health you
 had when you fled -- you aren't teleported anywhere and the enemy isn't defeated.

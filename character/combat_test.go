@@ -635,7 +635,8 @@ func Test_AttemptFleeSucceedsWithFullChance(t *testing.T) {
   ch := NewCharacter()
   ch.Class = &mocks.MockClass{FleeChance: 1}
 
-  if !ch.AttemptFlee() {
+  succeeded, _ := ch.AttemptFlee()
+  if !succeeded {
     t.Error("Expected AttemptFlee to succeed with a 100% chance, but it failed")
   }
 }
@@ -644,20 +645,48 @@ func Test_AttemptFleeFailsWithNoChance(t *testing.T) {
   ch := NewCharacter()
   ch.Class = &mocks.MockClass{FleeChance: 0}
 
-  if ch.AttemptFlee() {
+  succeeded, outOfStamina := ch.AttemptFlee()
+  if succeeded {
     t.Error("Expected AttemptFlee to fail with a 0% chance, but it succeeded")
+  }
+  if outOfStamina {
+    t.Error("Expected a failed roll to not be reported as an out-of-stamina failure")
   }
 }
 
-func Test_AttemptFleeClearsWantsFlee(t *testing.T) {
+func Test_AttemptFleeClearsWantsFleeOnSuccess(t *testing.T) {
+  ch := NewCharacter()
+  ch.Class = &mocks.MockClass{FleeChance: 1}
+  ch.SetWantsFlee()
+
+  ch.AttemptFlee()
+
+  if ch.WantsToFlee() {
+    t.Error("Expected a successful AttemptFlee to clear WantsFlee, but it's still true")
+  }
+}
+
+func Test_AttemptFleeLeavesWantsFleeSetOnFailedRoll(t *testing.T) {
   ch := NewCharacter()
   ch.Class = &mocks.MockClass{FleeChance: 0}
   ch.SetWantsFlee()
 
   ch.AttemptFlee()
 
-  if ch.WantsToFlee() {
-    t.Error("Expected AttemptFlee to clear WantsFlee regardless of outcome, but it's still true")
+  if !ch.WantsToFlee() {
+    t.Error("Expected a failed roll to leave WantsFlee set so combat keeps retrying, but it's false")
+  }
+}
+
+func Test_AttemptFleeLeavesWantsFleeSetWhenOutOfStamina(t *testing.T) {
+  ch := NewCharacter()
+  ch.Class = &mocks.MockClass{FleeChance: 1, FleeCost: ch.GetMaxStm() + 1}
+  ch.SetWantsFlee()
+
+  ch.AttemptFlee()
+
+  if !ch.WantsToFlee() {
+    t.Error("Expected an out-of-stamina failure to leave WantsFlee set so combat keeps retrying, but it's false")
   }
 }
 
@@ -666,7 +695,8 @@ func Test_AttemptFleeDeductsStaminaCost(t *testing.T) {
   ch.Class = &mocks.MockClass{FleeChance: 1, FleeCost: 10}
   startingStm := ch.GetStm()
 
-  if !ch.AttemptFlee() {
+  succeeded, _ := ch.AttemptFlee()
+  if !succeeded {
     t.Fatal("Expected AttemptFlee to succeed with a 100% chance")
   }
 
@@ -680,8 +710,12 @@ func Test_AttemptFleeFailsWithoutEnoughStamina(t *testing.T) {
   ch.Class = &mocks.MockClass{FleeChance: 1, FleeCost: ch.GetMaxStm() + 1}
   startingStm := ch.GetStm()
 
-  if ch.AttemptFlee() {
+  succeeded, outOfStamina := ch.AttemptFlee()
+  if succeeded {
     t.Error("Expected AttemptFlee to fail without enough stamina even with a 100% chance, but it succeeded")
+  }
+  if !outOfStamina {
+    t.Error("Expected AttemptFlee to report the failure as out-of-stamina")
   }
 
   if ch.GetStm() != startingStm {

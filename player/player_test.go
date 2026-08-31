@@ -102,6 +102,56 @@ func Test_CmdFleeSetsIntent(t *testing.T) {
   }
 }
 
+func Test_CmdFleeWhileAlreadyFleeingSendsContinueMessage(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  p.Level = character.MaxLevel
+  defer close(ch)
+  go p.EnterCombat(&mocks.MockNP{})
+  <-ch // "You attack %s!"
+
+  go p.Cmd("flee")
+  <-ch // "You prepare to flee!"
+
+  go p.Cmd("flee")
+  res := <-ch
+
+  if !strings.Contains(res, "You continue to try to flee!") {
+    t.Errorf("Expected 'You continue to try to flee!', but got '%s'", res)
+  }
+
+  if !p.WantsToFlee() {
+    t.Error("Expected WantsToFlee to remain true after re-typing 'flee', but it's false")
+  }
+}
+
+func Test_CmdAttackWhileInCombatCancelsFleeAndSkill(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  p.Class = classes.Minder
+  p.Classes[classes.Tier2] = classes.Minder
+  p.Level = character.MaxLevel
+  defer close(ch)
+  go p.EnterCombat(&mocks.MockNP{})
+  <-ch // "You attack %s!"
+
+  go p.Cmd("flee")
+  <-ch // "You prepare to flee!"
+
+  go p.Cmd("attack")
+  res := <-ch
+
+  if !strings.Contains(res, "You ready a plain attack!") {
+    t.Errorf("Expected 'You ready a plain attack!', but got '%s'", res)
+  }
+
+  if p.WantsToFlee() {
+    t.Error("Expected 'attack' to cancel a pending flee, but WantsToFlee is still true")
+  }
+
+  if p.CmbSkill != nil {
+    t.Errorf("Expected 'attack' to leave no combat skill queued, but got %v", p.CmbSkill)
+  }
+}
+
 func Test_CmdFleeOutOfCombat(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   defer close(ch)

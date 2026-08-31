@@ -112,8 +112,19 @@ func (p *Player) Cmd(cmd string) {
 
   if p.IsInCombat() {
     if strings.ToLower(cmd) == "flee" {
+      if p.WantsToFlee() {
+        p.SendMsg("You continue to try to flee!")
+        return
+      }
+
       p.SetWantsFlee()
       p.SendMsg("You prepare to flee!")
+      return
+    }
+
+    if strings.ToLower(cmd) == "attack" {
+      p.SetCmbSkill(nil)
+      p.SendMsg("You ready a plain attack!")
       return
     }
 
