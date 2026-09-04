@@ -8,7 +8,7 @@ import (
 )
 
 func Test_InitializingNPs(t *testing.T) {
-  room.LoadRooms("data/rooms.json")
+  room.LoadRooms("data/rooms.json", 15)
   rooms := room.RoomStore.Rooms
   queue := pubsub.NewQueue()
   err := InitNPs(rooms, queue)

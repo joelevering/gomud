@@ -3,7 +3,7 @@ package room
 import "testing"
 
 func Test_LoadingRooms(t *testing.T) {
-  var err = LoadRooms("../data/rooms.json")
+  var err = LoadRooms("../data/rooms.json", 15)
   if err != nil {
     t.Errorf("Error loading rooms: %s", err)
   }

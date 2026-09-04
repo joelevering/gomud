@@ -5,61 +5,92 @@ import (
   "fmt"
   "net"
   "strings"
+  "sync/atomic"
+  "time"
 
   "github.com/joelevering/gomud/player"
 )
 
 type ConnHandler struct {
-  entering chan *player.Player
-  leaving  chan *player.Player
-  state    *GameState
+  entering         chan *player.Player
+  leaving          chan *player.Player
+  claimName        chan nameClaimRequest
+  releaseName      chan string
+  state            *GameState
+  idleWarnAfter    time.Duration
+  idleWarnInterval time.Duration
+  idleKickAfter    time.Duration
+  idleCheckInterval time.Duration
 }
 
 func (handler *ConnHandler) Handle(conn net.Conn) {
   defer conn.Close()
 
   ch := make(chan string)
-  player := player.NewPlayer(ch, handler.state.Queue, handler.state.Store)
-  go player.StartWriter(conn)
+  p := player.NewPlayer(ch, handler.state.Queue, handler.state.Store)
+  go p.StartWriter(conn)
 
-  player.SetName(confirmName(player, conn))
-  player.Init()
+  name := confirmName(p, conn, handler.claimName)
+  p.SetName(name)
 
-  handler.entering <- player
+  reachedLogin := false
+  defer func() {
+    if !reachedLogin {
+      handler.releaseName <- name
+    }
+  }()
+
+  p.Init()
+  handler.entering <- p
+  reachedLogin = true
+
+  lastActivity := &atomic.Int64{}
+  lastActivity.Store(time.Now().UnixNano())
+  go watchIdle(p, conn, lastActivity, handler.idleWarnAfter, handler.idleWarnInterval, handler.idleKickAfter, handler.idleCheckInterval)
 
   input := bufio.NewScanner(conn)
   for input.Scan() {
+    lastActivity.Store(time.Now().UnixNano())
     txt := input.Text()
     if txt == "exit" || txt == "quit" {
-      player.SendMsg("Are you sure you want to quit? ('Y' to confirm)")
+      p.SendMsg("Are you sure you want to quit? ('Y' to confirm)")
       input.Scan()
       if strings.ToUpper(input.Text()) == "Y" {
-        player.SendMsg("OK! See you next time!")
+        p.SendMsg("OK! See you next time!")
         break
       }
 
-      player.SendMsg("OK, keeping you logged in. ('Y' would have logged you out)")
+      p.SendMsg("OK, keeping you logged in. ('Y' would have logged you out)")
     } else {
-      player.Cmd(input.Text())
+      p.Cmd(txt)
     }
   }
 
-  handler.leaving <- player
+  handler.leaving <- p
 }
 
-func confirmName(player *player.Player, conn net.Conn) string {
+func confirmName(p *player.Player, conn net.Conn, claimName chan<- nameClaimRequest) string {
   var confirmed, who string
+  input := bufio.NewScanner(conn)
 
-  for strings.ToUpper(confirmed) != "Y" {
-    player.SendMsg("Who are you?")
-    input := bufio.NewScanner(conn)
-    input.Scan()
-    who = input.Text()
+  for {
+    for strings.ToUpper(confirmed) != "Y" {
+      p.SendMsg("Who are you?")
+      input.Scan()
+      who = input.Text()
 
-    player.SendMsg(fmt.Sprintf("Are you sure you want to be called \"%s\"? ('Y' to confirm)", who))
-    input.Scan()
-    confirmed = input.Text()
+      p.SendMsg(fmt.Sprintf("Are you sure you want to be called \"%s\"? ('Y' to confirm)", who))
+      input.Scan()
+      confirmed = input.Text()
+    }
+
+    reply := make(chan bool)
+    claimName <- nameClaimRequest{name: who, reply: reply}
+    if <-reply {
+      return who
+    }
+
+    p.SendMsg(fmt.Sprintf("Sorry, \"%s\" is already logged in. Please choose a different name.", who))
+    confirmed = ""
   }
-
-  return who
 }
