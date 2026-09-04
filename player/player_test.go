@@ -19,7 +19,7 @@ import (
 func TestMain(m *testing.M) {
   os.RemoveAll("../test/")
   os.Mkdir("../test", 0755)
-  room.LoadRooms("../data/rooms.json")
+  room.LoadRooms("../data/rooms.json", 15)
   r := m.Run()
   os.RemoveAll("../test/")
   os.Exit(r)
@@ -857,4 +857,27 @@ func Test_InitAddsPlayerToRoom(t *testing.T) {
   if len(rmPl) != 1 || rmPl[0].GetName() != p.GetName() {
     t.Error("Player.Init should have added player to its room, but it didn't")
   }
+}
+
+func Test_LogoutChannel_CloseNotifiesMultipleListeners(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+
+  done1 := make(chan struct{})
+  done2 := make(chan struct{})
+
+  go func() {
+    <-p.Logout
+    close(done1)
+  }()
+
+  go func() {
+    <-p.Logout
+    close(done2)
+  }()
+
+  close(p.Logout)
+
+  <-done1
+  <-done2
 }

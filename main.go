@@ -3,6 +3,7 @@ package main
 import (
   "log"
   "net"
+  "time"
 
   "github.com/joelevering/gomud/player"
   "github.com/joelevering/gomud/interfaces"
@@ -20,7 +21,8 @@ type GameState struct {
 }
 
 func main() {
-  gameState := initGameState()
+  config := LoadConfiguration(Config)
+  gameState := initGameState(config)
 
   host := localIp() + ":" + port
   log.Print("Hosting on: " + host)
@@ -32,17 +34,28 @@ func main() {
 
   var entering = make(chan *player.Player)
   var leaving = make(chan *player.Player)
+  var claimName = make(chan nameClaimRequest)
+  var releaseName = make(chan string)
 
   connHandler := ConnHandler{
-    entering: entering,
-    leaving:  leaving,
-    state:    gameState,
+    entering:          entering,
+    leaving:           leaving,
+    claimName:         claimName,
+    releaseName:       releaseName,
+    state:             gameState,
+    idleWarnAfter:     time.Duration(config.Idle.WarnAfterMinutes) * time.Minute,
+    idleWarnInterval:  time.Duration(config.Idle.WarnIntervalMinutes) * time.Minute,
+    idleKickAfter:     time.Duration(config.Idle.KickAfterMinutes) * time.Minute,
+    idleCheckInterval: time.Duration(config.Idle.CheckIntervalSeconds) * time.Second,
   }
 
   gateKeeper := Gatekeeper{
-    entering: entering,
-    leaving:  leaving,
-    state:    gameState,
+    entering:     entering,
+    leaving:      leaving,
+    claimName:    claimName,
+    releaseName:  releaseName,
+    state:        gameState,
+    pendingNames: make(map[string]bool),
   }
 
   go gateKeeper.KeepTheGate()
@@ -59,14 +72,14 @@ func main() {
   }
 }
 
-func initGameState() *GameState {
+func initGameState(config *Configuration) *GameState {
   var state = GameState{
     Queue: pubsub.NewQueue(),
     Store: storage.LoadStore("data/store.json"),
     Players: make(map[string]*player.Player),
   }
 
-  err := room.LoadRooms("data/rooms.json")
+  err := room.LoadRooms("data/rooms.json", config.DefaultRoomID)
   if err != nil {
     panic("Error loading rooms")
   }

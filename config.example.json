@@ -1,0 +1,9 @@
+{
+  "default_room_id": 15,
+  "idle": {
+    "warn_after_minutes": 5,
+    "warn_interval_minutes": 5,
+    "kick_after_minutes": 20,
+    "check_interval_seconds": 15
+  }
+}
