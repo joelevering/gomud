@@ -27,7 +27,11 @@ func (handler *ConnHandler) Handle(conn net.Conn) {
   p := player.NewPlayer(ch, handler.state.Queue, handler.state.Store)
   go p.StartWriter(conn)
 
-  name := confirmName(p, conn, handler.claimName)
+  name, ok := confirmName(p, conn, handler.claimName)
+  if !ok {
+    close(ch)
+    return
+  }
   p.SetName(name)
 
   reachedLogin := false
@@ -66,25 +70,35 @@ func (handler *ConnHandler) Handle(conn net.Conn) {
   handler.leaving <- p
 }
 
-func confirmName(p *player.Player, conn net.Conn, claimName chan<- nameClaimRequest) string {
+// confirmName prompts the connection for a name and claims it, retrying on
+// a rejected (already-logged-in) name. It returns ok=false if the
+// connection disconnects before a name is successfully claimed -- Scan()
+// returns false immediately (non-blocking) once the underlying conn hits
+// EOF/an error, so this must be checked rather than assumed true, or a
+// disconnect during the prompt spins the loop forever.
+func confirmName(p *player.Player, conn net.Conn, claimName chan<- nameClaimRequest) (string, bool) {
   var confirmed, who string
   input := bufio.NewScanner(conn)
 
   for {
     for strings.ToUpper(confirmed) != "Y" {
       p.SendMsg("Who are you?")
-      input.Scan()
+      if !input.Scan() {
+        return "", false
+      }
       who = input.Text()
 
       p.SendMsg(fmt.Sprintf("Are you sure you want to be called \"%s\"? ('Y' to confirm)", who))
-      input.Scan()
+      if !input.Scan() {
+        return "", false
+      }
       confirmed = input.Text()
     }
 
     reply := make(chan bool)
     claimName <- nameClaimRequest{name: who, reply: reply}
     if <-reply {
-      return who
+      return who, true
     }
 
     p.SendMsg(fmt.Sprintf("Sorry, \"%s\" is already logged in. Please choose a different name.", who))
