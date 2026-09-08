@@ -2,6 +2,7 @@ package room
 
 import(
   "encoding/json"
+  "fmt"
   "io/ioutil"
 )
 
@@ -35,8 +36,13 @@ func (r *RoomFinder) Find(roomID int) *Room {
   return r.Rooms[index]
 }
 
-func (r *RoomFinder) SetDefault(roomID int) {
+func (r *RoomFinder) SetDefault(roomID int) error {
+  if _, ok := r.RoomMap[roomID]; !ok {
+    return fmt.Errorf("default room %d does not exist", roomID)
+  }
+
   r.Default = r.Find(roomID)
+  return nil
 }
 
 func LoadRooms(path string, defaultRoomID int) (error) {
@@ -53,7 +59,9 @@ func LoadRooms(path string, defaultRoomID int) (error) {
   }
 
   RoomStore = newRoomFinder(rooms)
-  RoomStore.SetDefault(defaultRoomID)
+  if err := RoomStore.SetDefault(defaultRoomID); err != nil {
+    return err
+  }
   attachRoomsToExits(rooms)
 
   return nil

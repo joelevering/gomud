@@ -9,10 +9,25 @@ import (
 func Test_LoadConfiguration_MissingFileFallsBackToDefaults(t *testing.T) {
   path := filepath.Join(t.TempDir(), "config.json")
 
-  cfg := LoadConfiguration(path)
+  cfg, err := LoadConfiguration(path)
+  if err != nil {
+    t.Fatalf("Expected no error but got %v", err)
+  }
 
   if *cfg != *DefaultConfiguration() {
     t.Errorf("Expected defaults but got %+v", cfg)
+  }
+}
+
+func Test_LoadConfiguration_MissingFileIsNotCreated(t *testing.T) {
+  path := filepath.Join(t.TempDir(), "config.json")
+
+  if _, err := LoadConfiguration(path); err != nil {
+    t.Fatalf("Expected no error but got %v", err)
+  }
+
+  if _, err := os.Stat(path); !os.IsNotExist(err) {
+    t.Error("Expected LoadConfiguration to not create config.json when it's absent")
   }
 }
 
@@ -22,7 +37,10 @@ func Test_LoadConfiguration_EmptyFileFallsBackToDefaults(t *testing.T) {
     t.Fatal(err)
   }
 
-  cfg := LoadConfiguration(path)
+  cfg, err := LoadConfiguration(path)
+  if err != nil {
+    t.Fatalf("Expected no error but got %v", err)
+  }
 
   if *cfg != *DefaultConfiguration() {
     t.Errorf("Expected defaults but got %+v", cfg)
@@ -35,7 +53,10 @@ func Test_LoadConfiguration_PartialOverrideKeepsDefaultsForOmittedFields(t *test
     t.Fatal(err)
   }
 
-  cfg := LoadConfiguration(path)
+  cfg, err := LoadConfiguration(path)
+  if err != nil {
+    t.Fatalf("Expected no error but got %v", err)
+  }
 
   if cfg.Idle.KickAfterMinutes != 30 {
     t.Errorf("Expected KickAfterMinutes to be 30 but got %d", cfg.Idle.KickAfterMinutes)
@@ -58,16 +79,14 @@ func Test_LoadConfiguration_PartialOverrideKeepsDefaultsForOmittedFields(t *test
   }
 }
 
-func Test_LoadConfiguration_MalformedJSONFallsBackToDefaults(t *testing.T) {
+func Test_LoadConfiguration_MalformedJSONErrors(t *testing.T) {
   path := filepath.Join(t.TempDir(), "config.json")
   if err := os.WriteFile(path, []byte(`{not valid json`), 0644); err != nil {
     t.Fatal(err)
   }
 
-  cfg := LoadConfiguration(path)
-
-  if *cfg != *DefaultConfiguration() {
-    t.Errorf("Expected defaults but got %+v", cfg)
+  if _, err := LoadConfiguration(path); err == nil {
+    t.Error("Expected an error for malformed JSON but got nil")
   }
 }
 
@@ -77,35 +96,45 @@ func Test_LoadConfiguration_DefaultRoomIDOverrideIsRespected(t *testing.T) {
     t.Fatal(err)
   }
 
-  cfg := LoadConfiguration(path)
+  cfg, err := LoadConfiguration(path)
+  if err != nil {
+    t.Fatalf("Expected no error but got %v", err)
+  }
 
   if cfg.DefaultRoomID != 9 {
     t.Errorf("Expected DefaultRoomID to be 9 but got %d", cfg.DefaultRoomID)
   }
 }
 
-func Test_LoadConfiguration_InvalidDefaultRoomIDFallsBackToDefault(t *testing.T) {
+func Test_LoadConfiguration_InvalidDefaultRoomIDErrors(t *testing.T) {
   path := filepath.Join(t.TempDir(), "config.json")
   if err := os.WriteFile(path, []byte(`{"default_room_id":-1}`), 0644); err != nil {
     t.Fatal(err)
   }
 
-  cfg := LoadConfiguration(path)
-
-  if cfg.DefaultRoomID != 15 {
-    t.Errorf("Expected DefaultRoomID to fall back to 15 but got %d", cfg.DefaultRoomID)
+  if _, err := LoadConfiguration(path); err == nil {
+    t.Error("Expected an error for an invalid default_room_id but got nil")
   }
 }
 
-func Test_LoadConfiguration_InvalidCheckIntervalFallsBackToDefaults(t *testing.T) {
+func Test_LoadConfiguration_InvalidCheckIntervalErrors(t *testing.T) {
   path := filepath.Join(t.TempDir(), "config.json")
   if err := os.WriteFile(path, []byte(`{"idle":{"check_interval_seconds":0}}`), 0644); err != nil {
     t.Fatal(err)
   }
 
-  cfg := LoadConfiguration(path)
+  if _, err := LoadConfiguration(path); err == nil {
+    t.Error("Expected an error for an invalid check_interval_seconds but got nil")
+  }
+}
 
-  if *cfg != *DefaultConfiguration() {
-    t.Errorf("Expected defaults but got %+v", cfg)
+func Test_LoadConfiguration_KickAfterNotGreaterThanWarnAfterErrors(t *testing.T) {
+  path := filepath.Join(t.TempDir(), "config.json")
+  if err := os.WriteFile(path, []byte(`{"idle":{"warn_after_minutes":10,"kick_after_minutes":5}}`), 0644); err != nil {
+    t.Fatal(err)
+  }
+
+  if _, err := LoadConfiguration(path); err == nil {
+    t.Error("Expected an error when kick_after_minutes <= warn_after_minutes but got nil")
   }
 }

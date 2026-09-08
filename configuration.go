@@ -2,9 +2,11 @@ package main
 
 import (
   "encoding/json"
+  "fmt"
   "io/ioutil"
   "log"
   "os"
+  "time"
 )
 
 const Config string = "config.json"
@@ -21,6 +23,22 @@ type IdleConfig struct {
   CheckIntervalSeconds int `json:"check_interval_seconds"`
 }
 
+type IdleDurations struct {
+  WarnAfter     time.Duration
+  WarnInterval  time.Duration
+  KickAfter     time.Duration
+  CheckInterval time.Duration
+}
+
+func (c IdleConfig) Durations() IdleDurations {
+  return IdleDurations{
+    WarnAfter:     time.Duration(c.WarnAfterMinutes) * time.Minute,
+    WarnInterval:  time.Duration(c.WarnIntervalMinutes) * time.Minute,
+    KickAfter:     time.Duration(c.KickAfterMinutes) * time.Minute,
+    CheckInterval: time.Duration(c.CheckIntervalSeconds) * time.Second,
+  }
+}
+
 func DefaultConfiguration() *Configuration {
   return &Configuration{
     DefaultRoomID: 15,
@@ -33,36 +51,41 @@ func DefaultConfiguration() *Configuration {
   }
 }
 
-func LoadConfiguration(filename string) *Configuration {
-  f, err := os.OpenFile(filename, os.O_CREATE, 0644)
-  if err != nil {
-    panic(err)
+// LoadConfiguration reads filename if it exists and returns the resulting
+// Configuration. A missing or empty file is not an error -- defaults are
+// used and logged. Any config.json that *does* specify values is expected
+// to specify valid ones; a malformed file or an out-of-range setting is
+// treated as a misconfiguration and returned as an error so the caller can
+// refuse to start rather than silently running with different settings
+// than the operator intended.
+func LoadConfiguration(filename string) (*Configuration, error) {
+  if _, err := os.Stat(filename); os.IsNotExist(err) {
+    log.Printf("%s not found, using default configuration", filename)
+    return DefaultConfiguration(), nil
   }
-  defer f.Close()
 
-  b, err := ioutil.ReadAll(f)
+  b, err := ioutil.ReadFile(filename)
   if err != nil {
-    panic(err)
+    return nil, fmt.Errorf("reading %s: %w", filename, err)
+  }
+
+  if len(b) == 0 {
+    log.Printf("%s is empty, using default configuration", filename)
+    return DefaultConfiguration(), nil
   }
 
   cfg := DefaultConfiguration()
-  if len(b) == 0 {
-    return cfg
-  }
-
   if err := json.Unmarshal(b, cfg); err != nil {
-    log.Printf("Error parsing %s, falling back to defaults: %v", filename, err)
-    return DefaultConfiguration()
+    return nil, fmt.Errorf("parsing %s: %w", filename, err)
   }
 
   if cfg.Idle.WarnAfterMinutes <= 0 || cfg.Idle.WarnIntervalMinutes <= 0 || cfg.Idle.KickAfterMinutes <= cfg.Idle.WarnAfterMinutes || cfg.Idle.CheckIntervalSeconds <= 0 {
-    log.Printf("Invalid idle config in %s, falling back to defaults", filename)
-    cfg.Idle = DefaultConfiguration().Idle
+    return nil, fmt.Errorf("invalid idle config in %s: %+v", filename, cfg.Idle)
   }
 
   if cfg.DefaultRoomID <= 0 {
-    cfg.DefaultRoomID = DefaultConfiguration().DefaultRoomID
+    return nil, fmt.Errorf("invalid default_room_id in %s: %d", filename, cfg.DefaultRoomID)
   }
 
-  return cfg
+  return cfg, nil
 }

@@ -1,9 +1,9 @@
 package main
 
 import (
+  "fmt"
   "log"
   "net"
-  "time"
 
   "github.com/joelevering/gomud/player"
   "github.com/joelevering/gomud/interfaces"
@@ -21,7 +21,11 @@ type GameState struct {
 }
 
 func main() {
-  config := LoadConfiguration(Config)
+  config, err := LoadConfiguration(Config)
+  if err != nil {
+    log.Fatalf("Invalid configuration, refusing to start: %v", err)
+  }
+
   gameState := initGameState(config)
 
   host := localIp() + ":" + port
@@ -38,15 +42,12 @@ func main() {
   var releaseName = make(chan string)
 
   connHandler := ConnHandler{
-    entering:          entering,
-    leaving:           leaving,
-    claimName:         claimName,
-    releaseName:       releaseName,
-    state:             gameState,
-    idleWarnAfter:     time.Duration(config.Idle.WarnAfterMinutes) * time.Minute,
-    idleWarnInterval:  time.Duration(config.Idle.WarnIntervalMinutes) * time.Minute,
-    idleKickAfter:     time.Duration(config.Idle.KickAfterMinutes) * time.Minute,
-    idleCheckInterval: time.Duration(config.Idle.CheckIntervalSeconds) * time.Second,
+    entering:    entering,
+    leaving:     leaving,
+    claimName:   claimName,
+    releaseName: releaseName,
+    state:       gameState,
+    idle:        config.Idle.Durations(),
   }
 
   gateKeeper := Gatekeeper{
@@ -81,7 +82,7 @@ func initGameState(config *Configuration) *GameState {
 
   err := room.LoadRooms("data/rooms.json", config.DefaultRoomID)
   if err != nil {
-    panic("Error loading rooms")
+    panic(fmt.Sprintf("Error loading rooms: %v", err))
   }
 
   err = InitNPs(room.RoomStore.Rooms, state.Queue)

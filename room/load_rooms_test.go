@@ -47,3 +47,11 @@ func Test_LoadingRooms(t *testing.T) {
     t.Errorf("Exit room ID expected to be room %v but got %v", rooms[1].GetID(), exit.GetRoom().GetID())
   }
 }
+
+func Test_LoadingRoomsErrorsWhenDefaultRoomDoesNotExist(t *testing.T) {
+  var err = LoadRooms("../data/rooms.json", 999999)
+
+  if err == nil {
+    t.Error("Expected an error when the default room ID doesn't exist, but got nil")
+  }
+}

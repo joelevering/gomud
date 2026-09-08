@@ -12,15 +12,12 @@ import (
 )
 
 type ConnHandler struct {
-  entering         chan *player.Player
-  leaving          chan *player.Player
-  claimName        chan nameClaimRequest
-  releaseName      chan string
-  state            *GameState
-  idleWarnAfter    time.Duration
-  idleWarnInterval time.Duration
-  idleKickAfter    time.Duration
-  idleCheckInterval time.Duration
+  entering    chan *player.Player
+  leaving     chan *player.Player
+  claimName   chan nameClaimRequest
+  releaseName chan string
+  state       *GameState
+  idle        IdleDurations
 }
 
 func (handler *ConnHandler) Handle(conn net.Conn) {
@@ -46,7 +43,7 @@ func (handler *ConnHandler) Handle(conn net.Conn) {
 
   lastActivity := &atomic.Int64{}
   lastActivity.Store(time.Now().UnixNano())
-  go watchIdle(p, conn, lastActivity, handler.idleWarnAfter, handler.idleWarnInterval, handler.idleKickAfter, handler.idleCheckInterval)
+  go watchIdle(p, conn, lastActivity, handler.idle)
 
   input := bufio.NewScanner(conn)
   for input.Scan() {
