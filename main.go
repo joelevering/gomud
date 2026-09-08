@@ -1,6 +1,7 @@
 package main
 
 import (
+  "fmt"
   "log"
   "net"
 
@@ -20,7 +21,12 @@ type GameState struct {
 }
 
 func main() {
-  gameState := initGameState()
+  config, err := LoadConfiguration(Config)
+  if err != nil {
+    log.Fatalf("Invalid configuration, refusing to start: %v", err)
+  }
+
+  gameState := initGameState(config)
 
   host := localIp() + ":" + port
   log.Print("Hosting on: " + host)
@@ -32,17 +38,25 @@ func main() {
 
   var entering = make(chan *player.Player)
   var leaving = make(chan *player.Player)
+  var claimName = make(chan nameClaimRequest)
+  var releaseName = make(chan string)
 
   connHandler := ConnHandler{
-    entering: entering,
-    leaving:  leaving,
-    state:    gameState,
+    entering:    entering,
+    leaving:     leaving,
+    claimName:   claimName,
+    releaseName: releaseName,
+    state:       gameState,
+    idle:        config.Idle.Durations(),
   }
 
   gateKeeper := Gatekeeper{
-    entering: entering,
-    leaving:  leaving,
-    state:    gameState,
+    entering:     entering,
+    leaving:      leaving,
+    claimName:    claimName,
+    releaseName:  releaseName,
+    state:        gameState,
+    pendingNames: make(map[string]bool),
   }
 
   go gateKeeper.KeepTheGate()
@@ -59,16 +73,16 @@ func main() {
   }
 }
 
-func initGameState() *GameState {
+func initGameState(config *Configuration) *GameState {
   var state = GameState{
     Queue: pubsub.NewQueue(),
     Store: storage.LoadStore("data/store.json"),
     Players: make(map[string]*player.Player),
   }
 
-  err := room.LoadRooms("data/rooms.json")
+  err := room.LoadRooms("data/rooms.json", config.DefaultRoomID)
   if err != nil {
-    panic("Error loading rooms")
+    panic(fmt.Sprintf("Error loading rooms: %v", err))
   }
 
   err = InitNPs(room.RoomStore.Rooms, state.Queue)

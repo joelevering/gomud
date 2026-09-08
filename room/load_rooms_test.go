@@ -3,7 +3,7 @@ package room
 import "testing"
 
 func Test_LoadingRooms(t *testing.T) {
-  var err = LoadRooms("../data/rooms.json")
+  var err = LoadRooms("../data/rooms.json", 15)
   if err != nil {
     t.Errorf("Error loading rooms: %s", err)
   }
@@ -45,5 +45,13 @@ func Test_LoadingRooms(t *testing.T) {
 
   if exit.GetRoom().GetID() != rooms[1].GetID() {
     t.Errorf("Exit room ID expected to be room %v but got %v", rooms[1].GetID(), exit.GetRoom().GetID())
+  }
+}
+
+func Test_LoadingRoomsErrorsWhenDefaultRoomDoesNotExist(t *testing.T) {
+  var err = LoadRooms("../data/rooms.json", 999999)
+
+  if err == nil {
+    t.Error("Expected an error when the default room ID doesn't exist, but got nil")
   }
 }
