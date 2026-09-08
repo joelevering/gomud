@@ -38,6 +38,54 @@ var ByName = map[string]*Class{
   "Slime Baby":  SlimeBaby,
   "Dog God":     DogGod,
   "Crab":        Crab,
+
+  // Fauna
+  "Vermin": Vermin,
+  "Vole": Vole,
+  "Bird": Bird,
+  "Goat": Goat,
+  "Lizard": Lizard,
+  "Amphibian": Amphibian,
+  "Snake": Snake,
+  "Insect": Insect,
+  "Boar": Boar,
+  "Plant": Plant,
+  "Fungus": Fungus,
+
+  // Constructs & Golems
+  "Construct": Construct,
+  "Golem": Golem,
+  "Golem King": GolemKing,
+
+  // Elementals & Spirits
+  "Elemental": Elemental,
+  "Elemental King": ElementalKing,
+  "Air Elemental": AirElemental,
+  "Dust Elemental": DustElemental,
+  "Zephyr": Zephyr,
+  "Spirit": Spirit,
+  "Ghost": Ghost,
+  "Undead": Undead,
+
+  // Cultists & Shrine
+  "Cultist": Cultist,
+  "Cultist Acolyte": CultistAcolyte,
+  "Cultist Zealot": CultistZealot,
+  "Cultist Warband Scout": CultistWarbandScout,
+  "Cultist High Priest": CultistHighPriest,
+  "Rogue Cultist": RogueCultist,
+  "Shrine Acolyte": ShrineAcolyte,
+  "Shrine Devotee": ShrineDevotee,
+  "Shrine Keeper": ShrineKeeper,
+
+  // Seneca Downs townsfolk
+  "Blacksmith": Blacksmith,
+  "Guard": Guard,
+  "Guard Captain": GuardCaptain,
+  "Innkeeper": Innkeeper,
+  "Merchant": Merchant,
+  "Peddler": Peddler,
+  "Shepherd": Shepherd,
 }
 
 func Find(name string) *Class {
@@ -358,4 +406,470 @@ var DogGod = &Class{
   },
   atkStats: []stats.Stat{stats.Str},
   defStats: []stats.Stat{stats.Flo},
+}
+
+// Fauna
+
+var Vermin = &Class{
+  name: "Vermin",
+  growth: StatGrowth{
+    Det: 18,
+    Stm: 5,
+    Foc: 5,
+    Flo: 6,
+  },
+  atkStats: []stats.Stat{stats.Flo},
+  defStats: []stats.Stat{stats.Flo},
+}
+
+var Vole = &Class{
+  name: "Vole",
+  growth: StatGrowth{
+    Det: 12,
+    Stm: 3,
+    Foc: 3,
+    Flo: 4,
+  },
+  atkStats: []stats.Stat{stats.Flo},
+  defStats: []stats.Stat{stats.Flo},
+}
+
+var Bird = &Class{
+  name: "Bird",
+  growth: StatGrowth{
+    Det: 14,
+    Stm: 4,
+    Foc: 4,
+    Flo: 5,
+  },
+  atkStats: []stats.Stat{stats.Flo},
+  defStats: []stats.Stat{stats.Flo},
+}
+
+var Goat = &Class{
+  name: "Goat",
+  growth: StatGrowth{
+    Det: 14,
+    Stm: 4,
+    Foc: 3,
+    Str: 4,
+  },
+  atkStats: []stats.Stat{stats.Str},
+  defStats: []stats.Stat{stats.Str},
+}
+
+var Lizard = &Class{
+  name: "Lizard",
+  growth: StatGrowth{
+    Det: 14,
+    Stm: 4,
+    Foc: 3,
+    Flo: 4,
+  },
+  atkStats: []stats.Stat{stats.Flo},
+  defStats: []stats.Stat{stats.Flo},
+}
+
+var Amphibian = &Class{
+  name: "Amphibian",
+  growth: StatGrowth{
+    Det: 24,
+    Stm: 7,
+    Foc: 5,
+    Str: 7,
+  },
+  atkStats: []stats.Stat{stats.Str},
+  defStats: []stats.Stat{stats.Str},
+}
+
+var Snake = &Class{
+  name: "Snake",
+  growth: StatGrowth{
+    Det: 20,
+    Stm: 5,
+    Foc: 5,
+    Flo: 7,
+  },
+  atkStats: []stats.Stat{stats.Flo},
+  defStats: []stats.Stat{stats.Flo},
+}
+
+var Insect = &Class{
+  name: "Insect",
+  growth: StatGrowth{
+    Det: 24,
+    Stm: 6,
+    Foc: 6,
+    Flo: 8,
+  },
+  atkStats: []stats.Stat{stats.Flo},
+  defStats: []stats.Stat{stats.Flo},
+}
+
+var Boar = &Class{
+  name: "Boar",
+  growth: StatGrowth{
+    Det: 20,
+    Stm: 8,
+    Foc: 4,
+    Str: 8,
+  },
+  atkStats: []stats.Stat{stats.Str},
+  defStats: []stats.Stat{stats.Str},
+}
+
+var Plant = &Class{
+  name: "Plant",
+  growth: StatGrowth{
+    Det: 26,
+    Stm: 8,
+    Foc: 5,
+    Str: 9,
+  },
+  atkStats: []stats.Stat{stats.Str},
+  defStats: []stats.Stat{stats.Str},
+}
+
+var Fungus = &Class{
+  name: "Fungus",
+  growth: StatGrowth{
+    Det: 18,
+    Stm: 6,
+    Foc: 4,
+    Str: 5,
+  },
+  atkStats: []stats.Stat{stats.Str},
+  defStats: []stats.Stat{stats.Str},
+}
+
+// Constructs & Golems
+
+var Construct = &Class{
+  name: "Construct",
+  growth: StatGrowth{
+    Det: 24,
+    Stm: 6,
+    Foc: 7,
+    Kno: 8,
+  },
+  atkStats: []stats.Stat{stats.Kno},
+  defStats: []stats.Stat{stats.Kno},
+}
+
+var Golem = &Class{
+  name: "Golem",
+  growth: StatGrowth{
+    Det: 30,
+    Stm: 10,
+    Foc: 8,
+    Kno: 10,
+  },
+  atkStats: []stats.Stat{stats.Kno},
+  defStats: []stats.Stat{stats.Kno},
+}
+
+var GolemKing = &Class{
+  name: "Golem King",
+  growth: StatGrowth{
+    Det: 60,
+    Stm: 20,
+    Foc: 18,
+    Kno: 20,
+  },
+  atkStats: []stats.Stat{stats.Kno},
+  defStats: []stats.Stat{stats.Kno},
+}
+
+// Elementals & Spirits
+
+var Elemental = &Class{
+  name: "Elemental",
+  growth: StatGrowth{
+    Det: 28,
+    Stm: 8,
+    Foc: 8,
+    Sag: 9,
+  },
+  atkStats: []stats.Stat{stats.Sag},
+  defStats: []stats.Stat{stats.Sag},
+}
+
+var ElementalKing = &Class{
+  name: "Elemental King",
+  growth: StatGrowth{
+    Det: 65,
+    Stm: 20,
+    Foc: 20,
+    Sag: 22,
+  },
+  atkStats: []stats.Stat{stats.Sag},
+  defStats: []stats.Stat{stats.Sag},
+}
+
+var AirElemental = &Class{
+  name: "Air Elemental",
+  growth: StatGrowth{
+    Det: 26,
+    Stm: 7,
+    Foc: 7,
+    Flo: 9,
+  },
+  atkStats: []stats.Stat{stats.Flo},
+  defStats: []stats.Stat{stats.Flo},
+}
+
+var DustElemental = &Class{
+  name: "Dust Elemental",
+  growth: StatGrowth{
+    Det: 22,
+    Stm: 6,
+    Foc: 6,
+    Flo: 8,
+  },
+  atkStats: []stats.Stat{stats.Flo},
+  defStats: []stats.Stat{stats.Flo},
+}
+
+var Zephyr = &Class{
+  name: "Zephyr",
+  growth: StatGrowth{
+    Det: 20,
+    Stm: 6,
+    Foc: 6,
+    Flo: 8,
+  },
+  atkStats: []stats.Stat{stats.Flo},
+  defStats: []stats.Stat{stats.Flo},
+}
+
+var Spirit = &Class{
+  name: "Spirit",
+  growth: StatGrowth{
+    Det: 24,
+    Stm: 6,
+    Foc: 8,
+    Sag: 9,
+  },
+  atkStats: []stats.Stat{stats.Sag},
+  defStats: []stats.Stat{stats.Sag},
+}
+
+var Ghost = &Class{
+  name: "Ghost",
+  growth: StatGrowth{
+    Det: 22,
+    Stm: 5,
+    Foc: 7,
+    Sag: 8,
+  },
+  atkStats: []stats.Stat{stats.Sag},
+  defStats: []stats.Stat{stats.Sag},
+}
+
+var Undead = &Class{
+  name: "Undead",
+  growth: StatGrowth{
+    Det: 28,
+    Stm: 8,
+    Foc: 7,
+    Sag: 10,
+  },
+  atkStats: []stats.Stat{stats.Sag},
+  defStats: []stats.Stat{stats.Sag},
+}
+
+// Cultists & Shrine
+
+var Cultist = &Class{
+  name: "Cultist",
+  growth: StatGrowth{
+    Det: 22,
+    Stm: 6,
+    Foc: 6,
+    Ing: 8,
+  },
+  atkStats: []stats.Stat{stats.Ing},
+  defStats: []stats.Stat{stats.Ing},
+}
+
+var CultistAcolyte = &Class{
+  name: "Cultist Acolyte",
+  growth: StatGrowth{
+    Det: 22,
+    Stm: 6,
+    Foc: 6,
+    Ing: 8,
+  },
+  atkStats: []stats.Stat{stats.Ing},
+  defStats: []stats.Stat{stats.Ing},
+}
+
+var CultistZealot = &Class{
+  name: "Cultist Zealot",
+  growth: StatGrowth{
+    Det: 26,
+    Stm: 7,
+    Foc: 6,
+    Ing: 9,
+  },
+  atkStats: []stats.Stat{stats.Ing},
+  defStats: []stats.Stat{stats.Ing},
+}
+
+var CultistWarbandScout = &Class{
+  name: "Cultist Warband Scout",
+  growth: StatGrowth{
+    Det: 26,
+    Stm: 7,
+    Foc: 7,
+    Ing: 9,
+  },
+  atkStats: []stats.Stat{stats.Ing},
+  defStats: []stats.Stat{stats.Ing},
+}
+
+var CultistHighPriest = &Class{
+  name: "Cultist High Priest",
+  growth: StatGrowth{
+    Det: 34,
+    Stm: 10,
+    Foc: 12,
+    Ing: 13,
+  },
+  atkStats: []stats.Stat{stats.Ing},
+  defStats: []stats.Stat{stats.Ing},
+}
+
+var RogueCultist = &Class{
+  name: "Rogue Cultist",
+  growth: StatGrowth{
+    Det: 26,
+    Stm: 7,
+    Foc: 6,
+    Ing: 9,
+  },
+  atkStats: []stats.Stat{stats.Ing},
+  defStats: []stats.Stat{stats.Ing},
+}
+
+var ShrineAcolyte = &Class{
+  name: "Shrine Acolyte",
+  growth: StatGrowth{
+    Det: 22,
+    Stm: 6,
+    Foc: 7,
+    Sag: 8,
+  },
+  atkStats: []stats.Stat{stats.Sag},
+  defStats: []stats.Stat{stats.Sag},
+}
+
+var ShrineDevotee = &Class{
+  name: "Shrine Devotee",
+  growth: StatGrowth{
+    Det: 22,
+    Stm: 6,
+    Foc: 7,
+    Sag: 8,
+  },
+  atkStats: []stats.Stat{stats.Sag},
+  defStats: []stats.Stat{stats.Sag},
+}
+
+var ShrineKeeper = &Class{
+  name: "Shrine Keeper",
+  growth: StatGrowth{
+    Det: 26,
+    Stm: 7,
+    Foc: 8,
+    Sag: 9,
+  },
+  atkStats: []stats.Stat{stats.Sag},
+  defStats: []stats.Stat{stats.Sag},
+}
+
+// Seneca Downs townsfolk
+
+var Blacksmith = &Class{
+  name: "Blacksmith",
+  growth: StatGrowth{
+    Det: 20,
+    Stm: 7,
+    Foc: 4,
+    Str: 7,
+  },
+  atkStats: []stats.Stat{stats.Str},
+  defStats: []stats.Stat{stats.Str},
+}
+
+var Guard = &Class{
+  name: "Guard",
+  growth: StatGrowth{
+    Det: 18,
+    Stm: 6,
+    Foc: 4,
+    Str: 6,
+  },
+  atkStats: []stats.Stat{stats.Str},
+  defStats: []stats.Stat{stats.Str},
+}
+
+var GuardCaptain = &Class{
+  name: "Guard Captain",
+  growth: StatGrowth{
+    Det: 24,
+    Stm: 8,
+    Foc: 5,
+    Str: 9,
+  },
+  atkStats: []stats.Stat{stats.Str},
+  defStats: []stats.Stat{stats.Str},
+}
+
+var Innkeeper = &Class{
+  name: "Innkeeper",
+  growth: StatGrowth{
+    Det: 14,
+    Stm: 4,
+    Foc: 4,
+    Sag: 4,
+  },
+  atkStats: []stats.Stat{stats.Sag},
+  defStats: []stats.Stat{stats.Sag},
+}
+
+var Merchant = &Class{
+  name: "Merchant",
+  growth: StatGrowth{
+    Det: 14,
+    Stm: 3,
+    Foc: 5,
+    Ing: 4,
+  },
+  atkStats: []stats.Stat{stats.Ing},
+  defStats: []stats.Stat{stats.Ing},
+}
+
+var Peddler = &Class{
+  name: "Peddler",
+  growth: StatGrowth{
+    Det: 16,
+    Stm: 4,
+    Foc: 5,
+    Ing: 5,
+  },
+  atkStats: []stats.Stat{stats.Ing},
+  defStats: []stats.Stat{stats.Ing},
+}
+
+var Shepherd = &Class{
+  name: "Shepherd",
+  growth: StatGrowth{
+    Det: 18,
+    Stm: 5,
+    Foc: 5,
+    Sag: 6,
+  },
+  atkStats: []stats.Stat{stats.Sag},
+  defStats: []stats.Stat{stats.Sag},
 }

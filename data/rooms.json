@@ -38,12 +38,22 @@
         "behavior": [
           {
             "trigger": "pc-enters",
-            "actions": [["say", "GREETINGS"]],
+            "actions": [
+              [
+                "say",
+                "GREETINGS"
+              ]
+            ],
             "chance": 1
           },
           {
             "trigger": "pc-leaves",
-            "actions": [["emote", "waves a stubby goo-hand goodbye."]],
+            "actions": [
+              [
+                "emote",
+                "waves a stubby goo-hand goodbye."
+              ]
+            ],
             "chance": 1
           }
         ]
@@ -226,23 +236,33 @@
         "behavior": [
           {
             "trigger": "pc-enters",
-            "actions": [["emote", "snips its claws in the air."]],
+            "actions": [
+              [
+                "emote",
+                "snips its claws in the air."
+              ]
+            ],
             "chance": 1
           },
           {
             "trigger": "pc-leaves",
-            "actions": [["say", "Phew"]],
+            "actions": [
+              [
+                "say",
+                "Phew"
+              ]
+            ],
             "chance": 1
           }
         ],
         "combat_behavior": [
           {
             "skill": "Pince",
-            "chance": 0.20
+            "chance": 0.2
           },
           {
             "skill": "Hide",
-            "chance": 0.20
+            "chance": 0.2
           }
         ]
       },
@@ -274,8 +294,8 @@
       },
       {
         "room_id": 12,
-        "key": "e",
-        "description": "Delve (e)ast into the densest swath of trees"
+        "key": "d",
+        "description": "(D)elve into the densest swath of trees"
       }
     ],
     "npcs": []
@@ -292,8 +312,8 @@
       },
       {
         "room_id": 13,
-        "key": "n",
-        "description": "(N)orth towards a nondescript section of trees"
+        "key": "e",
+        "description": "(E)ast towards a nondescript section of trees"
       },
       {
         "room_id": 16,
@@ -319,7 +339,12 @@
         "behavior": [
           {
             "trigger": "pc-enters",
-            "actions": [["emote", "looks away quickly."]],
+            "actions": [
+              [
+                "emote",
+                "looks away quickly."
+              ]
+            ],
             "chance": 1
           }
         ]
@@ -328,13 +353,18 @@
   },
   {
     "id": 12,
-    "name": "Slime Forest - Center - Western Edge",
+    "name": "Slime Forest - Western Edge",
     "description": "Trees and foliage crowd together unnaturally tightly, the sun darkened by their overhanging branches.",
     "exits": [
       {
         "room_id": 10,
         "key": "f",
         "description": "(F)ollow what light you can see"
+      },
+      {
+        "room_id": 87,
+        "key": "w",
+        "description": "(W)est, into the sudden hush of the swamp"
       }
     ],
     "npcs": [
@@ -388,6 +418,11 @@
         "room_id": 13,
         "key": "w",
         "description": "Down the (w)estward path"
+      },
+      {
+        "room_id": 49,
+        "key": "e",
+        "description": "(E)ast, where the path picks up again beyond the mud"
       }
     ],
     "npcs": [
@@ -543,6 +578,3267 @@
         "room_id": 18,
         "key": "e",
         "description": "Towards the (e)dge of the highland"
+      },
+      {
+        "room_id": 20,
+        "key": "s",
+        "description": "(S)outh, down the switchback onto the plateau"
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "name": "Tableland - Path - Rocky Switchback",
+    "description": "The cliffside trail zigzags sharply downward, red dust sliding loose underfoot with every step.\nBelow, the plateau opens into a hazy expanse the color of rust.",
+    "exits": [
+      {
+        "room_id": 19,
+        "key": "u",
+        "description": "(U)p the switchback, back toward the forest's edge"
+      },
+      {
+        "room_id": 21,
+        "key": "d",
+        "description": "(D)own the last stretch onto level ground"
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "name": "Tableland - Path - Windswept Flat",
+    "description": "A broad, sun-bleached flat stretches in every direction, the wind here constant and dry.\nWorn paths radiate outward like cracks in old pottery -- west into broken stone, east toward a haze of heat, and south into the plateau's depths.",
+    "exits": [
+      {
+        "room_id": 20,
+        "key": "n",
+        "description": "(N)orth toward the switchback"
+      },
+      {
+        "room_id": 22,
+        "key": "w",
+        "description": "(W)est toward a field of cracked stone"
+      },
+      {
+        "room_id": 26,
+        "key": "e",
+        "description": "(E)ast where the air shimmers with heat"
+      },
+      {
+        "room_id": 29,
+        "key": "s",
+        "description": "(S)outh, deeper onto the plateau"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 18,
+        "description": "A loose column of dust and air that drifts a few feet off the ground, unbothered by the wind",
+        "class": "Zephyr",
+        "character": {
+          "name": "Idle Zephyr",
+          "level": 5,
+          "exp_given": 25
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "spins lazily in place, scattering a little dust."
+              ]
+            ],
+            "chance": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "name": "Tableland - Path - Cracked Mesa Trail",
+    "description": "The ground here has split into a maze of dry, sun-cracked plates, each one shifting slightly underfoot.\nThe trail threads carefully between them.",
+    "exits": [
+      {
+        "room_id": 21,
+        "key": "e",
+        "description": "(E)ast back to the flat"
+      },
+      {
+        "room_id": 23,
+        "key": "w",
+        "description": "(W)est into the heart of the cracked stone"
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "name": "Tableland - Path - Cracked Mesa",
+    "description": "Slabs of rust-colored rock jut up at odd angles, as if the ground itself buckled long ago.",
+    "exits": [
+      {
+        "room_id": 22,
+        "key": "e",
+        "description": "(E)ast toward the trail"
+      },
+      {
+        "room_id": 24,
+        "key": "n",
+        "description": "(N)orth along a narrowing ledge"
+      },
+      {
+        "room_id": 25,
+        "key": "s",
+        "description": "(S)outh where the fissures widen"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 19,
+        "description": "A hunched shape of packed dust and stone that rises from a crack when it senses movement",
+        "class": "Dust Elemental",
+        "character": {
+          "name": "Dust Elemental",
+          "level": 6,
+          "exp_given": 30
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "grinds upright, shedding a hiss of dust."
+              ]
+            ],
+            "chance": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "name": "Tableland - Path - Crumbling Ledge",
+    "description": "The trail narrows to a ledge that crumbles a little more with every gust of wind.\nFar below, the plateau falls away into shadow.",
+    "exits": [
+      {
+        "room_id": 23,
+        "key": "s",
+        "description": "(S)outh back onto solid ground"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 20,
+        "description": "Coalesced air swirls at the ledge's edge, daring you to get closer",
+        "class": "Air Elemental",
+        "character": {
+          "name": "Ledge Warden",
+          "level": 7,
+          "exp_given": 35
+        }
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "name": "Tableland - Path - Fissure Crossing",
+    "description": "A series of narrow fissures split the ground here, some no wider than a footstep, others wide enough to swallow one.\nA faint, dry whistling rises from below.",
+    "exits": [
+      {
+        "room_id": 23,
+        "key": "n",
+        "description": "(N)orth back to the mesa"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 21,
+        "description": "A thin wisp of dust that darts between the fissures, more curious than dangerous",
+        "class": "Zephyr",
+        "character": {
+          "name": "Dust Wisp",
+          "level": 5,
+          "exp_given": 25
+        }
+      }
+    ]
+  },
+  {
+    "id": 26,
+    "name": "Tableland - Path - Sunbaked Trail",
+    "description": "Heat rises visibly off the rock here, bending the horizon into a shimmer.\nThe trail presses on regardless.",
+    "exits": [
+      {
+        "room_id": 21,
+        "key": "w",
+        "description": "(W)est back to the flat"
+      },
+      {
+        "room_id": 27,
+        "key": "e",
+        "description": "(E)ast into a shallow hollow"
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "name": "Tableland - Path - Sunbaked Hollow",
+    "description": "A shallow depression in the rock offers a sliver of shade, though little relief from the heat.",
+    "exits": [
+      {
+        "room_id": 26,
+        "key": "w",
+        "description": "(W)est toward the sunbaked trail"
+      },
+      {
+        "room_id": 28,
+        "key": "e",
+        "description": "(E)ast, further into the heat"
+      },
+      {
+        "room_id": 48,
+        "key": "n",
+        "description": "(N)orth along a lesser path"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 22,
+        "description": "A playful gust that keeps snatching at loose items and darting away",
+        "class": "Zephyr",
+        "character": {
+          "name": "Mischievous Zephyr",
+          "level": 6,
+          "exp_given": 30
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "tugs at your belongings, then giggles away."
+              ]
+            ],
+            "chance": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 28,
+    "name": "Tableland - Path - Baked Overlook",
+    "description": "The trail ends at a scorched overlook, the rock underfoot cracked from some long-ago heat.\nThe view stretches for miles, empty and red.",
+    "exits": [
+      {
+        "room_id": 27,
+        "key": "w",
+        "description": "(W)est back to the hollow"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 23,
+        "description": "A sentinel of compressed air that seems to watch the horizon more than you",
+        "class": "Air Elemental",
+        "character": {
+          "name": "Overlook Sentinel",
+          "level": 7,
+          "exp_given": 35
+        }
+      }
+    ]
+  },
+  {
+    "id": 29,
+    "name": "Tableland - Path - Long Stretch",
+    "description": "The path runs straight and flat for a long while, the wind at your back the whole way.",
+    "exits": [
+      {
+        "room_id": 21,
+        "key": "n",
+        "description": "(N)orth back to the flat"
+      },
+      {
+        "room_id": 30,
+        "key": "s",
+        "description": "(S)outh toward a crossroads"
+      }
+    ]
+  },
+  {
+    "id": 30,
+    "name": "Tableland - Path - Weathered Crossroads",
+    "description": "Four paths meet here at a crossroads worn smooth by countless footsteps.\nFaint chanting drifts in from the east, and the trail south feels somehow colder despite the sun.",
+    "exits": [
+      {
+        "room_id": 29,
+        "key": "n",
+        "description": "(N)orth toward the flat"
+      },
+      {
+        "room_id": 31,
+        "key": "w",
+        "description": "(W)est down a lesser-used trail"
+      },
+      {
+        "room_id": 32,
+        "key": "e",
+        "description": "(E)ast toward the sound of chanting"
+      },
+      {
+        "room_id": 37,
+        "key": "s",
+        "description": "(S)outh, deeper still"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 25,
+        "description": "A weathered traveler crouched at the crossroads, tracing shapes in the dust with a stick",
+        "class": "Cultist",
+        "character": {
+          "name": "Cultist Wanderer",
+          "level": 7,
+          "exp_given": 35
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "say",
+                "Another one, drawn south. They always are."
+              ]
+            ],
+            "chance": 0.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 31,
+    "name": "Tableland - Path - Sunken Trail",
+    "description": "The trail dips into a shallow basin here, the wind cutting off abruptly and leaving an odd stillness.",
+    "exits": [
+      {
+        "room_id": 30,
+        "key": "e",
+        "description": "(E)ast back to the crossroads"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 26,
+        "description": "A cultist sits cross-legged in the stillness, eyes closed, unbothered by your presence",
+        "class": "Cultist",
+        "character": {
+          "name": "Meditating Cultist",
+          "level": 6,
+          "exp_given": 30
+        }
+      }
+    ]
+  },
+  {
+    "id": 32,
+    "name": "Tableland - Path - Cultist Byway",
+    "description": "Faded markings, half worn away by wind and sand, line this stretch of trail.\nThe chanting grows steadily louder.",
+    "exits": [
+      {
+        "room_id": 30,
+        "key": "w",
+        "description": "(W)est back to the crossroads"
+      },
+      {
+        "room_id": 33,
+        "key": "e",
+        "description": "(E)ast toward the source of the chanting"
+      }
+    ]
+  },
+  {
+    "id": 33,
+    "name": "Tableland - Ritual Circle - Outskirts",
+    "description": "A ring of weathered standing stones marks the outer edge of a ritual site.\nRobed figures move between them, their chanting low and steady.",
+    "exits": [
+      {
+        "room_id": 32,
+        "key": "w",
+        "description": "(W)est down the byway"
+      },
+      {
+        "room_id": 34,
+        "key": "e",
+        "description": "(E)ast, closer to the stones"
+      },
+      {
+        "room_id": 40,
+        "key": "s",
+        "description": "(S)outh along a fainter trail"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 27,
+        "description": "A wary acolyte watches the outskirts, more curious than hostile",
+        "class": "Cultist Acolyte",
+        "character": {
+          "name": "Wary Acolyte",
+          "level": 7,
+          "exp_given": 35
+        }
+      }
+    ]
+  },
+  {
+    "id": 34,
+    "name": "Tableland - Ritual Circle - Outer Ring",
+    "description": "The standing stones grow denser here, arranged in a wide, deliberate ring.\nThe chanting is no longer distant -- it surrounds you.",
+    "exits": [
+      {
+        "room_id": 33,
+        "key": "w",
+        "description": "(W)est back to the outskirts"
+      },
+      {
+        "room_id": 35,
+        "key": "e",
+        "description": "(E)ast toward a flicker of firelight"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 28,
+        "description": "A zealous cultist bars the way forward, robes marked with unfamiliar sigils",
+        "class": "Cultist Zealot",
+        "character": {
+          "name": "Cultist Zealot",
+          "level": 8,
+          "exp_given": 40
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "say",
+                "The circle is not for outsiders."
+              ]
+            ],
+            "chance": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 35,
+    "name": "Tableland - Ritual Circle - Bonfire Camp",
+    "description": "A modest camp surrounds a low bonfire, its smoke bending sideways in the wind.\nPots and bundled supplies suggest the cultists here have settled in for a long stay.",
+    "exits": [
+      {
+        "room_id": 34,
+        "key": "w",
+        "description": "(W)est back to the outer ring"
+      },
+      {
+        "room_id": 36,
+        "key": "e",
+        "description": "(E)ast into a hush of quiet chanting"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 29,
+        "description": "A cultist tends the fire without looking up, unconcerned with anything beyond the flames",
+        "class": "Cultist",
+        "character": {
+          "name": "Camp Tender",
+          "level": 7,
+          "exp_given": 35
+        }
+      }
+    ]
+  },
+  {
+    "id": 36,
+    "name": "Tableland - Ritual Circle - Inner Sanctum",
+    "description": "At the center of the ring stands a slab of dark, wind-polished stone, ringed by a hush deeper than silence should allow.",
+    "exits": [
+      {
+        "room_id": 35,
+        "key": "w",
+        "description": "(W)est back to the camp"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 30,
+        "description": "An elder cultist presides over the slab, voice never wavering, eyes never opening",
+        "class": "Cultist High Priest",
+        "character": {
+          "name": "High Priest of the Circle",
+          "level": 10,
+          "exp_given": 150
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "say",
+                "You are early. Or perhaps, right on time."
+              ]
+            ],
+            "chance": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 37,
+    "name": "Tableland - Path - Southbound Trail",
+    "description": "The crossroads falls behind as the trail presses south, the plateau's red dust deepening into a darker shade.",
+    "exits": [
+      {
+        "room_id": 30,
+        "key": "n",
+        "description": "(N)orth back to the crossroads"
+      },
+      {
+        "room_id": 38,
+        "key": "s",
+        "description": "(S)outh, where the ground begins to change"
+      }
+    ]
+  },
+  {
+    "id": 38,
+    "name": "Tableland - Path - Sparse Grass",
+    "description": "Thin blades of grass have begun to push up through the cracked earth here, the first sign of anything green since the forest.\nThe trail forks, one branch continuing south, another curving west toward scorched ground.",
+    "exits": [
+      {
+        "room_id": 37,
+        "key": "n",
+        "description": "(N)orth toward the southbound trail"
+      },
+      {
+        "room_id": 39,
+        "key": "s",
+        "description": "(S)outh, further along the plateau's edge"
+      },
+      {
+        "room_id": 44,
+        "key": "w",
+        "description": "(W)est toward a haze of heat"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 34,
+        "description": "A restless gust of air kicks up loose dust and grass in equal measure",
+        "class": "Air Elemental",
+        "character": {
+          "name": "Restless Gust",
+          "level": 8,
+          "exp_given": 40
+        }
+      }
+    ]
+  },
+  {
+    "id": 39,
+    "name": "Tableland - Path - Southern Edge",
+    "description": "The trail thins and fades, the plateau's dust giving way at last to something greener and unfamiliar in the distance.\nThe way forward is not yet worn.",
+    "exits": [
+      {
+        "room_id": 38,
+        "key": "n",
+        "description": "(N)orth back onto the plateau"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 35,
+        "description": "A cultist scout crouches at the border, watching whatever lies beyond with open suspicion",
+        "class": "Cultist Warband Scout",
+        "character": {
+          "name": "Border Scout",
+          "level": 9,
+          "exp_given": 45
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "eyes you warily, hand resting on a weapon at their hip."
+              ]
+            ],
+            "chance": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 40,
+    "name": "Tableland - Path - Fractured Trail",
+    "description": "A narrow trail splits off from the ritual site, the ground here fractured into long, shallow trenches.",
+    "exits": [
+      {
+        "room_id": 33,
+        "key": "n",
+        "description": "(N)orth back to the outskirts"
+      },
+      {
+        "room_id": 41,
+        "key": "s",
+        "description": "(S)outh toward a lighter sound of song"
+      }
+    ]
+  },
+  {
+    "id": 41,
+    "name": "Tableland - Sunlit Shrine - Outskirts",
+    "description": "The trenches give way to open ground and a small shrine bathed in unusually bright light.\nThe air here feels warmer, gentler than the rest of the plateau.",
+    "exits": [
+      {
+        "room_id": 40,
+        "key": "n",
+        "description": "(N)orth back up the fractured trail"
+      },
+      {
+        "room_id": 42,
+        "key": "s",
+        "description": "(S)outh toward the shrine proper"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 31,
+        "description": "A calm devotee sits at the shrine's edge, humming a quiet tune",
+        "class": "Shrine Devotee",
+        "character": {
+          "name": "Sunlit Devotee",
+          "level": 7,
+          "exp_given": 35
+        }
+      }
+    ]
+  },
+  {
+    "id": 42,
+    "name": "Tableland - Sunlit Shrine - Prayer Ring",
+    "description": "A ring of pale stones surrounds a modest altar, kept clean of the plateau's ever-present dust.\nSeveral devotees kneel here in quiet prayer.",
+    "exits": [
+      {
+        "room_id": 41,
+        "key": "n",
+        "description": "(N)orth back to the outskirts"
+      },
+      {
+        "room_id": 43,
+        "key": "s",
+        "description": "(S)outh toward the shrine's keeper"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 32,
+        "description": "A young acolyte prays quietly, opening one eye to note your arrival before continuing",
+        "class": "Shrine Acolyte",
+        "character": {
+          "name": "Sunlit Acolyte",
+          "level": 6,
+          "exp_given": 30
+        }
+      }
+    ]
+  },
+  {
+    "id": 43,
+    "name": "Tableland - Sunlit Shrine - Sanctum",
+    "description": "The shrine's innermost chamber holds a small, sunlit altar, the only structure on the plateau that seems entirely at peace.\nEven the wind is gentler here.",
+    "exits": [
+      {
+        "room_id": 42,
+        "key": "n",
+        "description": "(N)orth back to the prayer ring"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 33,
+        "description": "The shrine keeper watches you approach with calm, appraising eyes -- not hostile, but not entirely trusting either",
+        "class": "Shrine Keeper",
+        "character": {
+          "name": "Keeper of the Sunlit Shrine",
+          "level": 8,
+          "exp_given": 40
+        }
+      }
+    ]
+  },
+  {
+    "id": 44,
+    "name": "Tableland - Path - Scorched Flat",
+    "description": "The ground here is blackened and glassy in patches, as if scorched by something far hotter than the sun.",
+    "exits": [
+      {
+        "room_id": 38,
+        "key": "e",
+        "description": "(E)ast back to the sparse grass"
+      },
+      {
+        "room_id": 45,
+        "key": "w",
+        "description": "(W)est deeper into the scorched ground"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 36,
+        "description": "A column of superheated air shimmers where it stands, the ground beneath it faintly smoking",
+        "class": "Air Elemental",
+        "character": {
+          "name": "Scorched Elemental",
+          "level": 9,
+          "exp_given": 45
+        }
+      }
+    ]
+  },
+  {
+    "id": 45,
+    "name": "Tableland - Path - Whispering Stones",
+    "description": "A scatter of small stones here hums faintly in the wind, each one carrying a different note.\nThe effect is unsettling more than musical.",
+    "exits": [
+      {
+        "room_id": 44,
+        "key": "e",
+        "description": "(E)ast back to the scorched flat"
+      },
+      {
+        "room_id": 46,
+        "key": "w",
+        "description": "(W)est toward a rising bluff"
+      },
+      {
+        "room_id": 47,
+        "key": "s",
+        "description": "(S)outh toward a lone altar"
+      }
+    ]
+  },
+  {
+    "id": 46,
+    "name": "Tableland - Path - Wind Scoured Bluff",
+    "description": "The plateau rises to its highest point here, scoured bare by wind that never seems to stop.",
+    "exits": [
+      {
+        "room_id": 45,
+        "key": "e",
+        "description": "(E)ast back to the stones"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 37,
+        "description": "A towering, near-solid column of wind and grit that dwarfs anything else you've seen on the plateau",
+        "class": "Air Elemental",
+        "character": {
+          "name": "Bluff Warden",
+          "level": 10,
+          "exp_given": 150
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "roars, a sound made entirely of wind."
+              ]
+            ],
+            "chance": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47,
+    "name": "Tableland - Path - Forgotten Altar",
+    "description": "A cracked altar sits half-buried in drifted dust, its carvings worn past recognition.\nSomething about it feels deliberately abandoned.",
+    "exits": [
+      {
+        "room_id": 45,
+        "key": "n",
+        "description": "(N)orth back to the stones"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 38,
+        "description": "A lone cultist picks through the altar's ruins, hostile to anyone who might take what they've found",
+        "class": "Rogue Cultist",
+        "character": {
+          "name": "Rogue Cultist",
+          "level": 9,
+          "exp_given": 45
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "say",
+                "Mine. All of it."
+              ]
+            ],
+            "chance": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 48,
+    "name": "Tableland - Path - Eastern Overlook",
+    "description": "A narrow spur climbs to a second overlook, quieter than the first, facing further east.",
+    "exits": [
+      {
+        "room_id": 27,
+        "key": "s",
+        "description": "(S)outh back to the hollow"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 24,
+        "description": "A small gust that circles the overlook in lazy loops",
+        "class": "Zephyr",
+        "character": {
+          "name": "Circling Zephyr",
+          "level": 6,
+          "exp_given": 30
+        }
+      }
+    ]
+  },
+  {
+    "id": 49,
+    "name": "Seneca Downs - Path - Western Edge",
+    "description": "The forest thins abruptly here, dark trunks giving way to open sky and the smell of turned earth.\nA worn cart path continues east into farmland; the tree line waits close behind to the west.",
+    "exits": [
+      {
+        "room_id": 14,
+        "key": "w",
+        "description": "(W)est, back into the darker press of the forest"
+      },
+      {
+        "room_id": 50,
+        "key": "e",
+        "description": "(E)ast, along the cart path into open country"
+      }
+    ]
+  },
+  {
+    "id": 50,
+    "name": "Seneca Downs - Path - Furrowed Field",
+    "description": "Neat furrows of tilled soil stretch alongside the path, though no farmer is in sight.\nA scatter of mice work busily among the exposed roots of a smattering of oak trees.",
+    "exits": [
+      {
+        "room_id": 49,
+        "key": "w",
+        "description": "(W)est back toward the forest"
+      },
+      {
+        "room_id": 51,
+        "key": "e",
+        "description": "(E)ast, up a gentle rise"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 39,
+        "description": "A skittering knot of small brown bodies, more numerous than any one of them is dangerous.",
+        "class": "Vermin",
+        "character": {
+          "name": "Field Mouse Swarm",
+          "level": 1,
+          "exp_given": 5
+        }
+      }
+    ]
+  },
+  {
+    "id": 51,
+    "name": "Seneca Downs - Path - Grazing Slope",
+    "description": "The land rises into a broad, grassy slope dotted with grazing animals and the occasional half-buried stone.\nWind moves through the grass in long, slow waves.",
+    "exits": [
+      {
+        "room_id": 50,
+        "key": "w",
+        "description": "(W)est, down toward the field"
+      },
+      {
+        "room_id": 52,
+        "key": "e",
+        "description": "(E)ast, further up the slope"
+      },
+      {
+        "room_id": 53,
+        "key": "s",
+        "description": "(S)outh along a fence line"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 40,
+        "description": "A shaggy goat that eyes you with mild, chewing indifference.",
+        "class": "Goat",
+        "character": {
+          "name": "Grazing Goat",
+          "level": 1,
+          "exp_given": 5
+        }
+      }
+    ]
+  },
+  {
+    "id": 53,
+    "name": "Seneca Downs - Path - Fence Line",
+    "description": "A low wooden fence runs the length of the path, its posts silvered with age.\nBeyond it, the pasture rolls on unbroken.",
+    "exits": [
+      {
+        "room_id": 51,
+        "key": "n",
+        "description": "(N)orth, back up the slope"
+      }
+    ]
+  },
+  {
+    "id": 52,
+    "name": "Seneca Downs - Path - Cart Track",
+    "description": "Deep ruts mark where heavy carts have passed this way many times before.\nBoulders, some as large as a person, sit scattered to either side.",
+    "exits": [
+      {
+        "room_id": 51,
+        "key": "w",
+        "description": "(W)est, back down the slope"
+      },
+      {
+        "room_id": 54,
+        "key": "e",
+        "description": "(E)ast, where the boulders grow thicker"
+      }
+    ]
+  },
+  {
+    "id": 54,
+    "name": "Seneca Downs - Path - Boulder Field",
+    "description": "Enormous boulders crowd together here, remnants of some ancient upheaval, forming natural corridors between them.",
+    "exits": [
+      {
+        "room_id": 52,
+        "key": "w",
+        "description": "(W)est, along the cart track"
+      },
+      {
+        "room_id": 55,
+        "key": "e",
+        "description": "(E)ast, past the last of the boulders"
+      },
+      {
+        "room_id": 56,
+        "key": "n",
+        "description": "(N)orth into a cluster of lichen-crusted stones"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 41,
+        "description": "A mottled lizard the color of the stone it suns itself on.",
+        "class": "Lizard",
+        "character": {
+          "name": "Rock Lizard",
+          "level": 2,
+          "exp_given": 10
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "flicks its tongue and eyes you warily from atop a sun-warmed stone."
+              ]
+            ],
+            "chance": 0.6
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 56,
+    "name": "Seneca Downs - Path - Lichen-Crusted Stones",
+    "description": "Thick lichen, orange and pale green, blankets a knot of smaller stones tucked among the boulders.",
+    "exits": [
+      {
+        "room_id": 54,
+        "key": "s",
+        "description": "(S)outh, back into the boulder field"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 43,
+        "description": "A fat, dirt-streaked vole pauses mid-dig, whiskers twitching.",
+        "class": "Vole",
+        "character": {
+          "name": "Burrowing Vole",
+          "level": 1,
+          "exp_given": 5
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "pauses its digging just long enough to eye you, then resumes."
+              ]
+            ],
+            "chance": 0.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 55,
+    "name": "Seneca Downs - Path - Hedgerow",
+    "description": "A tangled hedgerow marks the boundary of some long-abandoned field, thick enough to hide most of what moves through it.\nCrows scold you from its upper branches.",
+    "exits": [
+      {
+        "room_id": 54,
+        "key": "w",
+        "description": "(W)est, into the boulder field"
+      },
+      {
+        "room_id": 57,
+        "key": "e",
+        "description": "(E)ast, following the hedge uphill"
+      },
+      {
+        "room_id": 67,
+        "key": "n",
+        "description": "(N)orth toward a leaning silo"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 42,
+        "description": "A glossy black raven that watches you sidelong, unbothered.",
+        "class": "Bird",
+        "character": {
+          "name": "Crop Raven",
+          "level": 1,
+          "exp_given": 5
+        }
+      }
+    ]
+  },
+  {
+    "id": 67,
+    "name": "Seneca Downs - Path - Grain Silo Ruins",
+    "description": "A collapsed grain silo leans against the hillside, its wooden staves long since rotted through.\nBirds have claimed what's left of it.",
+    "exits": [
+      {
+        "room_id": 55,
+        "key": "s",
+        "description": "(S)outh, back to the hedgerow"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 52,
+        "description": "A cluster of crows crowd the silo's broken rafters, unwilling to give up the perch.",
+        "class": "Bird",
+        "character": {
+          "name": "Nesting Crows",
+          "level": 2,
+          "exp_given": 10
+        }
+      }
+    ]
+  },
+  {
+    "id": 57,
+    "name": "Seneca Downs - Path - Windswept Rise",
+    "description": "The hill crests into a rise with a long view back over the farmland below.\nA wind-bent tree leans over a worn path at its peak.",
+    "exits": [
+      {
+        "room_id": 55,
+        "key": "w",
+        "description": "(W)est, down the hedge"
+      },
+      {
+        "room_id": 58,
+        "key": "e",
+        "description": "(E)ast, down the far side of the rise"
+      },
+      {
+        "room_id": 59,
+        "key": "n",
+        "description": "(N)orth toward a lonely fence post"
+      },
+      {
+        "room_id": 60,
+        "key": "s",
+        "description": "(S)outh down a sunken lane"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 44,
+        "description": "A stooped shepherd who watches the fields more closely than he watches you.",
+        "class": "Shepherd",
+        "character": {
+          "name": "Wandering Shepherd",
+          "level": 3,
+          "exp_given": 15
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "adjusts his hat and returns his gaze to the fields, paying you no further mind."
+              ]
+            ],
+            "chance": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 59,
+    "name": "Seneca Downs - Path - Old Scarecrow Post",
+    "description": "A scarecrow leans at an unnatural angle against its post, straw spilling from a tear in its side.",
+    "exits": [
+      {
+        "room_id": 57,
+        "key": "s",
+        "description": "(S)outh, back to the rise"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 45,
+        "description": "A crudely stitched scarecrow that shouldn't be standing upright, let alone watching you.",
+        "class": "Construct",
+        "character": {
+          "name": "Animated Scarecrow",
+          "level": 3,
+          "exp_given": 15
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "jerks its head a fraction too far to watch you pass."
+              ]
+            ],
+            "chance": 0.6
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 60,
+    "name": "Seneca Downs - Path - Sunken Lane",
+    "description": "The path dips into a sunken lane worn deep by the repeated passage of something heavy and four-legged, high grass banks pressing close on either side.\nIt ends abruptly in a wallow of churned mud and flattened grass.",
+    "exits": [
+      {
+        "room_id": 57,
+        "key": "n",
+        "description": "(N)orth, back up to the rise"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 46,
+        "description": "A bristling, tusked boar that paws at the dirt, unwilling to yield the lane.",
+        "class": "Boar",
+        "character": {
+          "name": "Hedge Boar",
+          "level": 3,
+          "exp_given": 15
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "snorts and paws at the churned mud, unwilling to yield its wallow."
+              ]
+            ],
+            "chance": 0.7
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 58,
+    "name": "Seneca Downs - Path - Drystone Wall",
+    "description": "A drystone wall, stacked without mortar, runs alongside the path for a considerable stretch.\nA gap in the stones offers a shortcut off the main track.",
+    "exits": [
+      {
+        "room_id": 57,
+        "key": "w",
+        "description": "(W)est, up the rise"
+      },
+      {
+        "room_id": 61,
+        "key": "e",
+        "description": "(E)ast, where the wall opens onto a wider crossroads"
+      },
+      {
+        "room_id": 68,
+        "key": "g",
+        "description": "Squeeze through the (g)ap in the wall"
+      }
+    ]
+  },
+  {
+    "id": 68,
+    "name": "Seneca Downs - Path - Weathered Waystone",
+    "description": "A small, weather-worn statue stands half-swallowed by weeds beyond the gap, one hand raised in a blessing no one alive remembers the meaning of.\nA few wilted flowers rest at its base, left more recently than the statue's condition would suggest.",
+    "exits": [
+      {
+        "room_id": 58,
+        "key": "g",
+        "description": "Back through the (g)ap in the wall"
+      }
+    ]
+  },
+  {
+    "id": 61,
+    "name": "Seneca Downs - Path - Weathered Crossroads",
+    "description": "Several cart paths converge here around a cracked stone marker, its carved directions worn nearly illegible.",
+    "exits": [
+      {
+        "room_id": 58,
+        "key": "w",
+        "description": "(W)est, along the drystone wall"
+      },
+      {
+        "room_id": 62,
+        "key": "e",
+        "description": "(E)ast toward a distant rooftop"
+      },
+      {
+        "room_id": 63,
+        "key": "n",
+        "description": "(N)orth along a stone-lined path"
+      },
+      {
+        "room_id": 64,
+        "key": "s",
+        "description": "(S)outh into a thicket of bramble"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 47,
+        "description": "A road-worn peddler minding a cart of dubious wares.",
+        "class": "Peddler",
+        "character": {
+          "name": "Trail-Worn Peddler",
+          "level": 2,
+          "exp_given": 10
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "say",
+                "Downs-grown wares, best this side of the forest! ...Buying, are you? No? Suit yourself."
+              ]
+            ],
+            "chance": 0.6
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 64,
+    "name": "Seneca Downs - Path - Bramblewood Bend",
+    "description": "The path narrows sharply where bramble has grown thick and unchecked across it.\nThorns catch at your sleeve with every step.",
+    "exits": [
+      {
+        "room_id": 61,
+        "key": "n",
+        "description": "(N)orth, back to the crossroads"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 49,
+        "description": "A scarred, heavyset boar, larger and warier than its younger kin down the slope.",
+        "class": "Boar",
+        "character": {
+          "name": "Hillside Boar",
+          "level": 4,
+          "exp_given": 20
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "crashes free of the bramble, tusks lowered."
+              ]
+            ],
+            "chance": 0.6
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 62,
+    "name": "Seneca Downs - Path - Town Approach",
+    "description": "The cart track widens and firms into a proper road here, worn smooth by regular traffic.\nRooftops and chimney smoke are visible ahead.",
+    "exits": [
+      {
+        "room_id": 61,
+        "key": "w",
+        "description": "(W)est, back to the crossroads"
+      },
+      {
+        "room_id": 69,
+        "key": "e",
+        "description": "(E)ast into Seneca Town"
+      }
+    ]
+  },
+  {
+    "id": 63,
+    "name": "Seneca Downs - Path - Stonesway",
+    "description": "Flat standing stones, spaced with obvious intention, mark this path like a row of silent sentries.\nThe air feels a few degrees cooler here than it should.",
+    "exits": [
+      {
+        "room_id": 61,
+        "key": "s",
+        "description": "(S)outh, back to the crossroads"
+      },
+      {
+        "room_id": 65,
+        "key": "n",
+        "description": "(N)orth, where the stones grow denser"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 48,
+        "description": "A jackdaw perched atop one of the standing stones, croaking an unpleasant warning.",
+        "class": "Bird",
+        "character": {
+          "name": "Restless Jackdaw",
+          "level": 1,
+          "exp_given": 5
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "shifts along the stone, croaking a single unpleasant note."
+              ]
+            ],
+            "chance": 0.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 65,
+    "name": "Seneca Downs - Standing Stones Circle",
+    "description": "A ring of ancient standing stones crowns a low rise, their surfaces carved with symbols too weathered to read.\nAt the center, a wide crack in the earth descends into darkness.",
+    "exits": [
+      {
+        "room_id": 63,
+        "key": "s",
+        "description": "(S)outh down Stonesway"
+      },
+      {
+        "room_id": 66,
+        "key": "w",
+        "description": "(W)est to a moss-grown outlier stone"
+      },
+      {
+        "room_id": 75,
+        "key": "d",
+        "description": "(D)own into the crack in the earth"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 50,
+        "description": "A fragment of animate stone, humanoid in shape, that shudders faintly whenever you draw close.",
+        "class": "Golem",
+        "character": {
+          "name": "Stone-Touched Golem Remnant",
+          "level": 5,
+          "exp_given": 25
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "shudders faintly as you pass, stone dust sifting from an old crack in its chest."
+              ]
+            ],
+            "chance": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 66,
+    "name": "Seneca Downs - Path - Moss-Grown Outlier",
+    "description": "A single standing stone rests apart from the circle, half-swallowed by moss and creeping vine.",
+    "exits": [
+      {
+        "room_id": 65,
+        "key": "e",
+        "description": "(E)ast, back to the standing stones"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 51,
+        "description": "A slim, patterned adder that lifts its head at your approach but doesn't strike.",
+        "class": "Snake",
+        "character": {
+          "name": "Field Adder",
+          "level": 2,
+          "exp_given": 10
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "lifts its head and flicks its tongue at your approach."
+              ]
+            ],
+            "chance": 0.6
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 69,
+    "name": "Seneca Downs - Seneca Town - Approach",
+    "description": "The road opens into a small square lined with modest stone-and-timber buildings.\nSmoke curls from several chimneys despite the mild afternoon.",
+    "exits": [
+      {
+        "room_id": 62,
+        "key": "w",
+        "description": "(W)est, back onto the farm road"
+      },
+      {
+        "room_id": 70,
+        "key": "e",
+        "description": "(E)ast into the square proper"
+      }
+    ]
+  },
+  {
+    "id": 70,
+    "name": "Seneca Downs - Seneca Town - Plaza",
+    "description": "Seneca Town's small plaza sits at the heart of the settlement, a well at its center ringed by a few benches.",
+    "exits": [
+      {
+        "room_id": 69,
+        "key": "w",
+        "description": "(W)est, toward the farm road"
+      },
+      {
+        "room_id": 71,
+        "key": "n",
+        "description": "(N)orth to the general store"
+      },
+      {
+        "room_id": 72,
+        "key": "s",
+        "description": "(S)outh to the smithy"
+      },
+      {
+        "room_id": 73,
+        "key": "e",
+        "description": "(E)ast to the inn"
+      },
+      {
+        "room_id": 121,
+        "key": "p",
+        "description": "Head to the (p)ost near the gate"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 53,
+        "description": "A guard out of uniform but not out of habit, still watching the road out of the corner of one eye.",
+        "class": "Guard",
+        "character": {
+          "name": "Off-Duty Town Guard",
+          "level": 2,
+          "exp_given": 10
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "straightens up briefly as you pass, then relaxes against the well again."
+              ]
+            ],
+            "chance": 0.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 71,
+    "name": "Seneca Downs - Seneca Town - General Store",
+    "description": "Shelves crowded with dry goods, rope, and farm tools line the walls of the town's general store.\nThe smell of grain dust hangs thick in the air.",
+    "exits": [
+      {
+        "room_id": 70,
+        "key": "s",
+        "description": "(S)outh, back to the plaza"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 54,
+        "description": "A wiry shopkeeper who counts stock under his breath, barely glancing up.",
+        "class": "Merchant",
+        "character": {
+          "name": "Seneca Shopkeeper",
+          "level": 1,
+          "exp_given": 5
+        }
+      }
+    ]
+  },
+  {
+    "id": 72,
+    "name": "Seneca Downs - Seneca Town - Smithy",
+    "description": "Heat rolls off a low forge at the back of the smithy, and the ring of hammer on iron never quite stops.\nHorseshoes and farm implements hang from every available hook.",
+    "exits": [
+      {
+        "room_id": 70,
+        "key": "n",
+        "description": "(N)orth, back to the plaza"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 55,
+        "description": "A broad-shouldered smith, forearms streaked with soot, who works without looking up from the anvil.",
+        "class": "Blacksmith",
+        "character": {
+          "name": "Seneca Blacksmith",
+          "level": 3,
+          "exp_given": 15
+        }
+      }
+    ]
+  },
+  {
+    "id": 73,
+    "name": "Seneca Downs - Seneca Town - Inn",
+    "description": "A low fire crackles in the common room of the town's only inn, a handful of tables scattered before it.",
+    "exits": [
+      {
+        "room_id": 70,
+        "key": "o",
+        "description": "Out to the plaza"
+      },
+      {
+        "room_id": 74,
+        "key": "b",
+        "description": "Through to the inn's private rooms"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 56,
+        "description": "A tired-looking innkeeper who greets you more out of routine than enthusiasm.",
+        "class": "Innkeeper",
+        "character": {
+          "name": "Weary Innkeeper",
+          "level": 1,
+          "exp_given": 5
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "glances up from the bar just long enough to nod."
+              ]
+            ],
+            "chance": 0.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 74,
+    "name": "Seneca Downs - Seneca Town - Inn Back Rooms",
+    "description": "A short hall off the common room leads to a handful of small, curtained sleeping alcoves, currently empty.\nA ledger by the door lists room rates in a cramped hand.",
+    "exits": [
+      {
+        "room_id": 73,
+        "key": "o",
+        "description": "Out to the common room"
+      }
+    ],
+    "npcs": []
+  },
+  {
+    "id": 75,
+    "name": "Seneca Downs - Barrow Depths - Sunken Stairwell",
+    "description": "Rough-hewn stone steps spiral down from the crack in the standing stones into cold, still air.\nTorchlight soot still clings blackened to the walls, circling empty sconces.",
+    "exits": [
+      {
+        "room_id": 65,
+        "key": "u",
+        "description": "(U)p to the standing stones"
+      },
+      {
+        "room_id": 76,
+        "key": "d",
+        "description": "(D)own into the dark"
+      }
+    ]
+  },
+  {
+    "id": 76,
+    "name": "Seneca Downs - Barrow Depths - Root-Choked Passage",
+    "description": "Massive roots have broken through the ceiling here, snaking down the walls in search of moisture that isn't there.",
+    "exits": [
+      {
+        "room_id": 75,
+        "key": "u",
+        "description": "(U)p toward the stairwell"
+      },
+      {
+        "room_id": 77,
+        "key": "d",
+        "description": "(D)eeper down the passage"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 58,
+        "description": "A writhing mass of oversized cave rats that scatter and regroup as one.",
+        "class": "Vermin",
+        "character": {
+          "name": "Cave Rat Swarm",
+          "level": 5,
+          "exp_given": 25
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "scatters and regroups in a writhing, chittering mass as you approach."
+              ]
+            ],
+            "chance": 0.6
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 77,
+    "name": "Seneca Downs - Barrow Depths - Fungal Antechamber",
+    "description": "Pale, faintly luminous fungus blankets every surface of this wide chamber, casting everything in a sickly glow.\nThe air is thick with spores.",
+    "exits": [
+      {
+        "room_id": 76,
+        "key": "u",
+        "description": "(U)p the passage"
+      },
+      {
+        "room_id": 78,
+        "key": "d",
+        "description": "(D)eeper into the barrow"
+      },
+      {
+        "room_id": 79,
+        "key": "e",
+        "description": "(E)ast into a collapsed alcove"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 59,
+        "description": "A slow, glowing mass of fungal growth that pulses faintly as it drags itself forward.",
+        "class": "Fungus",
+        "character": {
+          "name": "Luminous Fungal Crawler",
+          "level": 5,
+          "exp_given": 25
+        }
+      }
+    ]
+  },
+  {
+    "id": 79,
+    "name": "Seneca Downs - Barrow Depths - Collapsed Alcove",
+    "description": "A side chamber has partially collapsed, rubble burying whatever it once held.\nA fragment of worked stone, etched with a golem's sigil, juts inert from the debris -- whatever animated it clearly isn't here anymore.",
+    "exits": [
+      {
+        "room_id": 77,
+        "key": "w",
+        "description": "(W)est, back to the antechamber"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 61,
+        "description": "A cluster of stone-boring grubs, fat and pale, nest in the gaps between the fallen rubble.",
+        "class": "Insect",
+        "character": {
+          "name": "Rubble Grubs",
+          "level": 5,
+          "exp_given": 25
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "writhe and scatter briefly across the stone, then resettle."
+              ]
+            ],
+            "chance": 0.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 78,
+    "name": "Seneca Downs - Barrow Depths - Cracked Gallery",
+    "description": "A long gallery runs deeper into the barrow, its ceiling fractured in a dozen places by some old tremor.\nDust sifts down steadily from above.",
+    "exits": [
+      {
+        "room_id": 77,
+        "key": "u",
+        "description": "(U)p to the antechamber"
+      },
+      {
+        "room_id": 80,
+        "key": "d",
+        "description": "(D)own toward the sound of stone on stone"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 60,
+        "description": "A crude assembly of loose stone that drags itself along on uneven, rock-hewn limbs.",
+        "class": "Construct",
+        "character": {
+          "name": "Rubble Crawler",
+          "level": 6,
+          "exp_given": 30
+        }
+      }
+    ]
+  },
+  {
+    "id": 80,
+    "name": "Seneca Downs - Barrow Depths - Golem Foundry",
+    "description": "Rows of half-finished stone golems stand frozen mid-construction in what must once have been a forge for them.\nOne, closer to complete than the rest, turns its head as you enter.",
+    "exits": [
+      {
+        "room_id": 78,
+        "key": "u",
+        "description": "(U)p the gallery"
+      },
+      {
+        "room_id": 81,
+        "key": "d",
+        "description": "(D)own the last stair"
+      },
+      {
+        "room_id": 82,
+        "key": "e",
+        "description": "(E)ast into a chiseling chamber"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 62,
+        "description": "A stone golem, more complete than the frozen ranks around it, its joints grinding as it turns to face you.",
+        "class": "Golem",
+        "character": {
+          "name": "Half-Formed Rock Golem",
+          "level": 7,
+          "exp_given": 35
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "grinds slowly to face you, one arm still fused to the stone it was carved from."
+              ]
+            ],
+            "chance": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 82,
+    "name": "Seneca Downs - Barrow Depths - Chiseling Chamber",
+    "description": "Chisels, mallets, and half-carved stone litter this small workroom, abandoned mid-task.\nA faint, cold presence seems to linger over the unfinished work.",
+    "exits": [
+      {
+        "room_id": 80,
+        "key": "w",
+        "description": "(W)est, back to the foundry"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 63,
+        "description": "A translucent, hunched figure that keeps chiseling at stone that isn't really there.",
+        "class": "Ghost",
+        "character": {
+          "name": "Stoneworker's Ghost",
+          "level": 6,
+          "exp_given": 30
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "flickers into view mid-swing, chiseling stone that isn't there."
+              ]
+            ],
+            "chance": 0.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 81,
+    "name": "Seneca Downs - Barrow Depths - Descending Stair",
+    "description": "A narrow stair cut directly into the rock spirals further down, the air growing colder with every step.\nThe sound of shifting stone echoes up from below.",
+    "exits": [
+      {
+        "room_id": 80,
+        "key": "u",
+        "description": "(U)p to the foundry"
+      },
+      {
+        "room_id": 83,
+        "key": "d",
+        "description": "(D)own toward the sound"
+      }
+    ]
+  },
+  {
+    "id": 83,
+    "name": "Seneca Downs - Barrow Depths - Bone-Littered Hall",
+    "description": "Old bones, human and otherwise, are scattered across the floor of this long hall.",
+    "exits": [
+      {
+        "room_id": 81,
+        "key": "u",
+        "description": "(U)p the stair"
+      },
+      {
+        "room_id": 84,
+        "key": "d",
+        "description": "(D)eeper toward the barrow's heart"
+      },
+      {
+        "room_id": 85,
+        "key": "e",
+        "description": "(E)ast, through the fractured seal"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 64,
+        "description": "A withered, upright corpse that rises unsteadily from among the bones as you approach.",
+        "class": "Undead",
+        "character": {
+          "name": "Barrow Wight",
+          "level": 7,
+          "exp_given": 35
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "stirs among the bones, rising unsteadily to face you."
+              ]
+            ],
+            "chance": 0.7
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 85,
+    "name": "Seneca Downs - Barrow Depths - Sealed Alcove",
+    "description": "A stone door, its ancient seal fractured by some old tremor, stands ajar just wide enough to slip through into a small alcove beyond.",
+    "exits": [
+      {
+        "room_id": 83,
+        "key": "w",
+        "description": "(W)est, back to the hall"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 66,
+        "description": "A pitted, ancient golem, still standing at rigid attention centuries after its post was forgotten.",
+        "class": "Golem",
+        "character": {
+          "name": "Ancient Rock Sentinel",
+          "level": 8,
+          "exp_given": 40
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "stands rigid and silent, but its eyes seem to track your every movement."
+              ]
+            ],
+            "chance": 0.6
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 84,
+    "name": "Seneca Downs - Barrow Depths - Threshold of the Barrow King",
+    "description": "A wide archway, carved with the same sigils seen throughout the barrow, marks the threshold to its deepest chamber.",
+    "exits": [
+      {
+        "room_id": 83,
+        "key": "u",
+        "description": "(U)p to the bone-littered hall"
+      },
+      {
+        "room_id": 86,
+        "key": "d",
+        "description": "(D)own into the king's chamber"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 65,
+        "description": "A massive golem, more intact than any other seen in the barrow, planted immovably before the archway.",
+        "class": "Golem",
+        "character": {
+          "name": "Barrow Guardian",
+          "level": 8,
+          "exp_given": 40
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "plants itself immovably in the archway, stone grinding against stone."
+              ]
+            ],
+            "chance": 0.7
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 86,
+    "name": "Seneca Downs - Barrow Depths - Barrow King's Chamber",
+    "description": "A cavernous chamber opens at the heart of the barrow, dominated by a throne of fused stone and bone.",
+    "exits": [
+      {
+        "room_id": 84,
+        "key": "u",
+        "description": "(U)p toward the threshold"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 67,
+        "description": "A colossal, throned figure of living rock, moss and lichen grown into the cracks of untold centuries.",
+        "class": "Golem King",
+        "character": {
+          "name": "The Rockbound Barrow King",
+          "level": 8,
+          "exp_given": 120
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "say",
+                "Who dares wake the King of Stone?"
+              ]
+            ],
+            "chance": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 87,
+    "name": "Morass - Path - Eastern Edge",
+    "description": "The forest's undergrowth grows wetter underfoot until it gives way entirely to black standing water and reeds.\nThe tree line is still visible behind you to the east; ahead, the ground disappears into the swamp.",
+    "exits": [
+      {
+        "room_id": 12,
+        "key": "e",
+        "description": "(E)ast, back into the drier forest"
+      },
+      {
+        "room_id": 88,
+        "key": "w",
+        "description": "(W)est, into the deepening mire"
+      }
+    ]
+  },
+  {
+    "id": 88,
+    "name": "Morass - Path - Waterlogged Trail",
+    "description": "The path has all but dissolved into standing water, forcing you to pick your way between half-submerged roots.",
+    "exits": [
+      {
+        "room_id": 87,
+        "key": "e",
+        "description": "(E)ast, back toward drier ground"
+      },
+      {
+        "room_id": 89,
+        "key": "w",
+        "description": "(W)est, deeper into the reeds"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 68,
+        "description": "A knot of fat leeches, drawn instantly to the warmth of anything living.",
+        "class": "Vermin",
+        "character": {
+          "name": "Marsh Leech Cluster",
+          "level": 7,
+          "exp_given": 35
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "ripples toward the warmth of your footsteps."
+              ]
+            ],
+            "chance": 0.6
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 89,
+    "name": "Morass - Path - Reed-Choked Clearing",
+    "description": "Reeds taller than a person crowd this shallow clearing, swaying though there's no wind to move them.\nThe ground squelches unpleasantly with every step.",
+    "exits": [
+      {
+        "room_id": 88,
+        "key": "e",
+        "description": "(E)ast along the trail"
+      },
+      {
+        "room_id": 90,
+        "key": "w",
+        "description": "(W)est, deeper into the mud"
+      },
+      {
+        "room_id": 91,
+        "key": "n",
+        "description": "(N)orth, where the reeds thin unexpectedly"
+      },
+      {
+        "room_id": 98,
+        "key": "s",
+        "description": "(S)outh along a winding channel"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 69,
+        "description": "A bloated frog with mottled green-brown skin, croaking at a pitch that sets your teeth on edge.",
+        "class": "Amphibian",
+        "character": {
+          "name": "Bog Frog",
+          "level": 7,
+          "exp_given": 35
+        }
+      }
+    ]
+  },
+  {
+    "id": 91,
+    "name": "Morass - Path - False Trail",
+    "description": "A dry-looking path leads invitingly north, though it curves back on itself in a way that leaves you disoriented.",
+    "exits": [
+      {
+        "room_id": 89,
+        "key": "s",
+        "description": "(S)outh, back to the clearing"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 70,
+        "description": "A cold, drifting light that seems to know exactly how far to stay ahead of you.",
+        "class": "Spirit",
+        "character": {
+          "name": "Will-o'-Wisp",
+          "level": 8,
+          "exp_given": 40
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "drifts closer, then further, matching your every step without ever quite approaching."
+              ]
+            ],
+            "chance": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 98,
+    "name": "Morass - Path - Twisting Channel",
+    "description": "A narrow channel of black water winds south in tight, unnatural switchbacks.",
+    "exits": [
+      {
+        "room_id": 89,
+        "key": "n",
+        "description": "(N)orth, back to the clearing"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 76,
+        "description": "A sodden, oversized rat that swims more easily than it walks.",
+        "class": "Vermin",
+        "character": {
+          "name": "Bog Rat",
+          "level": 7,
+          "exp_given": 35
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "splashes away through the shallows, then circles back."
+              ]
+            ],
+            "chance": 0.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 90,
+    "name": "Morass - Path - Sucking Mudflat",
+    "description": "The ground here has the consistency of thick porridge, pulling at your boots with every step.\nA misstep here could easily cost you a boot, or worse.",
+    "exits": [
+      {
+        "room_id": 89,
+        "key": "e",
+        "description": "(E)ast, back to the clearing"
+      },
+      {
+        "room_id": 92,
+        "key": "w",
+        "description": "(W)est, toward a stand of dead trees"
+      }
+    ]
+  },
+  {
+    "id": 92,
+    "name": "Morass - Path - Drowned Grove",
+    "description": "A stand of dead trees rises from the standing water, their bare branches hung with curtains of moss.\nThe air is thick with the whine of unseen insects.",
+    "exits": [
+      {
+        "room_id": 90,
+        "key": "e",
+        "description": "(E)ast, across the mudflat"
+      },
+      {
+        "room_id": 93,
+        "key": "w",
+        "description": "(W)est, past the last of the drowned trees"
+      },
+      {
+        "room_id": 94,
+        "key": "n",
+        "description": "(N)orth across a tangle of exposed roots"
+      },
+      {
+        "room_id": 99,
+        "key": "s",
+        "description": "(S)outh along a half-sunken log"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 71,
+        "description": "A mosquito the size of a small bird, its proboscis glinting wetly.",
+        "class": "Insect",
+        "character": {
+          "name": "Giant Mosquito",
+          "level": 8,
+          "exp_given": 40
+        }
+      }
+    ]
+  },
+  {
+    "id": 94,
+    "name": "Morass - Path - Tangled Root Bridge",
+    "description": "A crude bridge of tangled roots spans a stretch of deeper water, sagging alarmingly underfoot.",
+    "exits": [
+      {
+        "room_id": 92,
+        "key": "s",
+        "description": "(S)outh, back to the grove"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 73,
+        "description": "A thick-bodied serpent, patterned to vanish perfectly among the roots it hides in.",
+        "class": "Snake",
+        "character": {
+          "name": "Root Serpent",
+          "level": 9,
+          "exp_given": 45
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "uncoils slightly from among the roots, tasting the air."
+              ]
+            ],
+            "chance": 0.6
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 99,
+    "name": "Morass - Path - Half-Sunken Log",
+    "description": "An enormous fallen tree, half-submerged, offers the only dry footing for some distance in any direction.",
+    "exits": [
+      {
+        "room_id": 92,
+        "key": "n",
+        "description": "(N)orth, back to the grove"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 77,
+        "description": "A slick, dark adder coiled comfortably in the log's rotted-out hollow.",
+        "class": "Snake",
+        "character": {
+          "name": "Marsh Adder",
+          "level": 8,
+          "exp_given": 40
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "shifts in its hollow, unwilling to give up its perch."
+              ]
+            ],
+            "chance": 0.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 93,
+    "name": "Morass - Path - Deep Mire",
+    "description": "The water deepens here into a proper mire, thick with algae and the smell of decay. Thick roots, too large for any swamp tree, break the surface further out.\nA half-submerged footbridge, more suggestion than structure, continues on.",
+    "exits": [
+      {
+        "room_id": 92,
+        "key": "e",
+        "description": "(E)ast, into the drowned grove"
+      },
+      {
+        "room_id": 95,
+        "key": "w",
+        "description": "(W)est, toward higher, drier ground"
+      },
+      {
+        "room_id": 97,
+        "key": "s",
+        "description": "(S)outh onto the sinking footbridge"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 72,
+        "description": "A many-legged, mud-caked thing that moves with unsettling patience through the muck.",
+        "class": "Vermin",
+        "character": {
+          "name": "Mire Crawler",
+          "level": 9,
+          "exp_given": 45
+        }
+      }
+    ]
+  },
+  {
+    "id": 97,
+    "name": "Morass - Path - Sinking Footbridge",
+    "description": "The footbridge groans and dips lower with every step, threatening to give way entirely.\nBelow, the mire shows no bottom at all. Far ahead, past the bridge, the swamp's reeds give way to something greener and denser.",
+    "exits": [
+      {
+        "room_id": 93,
+        "key": "n",
+        "description": "(N)orth, back off the footbridge"
+      },
+      {
+        "room_id": 112,
+        "key": "w",
+        "description": "(W)est, pushing on past the footbridge"
+      }
+    ]
+  },
+  {
+    "id": 95,
+    "name": "Morass - Sunken Shrine Clearing",
+    "description": "A ring of higher, drier ground surrounds a half-sunken stone shrine, moss-choked and long abandoned.\nA crude idol, more mud than stone now, watches over a dark opening in the ground beside it.",
+    "exits": [
+      {
+        "room_id": 93,
+        "key": "e",
+        "description": "(E)ast, into the mire"
+      },
+      {
+        "room_id": 96,
+        "key": "n",
+        "description": "(N)orth to a last dry hummock"
+      },
+      {
+        "room_id": 100,
+        "key": "d",
+        "description": "(D)own into the opening beside the idol"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 74,
+        "description": "A crude idol, mostly reclaimed by moss and mud, that seems to watch more than a statue should.",
+        "class": "Construct",
+        "character": {
+          "name": "Moss-Grown Idol Guardian",
+          "level": 10,
+          "exp_given": 50
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "seems to track your movement, though its stone eyes haven't moved in centuries."
+              ]
+            ],
+            "chance": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 96,
+    "name": "Morass - Path - Last Dry Hummock",
+    "description": "A small hummock of solid ground rises just above the waterline, the last dry footing before the swamp reclaims everything.",
+    "exits": [
+      {
+        "room_id": 95,
+        "key": "s",
+        "description": "(S)outh, back to the shrine"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 75,
+        "description": "A frog the size of a dog, skin glistening with an oily, toxic sheen.",
+        "class": "Amphibian",
+        "character": {
+          "name": "Oversized Poisonous Frog",
+          "level": 10,
+          "exp_given": 50
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "shifts its bulk and croaks a low, wet warning."
+              ]
+            ],
+            "chance": 0.6
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 100,
+    "name": "Morass - Swamp Trenches - Sudden Drop",
+    "description": "The ground gives way beneath the idol without warning, dropping you into a passage carved through solid, suspended mud.\nThe walls hold their shape by no logic you can name.",
+    "exits": [
+      {
+        "room_id": 95,
+        "key": "u",
+        "description": "(U)p, scrambling back through the opening"
+      },
+      {
+        "room_id": 101,
+        "key": "d",
+        "description": "(D)eeper into the trench"
+      }
+    ]
+  },
+  {
+    "id": 101,
+    "name": "Morass - Swamp Trenches - Trench Passage",
+    "description": "The passage narrows uncomfortably, its mud walls glistening and faintly warm to the touch.\nFootprints, too many to be one creature's, crisscross the floor.",
+    "exits": [
+      {
+        "room_id": 100,
+        "key": "u",
+        "description": "(U)p, back toward the surface"
+      },
+      {
+        "room_id": 102,
+        "key": "e",
+        "description": "(E)ast, deeper along the passage"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 78,
+        "description": "A vaguely humanoid shape of animate mud, low to the ground and quick to duck from sight.",
+        "class": "Elemental",
+        "character": {
+          "name": "Mud Person Skulker",
+          "level": 9,
+          "exp_given": 45
+        }
+      }
+    ]
+  },
+  {
+    "id": 102,
+    "name": "Morass - Swamp Trenches - Suspended Mud Junction",
+    "description": "Passages branch off in three directions here, the mud walls impossibly overhanging without collapsing.",
+    "exits": [
+      {
+        "room_id": 101,
+        "key": "w",
+        "description": "(W)est along the passage"
+      },
+      {
+        "room_id": 103,
+        "key": "n",
+        "description": "(N)orth into a narrowing cut"
+      },
+      {
+        "room_id": 104,
+        "key": "e",
+        "description": "(E)ast around a sharp bend"
+      },
+      {
+        "room_id": 118,
+        "key": "s",
+        "description": "(S)outh into a flooded nook"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 79,
+        "description": "A humanoid column of mud, unmoving except to track your every step.",
+        "class": "Elemental",
+        "character": {
+          "name": "Mud Person Sentry",
+          "level": 10,
+          "exp_given": 50
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "say",
+                "Not welcome."
+              ]
+            ],
+            "chance": 0.7
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 103,
+    "name": "Morass - Swamp Trenches - Narrow Cut",
+    "description": "The trench narrows here to little more than a crawlspace, mud pressing close on every side.\nThe droning hum of insects grows suddenly deafening.",
+    "exits": [
+      {
+        "room_id": 102,
+        "key": "s",
+        "description": "(S)outh, back to the junction"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 80,
+        "description": "A dense, droning cloud of mosquitoes moving as a single hungry mass.",
+        "class": "Insect",
+        "character": {
+          "name": "Giant Mosquito Swarm",
+          "level": 9,
+          "exp_given": 45
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "rises off the walls in a single droning mass."
+              ]
+            ],
+            "chance": 0.6
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 104,
+    "name": "Morass - Swamp Trenches - Bending Channel",
+    "description": "The passage bends sharply, then sharply again, in a way that leaves you uncertain which direction you started from.\nWater drips steadily from unseen cracks above.",
+    "exits": [
+      {
+        "room_id": 102,
+        "key": "w",
+        "description": "(W)est, back to the junction"
+      },
+      {
+        "room_id": 105,
+        "key": "e",
+        "description": "(E)ast, where the passage finally widens"
+      }
+    ]
+  },
+  {
+    "id": 105,
+    "name": "Morass - Swamp Trenches - Waterlogged Alcove",
+    "description": "A wider alcove opens here, its floor pooled ankle-deep with stagnant water.",
+    "exits": [
+      {
+        "room_id": 104,
+        "key": "w",
+        "description": "(W)est, into the channel"
+      },
+      {
+        "room_id": 106,
+        "key": "n",
+        "description": "(N)orth toward a dead end"
+      },
+      {
+        "room_id": 107,
+        "key": "e",
+        "description": "(E)ast into a long corridor"
+      },
+      {
+        "room_id": 119,
+        "key": "s",
+        "description": "(S)outh toward a root-pierced wall"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 81,
+        "description": "A frog even larger than its swamp-surface kin, pale from a life spent entirely underground.",
+        "class": "Amphibian",
+        "character": {
+          "name": "Trench Bog Frog",
+          "level": 10,
+          "exp_given": 50
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "shifts in the shadow of the far wall, eyes catching what little light there is."
+              ]
+            ],
+            "chance": 0.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 106,
+    "name": "Morass - Swamp Trenches - Dead Reckoning",
+    "description": "The passage simply stops here, mud walls closing in on all sides with no way forward.\nCountless overlapping marks have been scratched into the wall, as if keeping count.",
+    "exits": [
+      {
+        "room_id": 105,
+        "key": "s",
+        "description": "(S)outh, back to the alcove"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 82,
+        "description": "A mud person that mutters wordlessly to itself, tracing the same wall markings over and over.",
+        "class": "Elemental",
+        "character": {
+          "name": "Mud Person Wanderer",
+          "level": 10,
+          "exp_given": 50
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "keeps tracing the same marks, muttering wordlessly."
+              ]
+            ],
+            "chance": 0.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 107,
+    "name": "Morass - Swamp Trenches - Suspended Corridor",
+    "description": "The trench opens briefly into a long, straight corridor, its mud ceiling arching improbably overhead.\nThe air here is colder than anywhere else in the trench.",
+    "exits": [
+      {
+        "room_id": 105,
+        "key": "w",
+        "description": "(W)est, back to the alcove"
+      },
+      {
+        "room_id": 108,
+        "key": "e",
+        "description": "(E)ast, toward the sound of voices"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 83,
+        "description": "A slick, segmented creature that clings to the mud walls as easily as the floor.",
+        "class": "Vermin",
+        "character": {
+          "name": "Mud-Slick Crawler",
+          "level": 11,
+          "exp_given": 55
+        }
+      }
+    ]
+  },
+  {
+    "id": 108,
+    "name": "Morass - Swamp Trenches - Mud Person Enclave",
+    "description": "The passage widens into a rough enclave lined with crude, mud-formed dwellings.",
+    "exits": [
+      {
+        "room_id": 107,
+        "key": "w",
+        "description": "(W)est, into the corridor"
+      },
+      {
+        "room_id": 109,
+        "key": "e",
+        "description": "(E)ast, deeper into the enclave's heart"
+      },
+      {
+        "room_id": 120,
+        "key": "s",
+        "description": "(S)outh into a quiet side-chamber"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 84,
+        "description": "An elder mud person, more sculpted than its kin, watching you with unmistakable intent.",
+        "class": "Elemental",
+        "character": {
+          "name": "Mud Person Elder",
+          "level": 11,
+          "exp_given": 55
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "say",
+                "The surface-born should not have found their way down here."
+              ]
+            ],
+            "chance": 0.8
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 109,
+    "name": "Morass - Swamp Trenches - Final Stretch",
+    "description": "The trench begins to slope steadily downward here, the air growing thick and close.\nA cloud of insects thickens ahead, drawn to something deeper in the dark.",
+    "exits": [
+      {
+        "room_id": 108,
+        "key": "w",
+        "description": "(W)est, back to the enclave"
+      },
+      {
+        "room_id": 110,
+        "key": "e",
+        "description": "(E)ast, following the slope down"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 85,
+        "description": "A churning, near-solid cloud of biting insects that parts and reforms around you.",
+        "class": "Insect",
+        "character": {
+          "name": "Mosquito Cloud",
+          "level": 11,
+          "exp_given": 55
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "thickens around you, drawn to the warmth of your blood."
+              ]
+            ],
+            "chance": 0.6
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 110,
+    "name": "Morass - Swamp Trenches - Sunken Antechamber",
+    "description": "The passage opens into a wide, low antechamber, its mud walls streaked with something dark and old.",
+    "exits": [
+      {
+        "room_id": 109,
+        "key": "w",
+        "description": "(W)est, back up the slope"
+      },
+      {
+        "room_id": 111,
+        "key": "e",
+        "description": "(E)ast, toward the gathering cold"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 86,
+        "description": "A shifting, half-formed shape of mud and shadow, barely holding a humanoid outline.",
+        "class": "Undead",
+        "character": {
+          "name": "Bog Wraith",
+          "level": 12,
+          "exp_given": 60
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "gathers itself out of the shadow at the chamber's edge."
+              ]
+            ],
+            "chance": 0.6
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 111,
+    "name": "Morass - Swamp Trenches - Heart of the Trenches",
+    "description": "The trench opens into a vast, cathedral-like hollow at its very heart, walls of suspended mud arching high overhead.",
+    "exits": [
+      {
+        "room_id": 110,
+        "key": "w",
+        "description": "(W)est, back toward the antechamber"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 87,
+        "description": "A towering, roughly humanoid mass of living mud, ancient beyond reckoning.",
+        "class": "Elemental King",
+        "character": {
+          "name": "The Mudbound Sovereign",
+          "level": 12,
+          "exp_given": 180
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "say",
+                "The mud remembers every bone it swallows. Yours will be no different."
+              ]
+            ],
+            "chance": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 112,
+    "name": "Morass - Path - Vine-Choked Crossing",
+    "description": "Beyond the footbridge the mire firms up slightly, but thick vines now hang low across the path, slick with condensation.\nThe air smells suddenly, unmistakably, of green growing things rather than rot.",
+    "exits": [
+      {
+        "room_id": 97,
+        "key": "e",
+        "description": "(E)ast, back onto the sinking footbridge"
+      },
+      {
+        "room_id": 113,
+        "key": "w",
+        "description": "(W)est, pushing through the hanging vines"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 88,
+        "description": "A vine that moves with far more purpose than any plant should, coiling toward exposed skin.",
+        "class": "Plant",
+        "character": {
+          "name": "Grasping Vine",
+          "level": 9,
+          "exp_given": 45
+        }
+      }
+    ]
+  },
+  {
+    "id": 113,
+    "name": "Morass - Path - Creeping Canopy",
+    "description": "Broad-leafed canopy closes overhead here, dimming the swamp's grey light to a mottled green gloom.\nThe mud underfoot is giving way, slowly, to matted roots and leaf litter.",
+    "exits": [
+      {
+        "room_id": 112,
+        "key": "e",
+        "description": "(E)ast to the vines"
+      },
+      {
+        "room_id": 114,
+        "key": "w",
+        "description": "(W)est, deeper beneath the canopy"
+      },
+      {
+        "room_id": 115,
+        "key": "n",
+        "description": "(N)orth around a buttressed root"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 89,
+        "description": "A large, patient spider that keeps to the shadows of the canopy overhead.",
+        "class": "Insect",
+        "character": {
+          "name": "Canopy Spider",
+          "level": 9,
+          "exp_given": 45
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "drops silently on a thread of silk, then vanishes back into the canopy just as fast."
+              ]
+            ],
+            "chance": 0.6
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 115,
+    "name": "Morass - Path - Buttress Root Hollow",
+    "description": "Enormous buttress roots fan out from a tree too large to see the top of, forming a shallow, sheltered hollow between them.",
+    "exits": [
+      {
+        "room_id": 113,
+        "key": "s",
+        "description": "(S)outh, back to the canopy path"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 91,
+        "description": "A toad the mottled color of old bark, nearly invisible against the roots until it moves.",
+        "class": "Amphibian",
+        "character": {
+          "name": "Root Toad",
+          "level": 9,
+          "exp_given": 45
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "croaks once, low and wet, from somewhere among the roots."
+              ]
+            ],
+            "chance": 0.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 114,
+    "name": "Morass - Path - Thickening Undergrowth",
+    "description": "The undergrowth thickens abruptly into something closer to jungle than swamp, ferns and broad leaves crowding out the reeds behind you.\nThe ground, at least, has finally gone solid underfoot.",
+    "exits": [
+      {
+        "room_id": 113,
+        "key": "e",
+        "description": "(E)ast, toward the mire"
+      },
+      {
+        "room_id": 116,
+        "key": "w",
+        "description": "(W)est, where the jungle grows denser still"
+      },
+      {
+        "room_id": 117,
+        "key": "s",
+        "description": "(S)outh into a fern-choked alcove"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 90,
+        "description": "A slender green serpent, patterned to vanish perfectly among the hanging vines.",
+        "class": "Snake",
+        "character": {
+          "name": "Vine Serpent",
+          "level": 10,
+          "exp_given": 50
+        }
+      }
+    ]
+  },
+  {
+    "id": 117,
+    "name": "Morass - Path - Fern-Choked Alcove",
+    "description": "Ferns taller than a person crowd this small alcove, their fronds trembling though the air is still.",
+    "exits": [
+      {
+        "room_id": 114,
+        "key": "n",
+        "description": "(N)orth, back to the undergrowth"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 92,
+        "description": "A beetle the size of a shield, its carapace gleaming an iridescent green-black.",
+        "class": "Insect",
+        "character": {
+          "name": "Giant Jungle Beetle",
+          "level": 10,
+          "exp_given": 50
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "shoulders free of the ferns, carapace clicking."
+              ]
+            ],
+            "chance": 0.6
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 116,
+    "name": "Morass - Path - Western Edge",
+    "description": "The last of the swamp finally gives way to true jungle here, dense and loud with unfamiliar calls.\nA narrow game trail continues west into the deeper green; the mire waits, quieter, behind you to the east.",
+    "exits": [
+      {
+        "room_id": 114,
+        "key": "e",
+        "description": "(E)ast, back into the thinning jungle and toward the swamp"
+      }
+    ]
+  },
+  {
+    "id": 118,
+    "name": "Morass - Swamp Trenches - Flooded Nook",
+    "description": "A low nook branches off the junction, flooded ankle-deep with water that never quite drains.",
+    "exits": [
+      {
+        "room_id": 102,
+        "key": "n",
+        "description": "(N)orth, back to the junction"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 93,
+        "description": "A leech grown fat and pale on whatever wanders too close to the flooded nook.",
+        "class": "Vermin",
+        "character": {
+          "name": "Trench Leech",
+          "level": 9,
+          "exp_given": 45
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "surfaces briefly, then sinks back beneath the still water."
+              ]
+            ],
+            "chance": 0.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 119,
+    "name": "Morass - Swamp Trenches - Root-Pierced Wall",
+    "description": "A tangle of massive roots has pierced clean through the mud wall here, reaching down from the jungle far above.\nThe wood looks as out of place here as anything could.",
+    "exits": [
+      {
+        "room_id": 105,
+        "key": "n",
+        "description": "(N)orth, back to the alcove"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 94,
+        "description": "A thing that might once have been root, now animate and hungry, coiled tight around the intrusion.",
+        "class": "Plant",
+        "character": {
+          "name": "Buried Root Horror",
+          "level": 10,
+          "exp_given": 50
+        }
+      }
+    ]
+  },
+  {
+    "id": 120,
+    "name": "Morass - Swamp Trenches - Mud Person Nursery",
+    "description": "A quiet side-chamber holds a scatter of small hollows scooped into the mud, tended by unseen hands.\nThe air here feels watched in a way the rest of the enclave doesn't.",
+    "exits": [
+      {
+        "room_id": 108,
+        "key": "n",
+        "description": "(N)orth, back to the enclave"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 95,
+        "description": "A small, still-forming mud person, more curious than hostile, but no less unsettling.",
+        "class": "Elemental",
+        "character": {
+          "name": "Mud Person Hatchling",
+          "level": 9,
+          "exp_given": 45
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "peers out from among its kin, curious rather than afraid."
+              ]
+            ],
+            "chance": 0.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 121,
+    "name": "Seneca Downs - Seneca Town - Guard Post",
+    "description": "A small guardhouse stands near the plaza, little more than a rack of spears, a locked cabinet, and a much-used dartboard just inside the door.",
+    "exits": [
+      {
+        "room_id": 70,
+        "key": "o",
+        "description": "Out into the plaza"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 57,
+        "description": "A weathered guard captain who watches the door more than she watches you.",
+        "class": "Guard Captain",
+        "character": {
+          "name": "Town Guard Captain",
+          "level": 4,
+          "exp_given": 20
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "say",
+                "State your business, traveler. The barrow's been restless again."
+              ]
+            ],
+            "chance": 0.7
+          }
+        ]
       }
     ]
   }
