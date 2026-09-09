@@ -354,7 +354,7 @@
   {
     "id": 12,
     "name": "Slime Forest - Western Edge",
-    "description": "Trees and foliage crowd together unnaturally tightly, the sun darkened by their overhanging branches.",
+    "description": "Trees and foliage crowd together unnaturally tightly, the sun darkened by their overhanging branches.\nThe ground grows soft and damp underfoot, a faint marshy smell drifting from somewhere close by.",
     "exits": [
       {
         "room_id": 10,
@@ -382,18 +382,18 @@
   },
   {
     "id": 13,
-    "name": "Slime Forest - Path - Dampening Ground",
-    "description": "The path continues to wander past a seemingly-static variety of trees.\nThe ground underneath your feet begins to feel spongy, happily giving way under your feet.",
+    "name": "Slime Forest - Path - Sunlit Verge",
+    "description": "The trees begin to thin here, patches of open sky breaking through the canopy more often than not.\nGrass creeps in along the path's edges, thicker with every step.",
     "exits": [
       {
         "room_id": 11,
         "key": "a",
-        "description": "(A)way from the damp ground"
+        "description": "(A)way, toward the crossroads"
       },
       {
         "room_id": 14,
         "key": "d",
-        "description": "(D)own the softening path"
+        "description": "(D)own the thinning path"
       }
     ],
     "npcs": [
@@ -411,8 +411,8 @@
   },
   {
     "id": 14,
-    "name": "Slime Forest - Path - Muddy Dead End",
-    "description": "Despite a moderate number of trees and plants, the forest ground here has given way to mud.\nThe path here, clearly identifiable to the west, abruptly sinks into the earth and vanishes to the east.",
+    "name": "Slime Forest - Path - Grassy Threshold",
+    "description": "The last of the trees give way here, thin trunks scattered among grass that grows thicker with every step.\nThe ground firms considerably underfoot, the path continuing clearly to the east.",
     "exits": [
       {
         "room_id": 13,
@@ -422,13 +422,13 @@
       {
         "room_id": 49,
         "key": "e",
-        "description": "(E)ast, where the path picks up again beyond the mud"
+        "description": "(E)ast, where the trees open fully onto farmland"
       }
     ],
     "npcs": [
       {
         "id": 12,
-        "description": "Mud and flecks of foliage give this green slime the appearance of brown polkadots.",
+        "description": "Dirt and bits of dry grass fleck this green slime, giving it a mottled brown-and-green look.",
         "class": "Slime",
         "character": {
           "name": "Dirty Forest Slime",
@@ -1517,12 +1517,36 @@
   {
     "id": 53,
     "name": "Seneca Downs - Path - Fence Line",
-    "description": "A low wooden fence runs the length of the path, its posts weathered to a soft grey.\nBeyond it, the pasture rolls on unbroken.",
+    "description": "A low wooden fence runs the length of the path, its posts weathered to a soft grey -- except for one stretch, trampled flat.\nBeyond it, the pasture rolls on unbroken.",
     "exits": [
       {
         "room_id": 51,
         "key": "n",
         "description": "(N)orth, up the slope"
+      }
+    ],
+    "npcs": [
+      {
+        "id": 96,
+        "description": "A bull, broad and heavily muscled, paces the length of the trampled fence, unable to find its way back through.",
+        "class": "Boar",
+        "character": {
+          "name": "Cornered Bull-Boar",
+          "level": 5,
+          "exp_given": 25
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "lowers its head and stamps a hoof, penned in and furious."
+              ]
+            ],
+            "chance": 0.8
+          }
+        ]
       }
     ]
   },
@@ -1603,12 +1627,12 @@
     "npcs": [
       {
         "id": 43,
-        "description": "A fat, dirt-streaked vole pauses mid-dig, whiskers twitching.",
-        "class": "Vole",
+        "description": "A thick-set badger plants itself in front of its den, claws already digging into the dirt.",
+        "class": "Badger",
         "character": {
-          "name": "Burrowing Vole",
-          "level": 1,
-          "exp_given": 5
+          "name": "Territorial Badger",
+          "level": 4,
+          "exp_given": 20
         },
         "behavior": [
           {
@@ -1616,10 +1640,10 @@
             "actions": [
               [
                 "emote",
-                "pauses its digging just long enough to eye you, then resumes."
+                "snarls low and doesn't budge an inch."
               ]
             ],
-            "chance": 0.5
+            "chance": 0.7
           }
         ]
       }
@@ -1649,13 +1673,25 @@
     "npcs": [
       {
         "id": 42,
-        "description": "A glossy black raven that watches you sidelong, unbothered.",
-        "class": "Bird",
+        "description": "A dozen ravens burst up screaming from the hedge at once, wings and beaks a single black storm.",
+        "class": "BirdSwarm",
         "character": {
-          "name": "Crop Raven",
-          "level": 1,
-          "exp_given": 5
-        }
+          "name": "Feral Raven Flock",
+          "level": 4,
+          "exp_given": 20
+        },
+        "behavior": [
+          {
+            "trigger": "pc-enters",
+            "actions": [
+              [
+                "emote",
+                "erupts from the hedge in a shrieking black cloud."
+              ]
+            ],
+            "chance": 0.7
+          }
+        ]
       }
     ]
   },
