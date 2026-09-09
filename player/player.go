@@ -243,12 +243,12 @@ func (p Player) List() {
 }
 
 func (p Player) Look() {
-  p.SendMsg(fmt.Sprintf("~~%s~~", p.Room.GetName()))
+  p.SendMsg(color.RoomTitle(fmt.Sprintf("~~%s~~", p.Room.GetName())))
   p.SendMsg(strings.Split(p.Room.GetDesc(), "\n")...)
   p.SendMsg("", "Exits:")
 
   for _, exit := range p.Room.GetExits() {
-    p.SendMsg(fmt.Sprintf("- %s", exit.GetDesc()))
+    p.SendMsg(color.Exit(fmt.Sprintf("- %s", exit.GetDesc())))
   }
 
   p.SendMsg("")
@@ -329,7 +329,7 @@ func (p *Player) ListClasses() {
 
     header := (tildes + "*" + name + "*" + tildes)
 
-    p.SendMsg(header)
+    p.SendMsg(color.ClassName(header))
     p.SendMsg(subheader)
     p.SendMsg("")
 
