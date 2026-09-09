@@ -384,12 +384,12 @@ func (ch *Character) ExpToLvl() int {
 }
 
 func (ch *Character) TickFx() {
-  for _, fx := range ch.Fx {
-    if fx.Duration == 0 {
-      delete(ch.Fx, fx.Effect)
-    } else {
-      fx.Duration -= 1
+  for effect := range ch.Fx {
+    if statfx.SelfManaged[effect] {
+      continue
     }
+
+    ch.tickOneFx(effect)
   }
 
   for _, dot := range ch.Dots {
@@ -452,6 +452,22 @@ func (ch *Character) addFx(i statfx.SEInst) {
   }
 
   ch.Fx[i.Effect] = &i
+}
+
+// tickOneFx ages a single status effect by one turn, removing it once its
+// duration is spent. Shared by TickFx's generic per-turn sweep and by
+// SelfManaged effects, which call it directly at their point of use instead.
+func (ch *Character) tickOneFx(effect statfx.StatusEffect) {
+  fx := ch.Fx[effect]
+  if fx == nil {
+    return
+  }
+
+  if fx.Duration == 0 {
+    delete(ch.Fx, effect)
+  } else {
+    fx.Duration -= 1
+  }
 }
 
 func (ch *Character) addDot(i statfx.DotInst) {

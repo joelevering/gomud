@@ -134,6 +134,7 @@ func (ch *Character) ResistAtk(fx structs.CmbFx, rep *structs.CmbRep) structs.Cm
     if dmg != 0 {
       rep.Vulnerable = true
     }
+    ch.tickOneFx(statfx.Vulnerable)
   }
 
   if ch.isSteeled() && dmg >1 {

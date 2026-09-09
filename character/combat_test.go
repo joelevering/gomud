@@ -367,6 +367,38 @@ func Test_ResistAtkIsImpactedByVulnerable(t *testing.T) {
   }
 }
 
+func Test_VulnerableSurvivesUnrelatedTickAndConsumesOnUse(t *testing.T) {
+  ch := NewCharacter()
+  vulnInst := statfx.SEInst{
+    Effect:   statfx.Vulnerable,
+    Duration: 0,
+  }
+  ch.addFx(vulnInst)
+
+  // Simulate the carrier taking their own turn (and so ticking their own
+  // fx) before ever being attacked while vulnerable -- previously this let
+  // a Duration: 0 roll expire before it was ever used.
+  ch.TickFx()
+
+  fx := structs.CmbFx{Dmg: 100}
+  rep := &structs.CmbRep{}
+  res := ch.ResistAtk(fx, rep)
+
+  if !rep.Vulnerable {
+    t.Error("Expected Vulnerable to still be active and reported after an unrelated TickFx call")
+  }
+
+  rep2 := &structs.CmbRep{}
+  res2 := ch.ResistAtk(fx, rep2)
+
+  if rep2.Vulnerable {
+    t.Error("Expected Vulnerable to be consumed after one use")
+  }
+  if res2.Dmg >= res.Dmg {
+    t.Errorf("Expected damage to drop back to normal once Vulnerable was consumed, but got %d then %d", res.Dmg, res2.Dmg)
+  }
+}
+
 func Test_ResistAtkWhileDodging(t *testing.T) {
   ch := NewCharacter()
   dodgeInst := statfx.SEInst{
