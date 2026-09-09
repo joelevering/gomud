@@ -492,11 +492,16 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
     p.SendMsg("You are concentrating on your enemy.")
   }
 
+  var skillMsg string
   if rep.Skill.Name != "" {
     if rep.Concentrating {
       p.SendMsg(fmt.Sprintf("You were unable to use %s!", rep.Skill.Name))
     } else if rep.FollowUpReq != "" {
       p.SendMsg(fmt.Sprintf("%s failed! It has to follow up %s", rep.Skill.Name, rep.FollowUpReq))
+    } else if rep.Dmg > 0 {
+      // Held until the damage line below, so the skill's effect on damage
+      // (e.g. Shove's reduced hit) is visible on the same line as the result.
+      skillMsg = color.Skill(fmt.Sprintf("You used %s!", rep.Skill.Name))
     } else {
       p.SendMsg(color.Skill(fmt.Sprintf("You used %s!", rep.Skill.Name)))
     }
@@ -539,10 +544,14 @@ func (p *Player) ReportAtk(opp interfaces.Combatant, rep structs.CmbRep) {
   }
 
   if rep.Dmg > 0 {
+    prefix := ""
+    if skillMsg != "" {
+      prefix = skillMsg + " "
+    }
     if opp.GetDet() == 0 {
-      p.SendMsg(color.Dmg(fmt.Sprintf("%s took %d damage!", opp.GetName(), rep.Dmg)))
+      p.SendMsg(prefix + color.Dmg(fmt.Sprintf("%s took %d damage!", opp.GetName(), rep.Dmg)))
     } else {
-      p.SendMsg(color.Dmg(fmt.Sprintf("%s took %d damage! %s has %d/%d health left!", opp.GetName(), rep.Dmg, opp.GetName(), opp.GetDet(), opp.GetMaxDet())))
+      p.SendMsg(prefix + color.Dmg(fmt.Sprintf("%s took %d damage! %s has %d/%d health left!", opp.GetName(), rep.Dmg, opp.GetName(), opp.GetDet(), opp.GetMaxDet())))
     }
   }
 
