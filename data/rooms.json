@@ -107,7 +107,7 @@
       {
         "room_id": 3,
         "key": "c",
-        "description": "(C)rawl back through the wall"
+        "description": "(C)rawl through the crack in the wall"
       }
     ],
     "npcs": [
@@ -594,7 +594,7 @@
       {
         "room_id": 19,
         "key": "u",
-        "description": "(U)p the switchback, back toward the forest's edge"
+        "description": "(U)p the switchback, toward the forest's edge"
       },
       {
         "room_id": 21,
@@ -662,7 +662,7 @@
       {
         "room_id": 21,
         "key": "e",
-        "description": "(E)ast back to the flat"
+        "description": "(E)ast onto the flat"
       },
       {
         "room_id": 23,
@@ -725,7 +725,7 @@
       {
         "room_id": 23,
         "key": "s",
-        "description": "(S)outh back onto solid ground"
+        "description": "(S)outh onto solid ground"
       }
     ],
     "npcs": [
@@ -749,7 +749,7 @@
       {
         "room_id": 23,
         "key": "n",
-        "description": "(N)orth back to the mesa"
+        "description": "(N)orth onto the mesa"
       }
     ],
     "npcs": [
@@ -773,7 +773,7 @@
       {
         "room_id": 21,
         "key": "w",
-        "description": "(W)est back to the flat"
+        "description": "(W)est onto the flat"
       },
       {
         "room_id": 27,
@@ -836,7 +836,7 @@
       {
         "room_id": 27,
         "key": "w",
-        "description": "(W)est back to the hollow"
+        "description": "(W)est into the hollow"
       }
     ],
     "npcs": [
@@ -855,12 +855,12 @@
   {
     "id": 29,
     "name": "Tableland - Path - Long Stretch",
-    "description": "The path runs straight and flat for a long while, the wind at your back the whole way.",
+    "description": "The path runs straight and flat for a long while, wind hissing steadily across the open ground.",
     "exits": [
       {
         "room_id": 21,
         "key": "n",
-        "description": "(N)orth back to the flat"
+        "description": "(N)orth onto the flat"
       },
       {
         "room_id": 30,
@@ -928,7 +928,7 @@
       {
         "room_id": 30,
         "key": "e",
-        "description": "(E)ast back to the crossroads"
+        "description": "(E)ast to the crossroads"
       }
     ],
     "npcs": [
@@ -952,7 +952,7 @@
       {
         "room_id": 30,
         "key": "w",
-        "description": "(W)est back to the crossroads"
+        "description": "(W)est to the crossroads"
       },
       {
         "room_id": 33,
@@ -1003,7 +1003,7 @@
       {
         "room_id": 33,
         "key": "w",
-        "description": "(W)est back to the outskirts"
+        "description": "(W)est to the outskirts"
       },
       {
         "room_id": 35,
@@ -1044,7 +1044,7 @@
       {
         "room_id": 34,
         "key": "w",
-        "description": "(W)est back to the outer ring"
+        "description": "(W)est to the outer ring"
       },
       {
         "room_id": 36,
@@ -1073,7 +1073,7 @@
       {
         "room_id": 35,
         "key": "w",
-        "description": "(W)est back to the camp"
+        "description": "(W)est to the camp"
       }
     ],
     "npcs": [
@@ -1109,7 +1109,7 @@
       {
         "room_id": 30,
         "key": "n",
-        "description": "(N)orth back to the crossroads"
+        "description": "(N)orth to the crossroads"
       },
       {
         "room_id": 38,
@@ -1160,7 +1160,7 @@
       {
         "room_id": 38,
         "key": "n",
-        "description": "(N)orth back onto the plateau"
+        "description": "(N)orth onto the plateau"
       }
     ],
     "npcs": [
@@ -1196,7 +1196,7 @@
       {
         "room_id": 33,
         "key": "n",
-        "description": "(N)orth back to the outskirts"
+        "description": "(N)orth to the outskirts"
       },
       {
         "room_id": 41,
@@ -1213,7 +1213,7 @@
       {
         "room_id": 40,
         "key": "n",
-        "description": "(N)orth back up the fractured trail"
+        "description": "(N)orth up the fractured trail"
       },
       {
         "room_id": 42,
@@ -1242,7 +1242,7 @@
       {
         "room_id": 41,
         "key": "n",
-        "description": "(N)orth back to the outskirts"
+        "description": "(N)orth to the outskirts"
       },
       {
         "room_id": 43,
@@ -1271,7 +1271,7 @@
       {
         "room_id": 42,
         "key": "n",
-        "description": "(N)orth back to the prayer ring"
+        "description": "(N)orth to the prayer ring"
       }
     ],
     "npcs": [
@@ -1295,7 +1295,7 @@
       {
         "room_id": 38,
         "key": "e",
-        "description": "(E)ast back to the sparse grass"
+        "description": "(E)ast to the sparse grass"
       },
       {
         "room_id": 45,
@@ -1324,7 +1324,7 @@
       {
         "room_id": 44,
         "key": "e",
-        "description": "(E)ast back to the scorched flat"
+        "description": "(E)ast to the scorched flat"
       },
       {
         "room_id": 46,
@@ -1346,7 +1346,7 @@
       {
         "room_id": 45,
         "key": "e",
-        "description": "(E)ast back to the stones"
+        "description": "(E)ast to the stones"
       }
     ],
     "npcs": [
@@ -1382,7 +1382,7 @@
       {
         "room_id": 45,
         "key": "n",
-        "description": "(N)orth back to the stones"
+        "description": "(N)orth to the stones"
       }
     ],
     "npcs": [
@@ -1418,7 +1418,7 @@
       {
         "room_id": 27,
         "key": "s",
-        "description": "(S)outh back to the hollow"
+        "description": "(S)outh to the hollow"
       }
     ],
     "npcs": [
@@ -1442,7 +1442,7 @@
       {
         "room_id": 14,
         "key": "w",
-        "description": "(W)est, back into the darker press of the forest"
+        "description": "(W)est, into the darker press of the forest"
       },
       {
         "room_id": 50,
@@ -1459,7 +1459,7 @@
       {
         "room_id": 49,
         "key": "w",
-        "description": "(W)est back toward the forest"
+        "description": "(W)est, toward the forest"
       },
       {
         "room_id": 51,
@@ -1517,12 +1517,12 @@
   {
     "id": 53,
     "name": "Seneca Downs - Path - Fence Line",
-    "description": "A low wooden fence runs the length of the path, its posts silvered with age.\nBeyond it, the pasture rolls on unbroken.",
+    "description": "A low wooden fence runs the length of the path, its posts weathered to a soft grey.\nBeyond it, the pasture rolls on unbroken.",
     "exits": [
       {
         "room_id": 51,
         "key": "n",
-        "description": "(N)orth, back up the slope"
+        "description": "(N)orth, up the slope"
       }
     ]
   },
@@ -1534,7 +1534,7 @@
       {
         "room_id": 51,
         "key": "w",
-        "description": "(W)est, back down the slope"
+        "description": "(W)est, down the slope"
       },
       {
         "room_id": 54,
@@ -1597,7 +1597,7 @@
       {
         "room_id": 54,
         "key": "s",
-        "description": "(S)outh, back into the boulder field"
+        "description": "(S)outh, into the boulder field"
       }
     ],
     "npcs": [
@@ -1667,7 +1667,7 @@
       {
         "room_id": 55,
         "key": "s",
-        "description": "(S)outh, back to the hedgerow"
+        "description": "(S)outh, to the hedgerow"
       }
     ],
     "npcs": [
@@ -1686,7 +1686,7 @@
   {
     "id": 57,
     "name": "Seneca Downs - Path - Windswept Rise",
-    "description": "The hill crests into a rise with a long view back over the farmland below.\nA wind-bent tree leans over a worn path at its peak.",
+    "description": "The hill crests into a rise with a long view over the farmland below.\nA wind-bent tree leans over a worn path at its peak.",
     "exits": [
       {
         "room_id": 55,
@@ -1742,7 +1742,7 @@
       {
         "room_id": 57,
         "key": "s",
-        "description": "(S)outh, back to the rise"
+        "description": "(S)outh, to the rise"
       }
     ],
     "npcs": [
@@ -1778,7 +1778,7 @@
       {
         "room_id": 57,
         "key": "n",
-        "description": "(N)orth, back up to the rise"
+        "description": "(N)orth, up to the rise"
       }
     ],
     "npcs": [
@@ -1836,7 +1836,7 @@
       {
         "room_id": 58,
         "key": "g",
-        "description": "Back through the (g)ap in the wall"
+        "description": "Squeeze through the (g)ap in the wall"
       }
     ]
   },
@@ -1899,7 +1899,7 @@
       {
         "room_id": 61,
         "key": "n",
-        "description": "(N)orth, back to the crossroads"
+        "description": "(N)orth, to the crossroads"
       }
     ],
     "npcs": [
@@ -1935,7 +1935,7 @@
       {
         "room_id": 61,
         "key": "w",
-        "description": "(W)est, back to the crossroads"
+        "description": "(W)est, to the crossroads"
       },
       {
         "room_id": 69,
@@ -1952,7 +1952,7 @@
       {
         "room_id": 61,
         "key": "s",
-        "description": "(S)outh, back to the crossroads"
+        "description": "(S)outh, to the crossroads"
       },
       {
         "room_id": 65,
@@ -2039,7 +2039,7 @@
       {
         "room_id": 65,
         "key": "e",
-        "description": "(E)ast, back to the standing stones"
+        "description": "(E)ast, to the standing stones"
       }
     ],
     "npcs": [
@@ -2075,7 +2075,7 @@
       {
         "room_id": 62,
         "key": "w",
-        "description": "(W)est, back onto the farm road"
+        "description": "(W)est, onto the farm road"
       },
       {
         "room_id": 70,
@@ -2148,7 +2148,7 @@
       {
         "room_id": 70,
         "key": "s",
-        "description": "(S)outh, back to the plaza"
+        "description": "(S)outh, to the plaza"
       }
     ],
     "npcs": [
@@ -2172,7 +2172,7 @@
       {
         "room_id": 70,
         "key": "n",
-        "description": "(N)orth, back to the plaza"
+        "description": "(N)orth, to the plaza"
       }
     ],
     "npcs": [
@@ -2196,12 +2196,12 @@
       {
         "room_id": 70,
         "key": "o",
-        "description": "Out to the plaza"
+        "description": "(O)ut to the plaza"
       },
       {
         "room_id": 74,
-        "key": "b",
-        "description": "Through to the inn's private rooms"
+        "key": "p",
+        "description": "Through to the (p)rivate rooms"
       }
     ],
     "npcs": [
@@ -2237,7 +2237,7 @@
       {
         "room_id": 73,
         "key": "o",
-        "description": "Out to the common room"
+        "description": "(O)ut to the common room"
       }
     ],
     "npcs": []
@@ -2342,7 +2342,7 @@
       {
         "room_id": 77,
         "key": "w",
-        "description": "(W)est, back to the antechamber"
+        "description": "(W)est, to the antechamber"
       }
     ],
     "npcs": [
@@ -2453,7 +2453,7 @@
       {
         "room_id": 80,
         "key": "w",
-        "description": "(W)est, back to the foundry"
+        "description": "(W)est, to the foundry"
       }
     ],
     "npcs": [
@@ -2552,7 +2552,7 @@
       {
         "room_id": 83,
         "key": "w",
-        "description": "(W)est, back to the hall"
+        "description": "(W)est, to the hall"
       }
     ],
     "npcs": [
@@ -2665,7 +2665,7 @@
       {
         "room_id": 12,
         "key": "e",
-        "description": "(E)ast, back into the drier forest"
+        "description": "(E)ast, into the drier forest"
       },
       {
         "room_id": 88,
@@ -2682,7 +2682,7 @@
       {
         "room_id": 87,
         "key": "e",
-        "description": "(E)ast, back toward drier ground"
+        "description": "(E)ast, toward drier ground"
       },
       {
         "room_id": 89,
@@ -2762,7 +2762,7 @@
       {
         "room_id": 89,
         "key": "s",
-        "description": "(S)outh, back to the clearing"
+        "description": "(S)outh, to the clearing"
       }
     ],
     "npcs": [
@@ -2798,7 +2798,7 @@
       {
         "room_id": 89,
         "key": "n",
-        "description": "(N)orth, back to the clearing"
+        "description": "(N)orth, to the clearing"
       }
     ],
     "npcs": [
@@ -2834,7 +2834,7 @@
       {
         "room_id": 89,
         "key": "e",
-        "description": "(E)ast, back to the clearing"
+        "description": "(E)ast, to the clearing"
       },
       {
         "room_id": 92,
@@ -2890,7 +2890,7 @@
       {
         "room_id": 92,
         "key": "s",
-        "description": "(S)outh, back to the grove"
+        "description": "(S)outh, to the grove"
       }
     ],
     "npcs": [
@@ -2926,7 +2926,7 @@
       {
         "room_id": 92,
         "key": "n",
-        "description": "(N)orth, back to the grove"
+        "description": "(N)orth, to the grove"
       }
     ],
     "npcs": [
@@ -2996,7 +2996,7 @@
       {
         "room_id": 93,
         "key": "n",
-        "description": "(N)orth, back off the footbridge"
+        "description": "(N)orth, off the footbridge"
       },
       {
         "room_id": 112,
@@ -3059,7 +3059,7 @@
       {
         "room_id": 95,
         "key": "s",
-        "description": "(S)outh, back to the shrine"
+        "description": "(S)outh, to the shrine"
       }
     ],
     "npcs": [
@@ -3095,7 +3095,7 @@
       {
         "room_id": 95,
         "key": "u",
-        "description": "(U)p, scrambling back through the opening"
+        "description": "(U)p, scrambling through the opening"
       },
       {
         "room_id": 101,
@@ -3112,7 +3112,7 @@
       {
         "room_id": 100,
         "key": "u",
-        "description": "(U)p, back toward the surface"
+        "description": "(U)p, toward the surface"
       },
       {
         "room_id": 102,
@@ -3192,7 +3192,7 @@
       {
         "room_id": 102,
         "key": "s",
-        "description": "(S)outh, back to the junction"
+        "description": "(S)outh, to the junction"
       }
     ],
     "npcs": [
@@ -3228,7 +3228,7 @@
       {
         "room_id": 102,
         "key": "w",
-        "description": "(W)est, back to the junction"
+        "description": "(W)est, to the junction"
       },
       {
         "room_id": 105,
@@ -3296,7 +3296,7 @@
       {
         "room_id": 105,
         "key": "s",
-        "description": "(S)outh, back to the alcove"
+        "description": "(S)outh, to the alcove"
       }
     ],
     "npcs": [
@@ -3332,7 +3332,7 @@
       {
         "room_id": 105,
         "key": "w",
-        "description": "(W)est, back to the alcove"
+        "description": "(W)est, to the alcove"
       },
       {
         "room_id": 108,
@@ -3407,7 +3407,7 @@
       {
         "room_id": 108,
         "key": "w",
-        "description": "(W)est, back to the enclave"
+        "description": "(W)est, to the enclave"
       },
       {
         "room_id": 110,
@@ -3448,7 +3448,7 @@
       {
         "room_id": 109,
         "key": "w",
-        "description": "(W)est, back up the slope"
+        "description": "(W)est, up the slope"
       },
       {
         "room_id": 111,
@@ -3489,7 +3489,7 @@
       {
         "room_id": 110,
         "key": "w",
-        "description": "(W)est, back toward the antechamber"
+        "description": "(W)est, toward the antechamber"
       }
     ],
     "npcs": [
@@ -3525,7 +3525,7 @@
       {
         "room_id": 97,
         "key": "e",
-        "description": "(E)ast, back onto the sinking footbridge"
+        "description": "(E)ast, onto the sinking footbridge"
       },
       {
         "room_id": 113,
@@ -3600,7 +3600,7 @@
       {
         "room_id": 113,
         "key": "s",
-        "description": "(S)outh, back to the canopy path"
+        "description": "(S)outh, to the canopy path"
       }
     ],
     "npcs": [
@@ -3670,7 +3670,7 @@
       {
         "room_id": 114,
         "key": "n",
-        "description": "(N)orth, back to the undergrowth"
+        "description": "(N)orth, to the undergrowth"
       }
     ],
     "npcs": [
@@ -3706,7 +3706,7 @@
       {
         "room_id": 114,
         "key": "e",
-        "description": "(E)ast, back into the thinning jungle and toward the swamp"
+        "description": "(E)ast, into the thinning jungle and toward the swamp"
       }
     ]
   },
@@ -3718,7 +3718,7 @@
       {
         "room_id": 102,
         "key": "n",
-        "description": "(N)orth, back to the junction"
+        "description": "(N)orth, to the junction"
       }
     ],
     "npcs": [
@@ -3754,7 +3754,7 @@
       {
         "room_id": 105,
         "key": "n",
-        "description": "(N)orth, back to the alcove"
+        "description": "(N)orth, to the alcove"
       }
     ],
     "npcs": [
@@ -3778,7 +3778,7 @@
       {
         "room_id": 108,
         "key": "n",
-        "description": "(N)orth, back to the enclave"
+        "description": "(N)orth, to the enclave"
       }
     ],
     "npcs": [
@@ -3814,7 +3814,7 @@
       {
         "room_id": 70,
         "key": "o",
-        "description": "Out into the plaza"
+        "description": "(O)ut into the plaza"
       }
     ],
     "npcs": [
