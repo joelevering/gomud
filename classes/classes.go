@@ -86,6 +86,10 @@ var ByName = map[string]*Class{
   "Merchant": Merchant,
   "Peddler": Peddler,
   "Shepherd": Shepherd,
+
+  // Aggressive/elite variants
+  "BirdSwarm": BirdSwarm,
+  "Badger": Badger,
 }
 
 func Find(name string) *Class {
@@ -872,4 +876,32 @@ var Shepherd = &Class{
   },
   atkStats: []stats.Stat{stats.Sag},
   defStats: []stats.Stat{stats.Sag},
+}
+
+// Aggressive/elite variants -- distinct from their base animal classes so
+// upgrading one encounter doesn't inadvertently buff every trivial NPC
+// sharing that base class.
+
+var BirdSwarm = &Class{
+  name: "BirdSwarm",
+  growth: StatGrowth{
+    Det: 24,
+    Stm: 6,
+    Foc: 6,
+    Flo: 9,
+  },
+  atkStats: []stats.Stat{stats.Flo},
+  defStats: []stats.Stat{stats.Flo},
+}
+
+var Badger = &Class{
+  name: "Badger",
+  growth: StatGrowth{
+    Det: 26,
+    Stm: 9,
+    Foc: 4,
+    Str: 9,
+  },
+  atkStats: []stats.Stat{stats.Str},
+  defStats: []stats.Stat{stats.Str},
 }
