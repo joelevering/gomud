@@ -2,6 +2,7 @@ package character
 
 import (
   "fmt"
+  "log"
   "math"
   "sync"
 
@@ -440,10 +441,15 @@ func (ch *Character) addFx(i statfx.SEInst) {
 // tickOneFx ages a single status effect by one turn, removing it once its
 // duration is spent. Called at each effect's own point of use (e.g. Weak in
 // AtkFx, Vulnerable in ResistAtk) rather than on a generic per-turn sweep,
-// so an effect only ages when it was actually relevant that turn.
+// so an effect only ages when it was actually relevant that turn. Every
+// call site checks isX()/hasEffect() for this same effect immediately
+// beforehand, so fx should never actually be nil here -- if it is, some
+// caller's guard is missing or wrong, which is worth surfacing rather than
+// silently leaving the effect unaged.
 func (ch *Character) tickOneFx(effect statfx.StatusEffect) {
   fx := ch.Fx[effect]
   if fx == nil {
+    log.Printf("tickOneFx: called for %s with no matching effect on %s", effect, ch.Name)
     return
   }
 
@@ -456,10 +462,13 @@ func (ch *Character) tickOneFx(effect statfx.StatusEffect) {
 
 // tickOneDot ages a single damage-over-time effect by one turn, removing it
 // once its duration is spent. Called from selfCmbFx, at the point each dot
-// is actually read to deal its damage.
+// is actually read to deal its damage -- dotType always comes from ranging
+// over ch.Dots itself, so dot should never actually be nil here; see
+// tickOneFx for why that's still worth logging rather than ignoring.
 func (ch *Character) tickOneDot(dotType statfx.DotType) {
   dot := ch.Dots[dotType]
   if dot == nil {
+    log.Printf("tickOneDot: called for %s with no matching dot on %s", dotType, ch.Name)
     return
   }
 
