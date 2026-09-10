@@ -24,14 +24,3 @@ const(
   Steeled = StatusEffect("steeled") // less damage taken
   FleetFooted = StatusEffect("fleetFooted") // better chance to flee combat
 )
-
-// SelfManaged effects age at the point they're actually consumed (see
-// Character.ResistAtk for Vulnerable) rather than on Character.TickFx's
-// generic per-turn sweep. They're excluded there to avoid double-aging:
-// Vulnerable is only ever relevant on the turn its carrier is attacked,
-// which can fall on a different turn than the one TickFx runs on for that
-// carrier -- ticking it on both would sometimes expire it before it's
-// ever used.
-var SelfManaged = map[StatusEffect]bool{
-  Vulnerable: true,
-}

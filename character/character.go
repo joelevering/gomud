@@ -383,24 +383,6 @@ func (ch *Character) ExpToLvl() int {
   return ch.NextLvlExp - ch.Exp
 }
 
-func (ch *Character) TickFx() {
-  for effect := range ch.Fx {
-    if statfx.SelfManaged[effect] {
-      continue
-    }
-
-    ch.tickOneFx(effect)
-  }
-
-  for _, dot := range ch.Dots {
-    if dot.Duration == 0 {
-      delete(ch.Dots, dot.Type)
-    } else {
-      dot.Duration -= 1
-    }
-  }
-}
-
 // private
 
 func (ch *Character) getAndClearCmbSkill() *skills.Skill {
@@ -421,6 +403,7 @@ func (ch *Character) payFor(costType stats.Stat, costAmt int) bool {
     cost := costAmt
     if ch.isConserving() {
       cost = int(float64(cost) * 0.5)
+      ch.tickOneFx(statfx.Conserve)
     }
 
     newStm := ch.GetStm() - cost
@@ -455,8 +438,9 @@ func (ch *Character) addFx(i statfx.SEInst) {
 }
 
 // tickOneFx ages a single status effect by one turn, removing it once its
-// duration is spent. Shared by TickFx's generic per-turn sweep and by
-// SelfManaged effects, which call it directly at their point of use instead.
+// duration is spent. Called at each effect's own point of use (e.g. Weak in
+// AtkFx, Vulnerable in ResistAtk) rather than on a generic per-turn sweep,
+// so an effect only ages when it was actually relevant that turn.
 func (ch *Character) tickOneFx(effect statfx.StatusEffect) {
   fx := ch.Fx[effect]
   if fx == nil {
@@ -467,6 +451,22 @@ func (ch *Character) tickOneFx(effect statfx.StatusEffect) {
     delete(ch.Fx, effect)
   } else {
     fx.Duration -= 1
+  }
+}
+
+// tickOneDot ages a single damage-over-time effect by one turn, removing it
+// once its duration is spent. Called from selfCmbFx, at the point each dot
+// is actually read to deal its damage.
+func (ch *Character) tickOneDot(dotType statfx.DotType) {
+  dot := ch.Dots[dotType]
+  if dot == nil {
+    return
+  }
+
+  if dot.Duration == 0 {
+    delete(ch.Dots, dotType)
+  } else {
+    dot.Duration -= 1
   }
 }
 

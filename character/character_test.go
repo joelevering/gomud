@@ -75,7 +75,7 @@ func Test_GainExpLevelsUp(t *testing.T) {
   }
 }
 
-func Test_TickFxLowersFxDuration(t *testing.T) {
+func Test_TickOneFxLowersFxDuration(t *testing.T) {
   ch := NewCharacter()
   fxI := statfx.SEInst{
     Effect: statfx.Weak,
@@ -83,15 +83,15 @@ func Test_TickFxLowersFxDuration(t *testing.T) {
   }
   ch.addFx(fxI)
 
-  ch.TickFx()
+  ch.tickOneFx(statfx.Weak)
 
   fxRes := ch.Fx[statfx.Weak]
   if fxRes.Duration != 0 {
-    t.Errorf("Expected TickFx to lower duration, but duration is %d", fxRes.Duration)
+    t.Errorf("Expected tickOneFx to lower duration, but duration is %d", fxRes.Duration)
   }
 }
 
-func Test_TickFxRemoves0DurationFx(t *testing.T) {
+func Test_TickOneFxRemoves0DurationFx(t *testing.T) {
   ch := NewCharacter()
   fxI := statfx.SEInst{
     Effect: statfx.Weak,
@@ -99,11 +99,11 @@ func Test_TickFxRemoves0DurationFx(t *testing.T) {
   }
   ch.addFx(fxI)
 
-  ch.TickFx()
+  ch.tickOneFx(statfx.Weak)
 
   fxRes := ch.Fx[statfx.Weak]
   if fxRes != nil {
-    t.Error("Expected TickDuration to remove 0-duration fx")
+    t.Error("Expected tickOneFx to remove 0-duration fx")
   }
 }
 
