@@ -354,7 +354,7 @@
   {
     "id": 12,
     "name": "Slime Forest - Western Edge",
-    "description": "Trees and foliage crowd together unnaturally tightly, the sun darkened by their overhanging branches.\nThe ground grows soft and damp underfoot, a faint marshy smell drifting from somewhere close by.",
+    "description": "Trees and foliage crowd together unnaturally tightly, the sun darkened by their overhanging branches.\nThe ground grows soft and damp underfoot. Hints of tangy vegetation drift from somewhere close by.",
     "exits": [
       {
         "room_id": 10,
@@ -383,7 +383,7 @@
   {
     "id": 13,
     "name": "Slime Forest - Path - Sunlit Verge",
-    "description": "The trees begin to thin here, patches of open sky breaking through the canopy more often than not.\nGrass creeps in along the path's edges, thicker with every step.",
+    "description": "The trees begin to thin here, patches of open sky breaking through the canopy more often than not.\nGrass creeps in thick clumps along the path's edges, wildflowers pushing up between the exposed roots.",
     "exits": [
       {
         "room_id": 11,
@@ -412,7 +412,7 @@
   {
     "id": 14,
     "name": "Slime Forest - Path - Grassy Threshold",
-    "description": "The last of the trees give way here, thin trunks scattered among grass that grows thicker with every step.\nThe ground firms considerably underfoot, the path continuing clearly to the east.",
+    "description": "The last of the trees give way here, thin trunks scattered among grass grown thick and unruly.\nThe ground firms considerably underfoot, the path continuing clearly to the east.",
     "exits": [
       {
         "room_id": 13,
@@ -947,7 +947,7 @@
   {
     "id": 32,
     "name": "Tableland - Path - Cultist Byway",
-    "description": "Faded markings, half worn away by wind and sand, line this stretch of trail.\nThe chanting grows steadily louder.",
+    "description": "Faded markings, half worn away by wind and sand, line this stretch of trail.\nSteady chanting hums from somewhere unseen.",
     "exits": [
       {
         "room_id": 30,
@@ -2520,7 +2520,7 @@
   {
     "id": 81,
     "name": "Seneca Downs - Barrow Depths - Descending Stair",
-    "description": "A narrow stair cut directly into the rock spirals further down, the air growing colder with every step.\nThe sound of shifting stone echoes up from below.",
+    "description": "A narrow stair cut directly into the rock spirals further down into cold, still air.\nThe sound of shifting stone echoes up from below.",
     "exits": [
       {
         "room_id": 80,
@@ -2696,7 +2696,7 @@
   {
     "id": 87,
     "name": "Morass - Path - Eastern Edge",
-    "description": "The forest's undergrowth grows wetter underfoot until it gives way entirely to black standing water and reeds.\nThe tree line is still visible behind you to the east; ahead, the ground disappears into the swamp.",
+    "description": "The forest's undergrowth is soaked through here, giving way at the edges to black standing water and reeds.\nThe tree line is still visible to the east; the ground disappears into the swamp to the west.",
     "exits": [
       {
         "room_id": 12,
@@ -3667,7 +3667,7 @@
   {
     "id": 114,
     "name": "Morass - Path - Thickening Undergrowth",
-    "description": "The undergrowth thickens abruptly into something closer to jungle than swamp, ferns and broad leaves crowding out the reeds behind you.\nThe ground, at least, has finally gone solid underfoot.",
+    "description": "The undergrowth thickens abruptly into something closer to jungle than swamp, ferns and broad leaves crowding out the last of the reeds.\nThe ground, at least, has finally gone solid underfoot.",
     "exits": [
       {
         "room_id": 113,
@@ -3737,7 +3737,7 @@
   {
     "id": 116,
     "name": "Morass - Path - Western Edge",
-    "description": "The last of the swamp finally gives way to true jungle here, dense and loud with unfamiliar calls.\nA narrow game trail continues west into the deeper green; the mire waits, quieter, behind you to the east.",
+    "description": "The last of the swamp finally gives way to true jungle here, dense and loud with unfamiliar calls.\nA narrow game trail continues west into the deeper green; the mire lies quieter to the east.",
     "exits": [
       {
         "room_id": 114,
