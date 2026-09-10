@@ -84,7 +84,6 @@ func (m *MockCharacter) ApplyAtk(_ structs.CmbFx, _ *structs.CmbRep) {}
 func (m *MockCharacter) ApplyDef(_ structs.CmbFx, _ *structs.CmbRep) {}
 func (m *MockCharacter) IsDefeated() bool { return m.ShouldDie }
 func (m *MockCharacter) ExpToLvl() int { return 100 }
-func (m *MockCharacter) TickFx() {}
 func (m *MockCharacter) WantsToFlee() bool { return m.WantsFlee }
 func (m *MockCharacter) AttemptFlee() (succeeded, outOfStamina bool) {
   if m.FleeSucceeds {

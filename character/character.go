@@ -2,6 +2,7 @@ package character
 
 import (
   "fmt"
+  "log"
   "math"
   "sync"
 
@@ -383,24 +384,6 @@ func (ch *Character) ExpToLvl() int {
   return ch.NextLvlExp - ch.Exp
 }
 
-func (ch *Character) TickFx() {
-  for _, fx := range ch.Fx {
-    if fx.Duration == 0 {
-      delete(ch.Fx, fx.Effect)
-    } else {
-      fx.Duration -= 1
-    }
-  }
-
-  for _, dot := range ch.Dots {
-    if dot.Duration == 0 {
-      delete(ch.Dots, dot.Type)
-    } else {
-      dot.Duration -= 1
-    }
-  }
-}
-
 // private
 
 func (ch *Character) getAndClearCmbSkill() *skills.Skill {
@@ -421,6 +404,7 @@ func (ch *Character) payFor(costType stats.Stat, costAmt int) bool {
     cost := costAmt
     if ch.isConserving() {
       cost = int(float64(cost) * 0.5)
+      ch.tickOneFx(statfx.Conserve)
     }
 
     newStm := ch.GetStm() - cost
@@ -452,6 +436,47 @@ func (ch *Character) addFx(i statfx.SEInst) {
   }
 
   ch.Fx[i.Effect] = &i
+}
+
+// tickOneFx ages a single status effect by one turn, removing it once its
+// duration is spent. Called at each effect's own point of use (e.g. Weak in
+// AtkFx, Vulnerable in ResistAtk) rather than on a generic per-turn sweep,
+// so an effect only ages when it was actually relevant that turn. Every
+// call site checks isX()/hasEffect() for this same effect immediately
+// beforehand, so fx should never actually be nil here -- if it is, some
+// caller's guard is missing or wrong, which is worth surfacing rather than
+// silently leaving the effect unaged.
+func (ch *Character) tickOneFx(effect statfx.StatusEffect) {
+  fx := ch.Fx[effect]
+  if fx == nil {
+    log.Printf("tickOneFx: called for %s with no matching effect on %s", effect, ch.Name)
+    return
+  }
+
+  if fx.Duration == 0 {
+    delete(ch.Fx, effect)
+  } else {
+    fx.Duration -= 1
+  }
+}
+
+// tickOneDot ages a single damage-over-time effect by one turn, removing it
+// once its duration is spent. Called from selfCmbFx, at the point each dot
+// is actually read to deal its damage -- dotType always comes from ranging
+// over ch.Dots itself, so dot should never actually be nil here; see
+// tickOneFx for why that's still worth logging rather than ignoring.
+func (ch *Character) tickOneDot(dotType statfx.DotType) {
+  dot := ch.Dots[dotType]
+  if dot == nil {
+    log.Printf("tickOneDot: called for %s with no matching dot on %s", dotType, ch.Name)
+    return
+  }
+
+  if dot.Duration == 0 {
+    delete(ch.Dots, dotType)
+  } else {
+    dot.Duration -= 1
+  }
 }
 
 func (ch *Character) addDot(i statfx.DotInst) {

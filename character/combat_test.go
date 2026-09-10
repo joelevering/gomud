@@ -343,6 +343,27 @@ func Test_ResistAtkIsImpactedBySteeled(t *testing.T) {
   }
 }
 
+func Test_SteeledWithZeroDurationStillAppliesOnceThenExpires(t *testing.T) {
+  ch := NewCharacter()
+  ch.addFx(statfx.SEInst{Effect: statfx.Steeled, Duration: 0})
+
+  fx := structs.CmbFx{Dmg: 100}
+  rep1 := &structs.CmbRep{}
+  res1 := ch.ResistAtk(fx, rep1)
+  if !rep1.Steeled {
+    t.Error("Expected a freshly-applied Steeled (even at Duration: 0) to apply on the first attack")
+  }
+
+  rep2 := &structs.CmbRep{}
+  res2 := ch.ResistAtk(fx, rep2)
+  if rep2.Steeled {
+    t.Error("Expected Steeled to be consumed after one use")
+  }
+  if res2.Dmg <= res1.Dmg {
+    t.Errorf("Expected damage to rise back to normal once Steeled was consumed, but got %d then %d", res1.Dmg, res2.Dmg)
+  }
+}
+
 func Test_ResistAtkIsImpactedByVulnerable(t *testing.T) {
   ch := NewCharacter()
   vulnCh := NewCharacter()
@@ -364,6 +385,36 @@ func Test_ResistAtkIsImpactedByVulnerable(t *testing.T) {
 
   if !rep.Vulnerable {
     t.Error("Expected Vulnerable to be reported")
+  }
+}
+
+func Test_VulnerableWithZeroDurationStillAppliesOnceThenExpires(t *testing.T) {
+  ch := NewCharacter()
+  vulnInst := statfx.SEInst{
+    Effect:   statfx.Vulnerable,
+    Duration: 0,
+  }
+  ch.addFx(vulnInst)
+
+  // Vulnerable ages at the point it's consumed (in ResistAtk), not on any
+  // generic per-turn schedule, so a Duration: 0 roll is no longer at risk
+  // of being aged away by an unrelated turn before it's ever used.
+  fx := structs.CmbFx{Dmg: 100}
+  rep := &structs.CmbRep{}
+  res := ch.ResistAtk(fx, rep)
+
+  if !rep.Vulnerable {
+    t.Error("Expected a freshly-applied Vulnerable (even at Duration: 0) to apply on the first attack")
+  }
+
+  rep2 := &structs.CmbRep{}
+  res2 := ch.ResistAtk(fx, rep2)
+
+  if rep2.Vulnerable {
+    t.Error("Expected Vulnerable to be consumed after one use")
+  }
+  if res2.Dmg >= res.Dmg {
+    t.Errorf("Expected damage to drop back to normal once Vulnerable was consumed, but got %d then %d", res.Dmg, res2.Dmg)
   }
 }
 
@@ -608,6 +659,41 @@ func Test_ApplyAtkAppliesDoTDmg(t *testing.T) {
 
   if ch.GetDet() == ch.GetMaxDet() {
     t.Errorf("Expected ApplyAtk to apply bleed dmg, but det is %d/%d", ch.GetDet(), ch.GetMaxDet())
+  }
+}
+
+func Test_AtkFxAgesAndExpiresDots(t *testing.T) {
+  ch := NewCharacter()
+  bleedInst := statfx.DotInst{
+    Type: statfx.Bleed,
+    Dmg: 20,
+    Duration: 1,
+  }
+  ch.addDot(bleedInst)
+
+  // Duration: 1 means the dot is still present (and deals damage) on both
+  // the turn it's applied and the turn after -- same "N+1 uses" semantics
+  // as every other status effect, and identical to the old TickFx-based
+  // behavior this replaced.
+  rep1 := &structs.CmbRep{}
+  fx1 := ch.AtkFx(rep1)
+  if len(fx1.DotDmgs) != 1 {
+    t.Fatalf("Expected the dot to deal damage on turn 1, but DotDmgs was %v", fx1.DotDmgs)
+  }
+
+  rep2 := &structs.CmbRep{}
+  fx2 := ch.AtkFx(rep2)
+  if len(fx2.DotDmgs) != 1 {
+    t.Fatalf("Expected the dot to still deal damage on turn 2, but DotDmgs was %v", fx2.DotDmgs)
+  }
+
+  rep3 := &structs.CmbRep{}
+  fx3 := ch.AtkFx(rep3)
+  if len(fx3.DotDmgs) != 0 {
+    t.Errorf("Expected the dot to have expired by turn 3, but DotDmgs was %v", fx3.DotDmgs)
+  }
+  if ch.Dots[statfx.Bleed] != nil {
+    t.Error("Expected the expired dot to be removed from ch.Dots")
   }
 }
 

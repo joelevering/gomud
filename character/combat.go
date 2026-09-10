@@ -69,14 +69,18 @@ func (ch *Character) AtkFx(rep *structs.CmbRep) structs.CmbFx {
       sk = nil // but don't actually use it
     }
     rep.Concentrating = true
+    ch.tickOneFx(statfx.Concentration)
   }
 
   if sk != nil {
     hasSelfReq, effect := sk.SelfFollowUpReq()
-    if hasSelfReq && !ch.hasEffect(effect) {
-      rep.FollowUpReq = effect
-      rep.Skill = *sk
-      return structs.CmbFx{}
+    if hasSelfReq {
+      if !ch.hasEffect(effect) {
+        rep.FollowUpReq = effect
+        rep.Skill = *sk
+        return structs.CmbFx{}
+      }
+      ch.tickOneFx(effect)
     }
 
     if ch.payForSkill(*sk) {
@@ -87,11 +91,16 @@ func (ch *Character) AtkFx(rep *structs.CmbRep) structs.CmbFx {
   }
 
   cFx := ch.calcCmbFx(sk, rep)
-  if ch.isWeak() && cFx.Dmg > 1 {
+  weak := ch.isWeak()
+  if weak {
+    ch.tickOneFx(statfx.Weak)
+  }
+  if weak && cFx.Dmg > 1 {
     cFx.Dmg /= 2
     rep.Weak = true
   }
   if ch.isEmpowered() {
+    ch.tickOneFx(statfx.Empowered)
     cFx.Dmg *= 2
     if cFx.Dmg > 0 {
       rep.Empowered = true
@@ -106,9 +115,12 @@ func (ch *Character) ResistAtk(fx structs.CmbFx, rep *structs.CmbRep) structs.Cm
     DotDmgs: fx.DotDmgs,
   }
 
-  if fx.Req != "" && !ch.hasEffect(fx.Req) {
-    rep.FollowUpReq = fx.Req
-    return newFx
+  if fx.Req != "" {
+    if !ch.hasEffect(fx.Req) {
+      rep.FollowUpReq = fx.Req
+      return newFx
+    }
+    ch.tickOneFx(fx.Req)
   }
 
   newFx.Heal = fx.Heal
@@ -119,10 +131,12 @@ func (ch *Character) ResistAtk(fx structs.CmbFx, rep *structs.CmbRep) structs.Cm
   var dmg, selfDmg int
   if ch.isDodging() {
     rep.Dodged = true
+    ch.tickOneFx(statfx.Dodging)
   } else if ch.isRedirecting() {
     dmg = fx.Dmg/2
     selfDmg = dmg + fx.SelfDmg
     rep.Redirected = true
+    ch.tickOneFx(statfx.Redirecting)
   } else {
     dmg = ch.calcDmg(fx.Dmg)
   }
@@ -134,9 +148,14 @@ func (ch *Character) ResistAtk(fx structs.CmbFx, rep *structs.CmbRep) structs.Cm
     if dmg != 0 {
       rep.Vulnerable = true
     }
+    ch.tickOneFx(statfx.Vulnerable)
   }
 
-  if ch.isSteeled() && dmg >1 {
+  steeled := ch.isSteeled()
+  if steeled {
+    ch.tickOneFx(statfx.Steeled)
+  }
+  if steeled && dmg > 1 {
     dmg /= 2
     rep.Steeled = true
   }
@@ -179,8 +198,9 @@ func (ch *Character) ApplyDef(fx structs.CmbFx, rep *structs.CmbRep) {
 
 func (ch *Character) selfCmbFx() structs.CmbFx {
   dots := []statfx.DotInst{}
-  for _, d := range ch.Dots {
+  for dotType, d := range ch.Dots {
     dots = append(dots, *d)
+    ch.tickOneDot(dotType)
   }
 
   return structs.CmbFx{DotDmgs: dots}
@@ -191,6 +211,7 @@ func (ch *Character) calcCmbFx(sk *skills.Skill, rep *structs.CmbRep) structs.Cm
 
   if ch.isStunned() {
     rep.Stunned = true
+    ch.tickOneFx(statfx.Stun)
 
     return fx
   }
