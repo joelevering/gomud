@@ -595,6 +595,58 @@ func Test_Flee(t *testing.T) {
   }
 }
 
+func Test_FleeMovesThroughARandomExit(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+
+  adjacentRoom := &mocks.MockRoom{
+    Name: "Adjacent Room",
+  }
+  origRoom := &mocks.MockRoom{
+    Exits: []interfaces.ExitI{
+      &room.Exit{
+        Room: adjacentRoom,
+        Key:  "o",
+      },
+    },
+  }
+  p.Room = origRoom
+  p.InCombat = true
+
+  go p.Flee(p.Room.GetNPs()[0])
+
+  var messages []string
+  for i := 0; i < 2; i++ {
+    messages = append(messages, <-ch)
+  }
+  full := strings.Join(messages, "\n")
+
+  if !strings.Contains(full, "You escape from the fight with mock np name, fleeing to Adjacent Room!") {
+    t.Errorf("Expected a flee message naming the destination room, but got '%s'", full)
+  }
+
+  if origRoom.RemovedPlayer != p {
+    t.Error("Expected player to be removed from the original room, but it was not")
+  }
+
+  if adjacentRoom.AddedPlayer != p {
+    t.Error("Expected player to be added to the adjacent room, but it was not")
+  }
+
+  if p.Room != adjacentRoom {
+    t.Error("Expected player's room to be updated to the adjacent room, but it wasn't")
+  }
+
+  if p.IsInCombat() {
+    t.Error("Expected Flee to leave combat, but IsInCombat is still true")
+  }
+
+  // Drain the rest of the 'Look' output triggered by entering the new room.
+  for i := 0; i < 5; i++ {
+    <-ch
+  }
+}
+
 // Also tests GainExp
 
 func Test_WinCombatEndsCombatAndGivesExp(t *testing.T) {
