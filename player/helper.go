@@ -72,9 +72,9 @@ func HelpSkill(skName string) string {
   msg := `***************%s***************
 %s
 
-Cost: %d %s`
+Cost: %s`
 
-  return fmt.Sprintf(msg, sk.Name, sk.Desc, sk.CostAmt, sk.CostType)
+  return fmt.Sprintf(msg, sk.Name, sk.Desc, sk.CostString())
 }
 
 func HelpClass(clName string) string {

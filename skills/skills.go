@@ -1,6 +1,7 @@
 package skills
 
 import (
+  "fmt"
   "strings"
 
   "github.com/joelevering/gomud/statfx"
@@ -60,6 +61,11 @@ type Skill struct {
   CostAmt     int
   Rstcn       Rstcn
   FollowUpReq *FollowUpReq
+}
+
+// CostString returns a player-facing cost, e.g. "10 stamina".
+func (sk *Skill) CostString() string {
+  return fmt.Sprintf("%d %s", sk.CostAmt, sk.CostType.Name())
 }
 
 type Effect struct {
