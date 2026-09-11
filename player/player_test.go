@@ -221,6 +221,33 @@ func Test_SendMsg(t *testing.T) {
   }
 }
 
+func Test_StatusShowsSkillAndFleeCosts(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  p.Class = classes.Minder
+  p.Classes[classes.Tier2] = classes.Minder
+  p.Level = character.MaxLevel
+
+  go func(ch chan string) {
+    defer close(ch)
+    p.Status()
+  }(ch)
+
+  var lines []string
+  for msg := range ch {
+    lines = append(lines, msg)
+  }
+  full := strings.Join(lines, "\n")
+
+  if !strings.Contains(full, "Shove (10 stamina)") {
+    t.Errorf("Expected Status to show Shove's cost as '10 stamina', but got %s", full)
+  }
+
+  fleeLine := fmt.Sprintf("Flee: %d stamina", p.Class.GetFleeCost())
+  if !strings.Contains(full, fleeLine) {
+    t.Errorf("Expected Status to show '%s', but got %s", fleeLine, full)
+  }
+}
+
 func Test_List(t *testing.T) {
   p, ch, _ := NewTestPlayer()
   defer close(ch)

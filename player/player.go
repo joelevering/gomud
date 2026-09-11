@@ -16,6 +16,7 @@ import (
   "github.com/joelevering/gomud/room"
   "github.com/joelevering/gomud/skills"
   "github.com/joelevering/gomud/statfx"
+  "github.com/joelevering/gomud/stats"
   "github.com/joelevering/gomud/storage"
   "github.com/joelevering/gomud/structs"
 )
@@ -311,8 +312,10 @@ func (p *Player) Status() {
   p.SendMsg("")
   p.SendMsg("Skills:")
   for _, sk := range p.GetSkills() {
-    p.SendMsg(fmt.Sprintf(" * %s", sk.Name))
+    p.SendMsg(fmt.Sprintf(" * %s (%s)", sk.Name, sk.CostString()))
   }
+  p.SendMsg("")
+  p.SendMsg(fmt.Sprintf("Flee: %d %s", p.Class.GetFleeCost(), stats.Stm.Name()))
   p.SendMsg(strings.Repeat("~", utf8.RuneCountInString(header)))
 }
 
