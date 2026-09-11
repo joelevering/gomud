@@ -325,8 +325,9 @@ against you. If you don't have enough stamina to attempt it, you'll fail to flee
 Once you start fleeing, you'll keep trying automatically every turn until you succeed, are defeated,
 or choose a skill (or a plain 'attack'), which cancels the attempt.
 
-If you succeed, combat ends immediately. You stay in the same location, at whatever health you
-had when you fled -- you aren't teleported anywhere and the enemy isn't defeated.
+If you succeed, combat ends immediately and you're moved through a random exit of your current
+room, at whatever health you had when you fled -- the enemy isn't defeated, and you won't know
+where you'll end up until you get there.
 
 Using 'flee' outside of combat does nothing, since there's nothing to flee from.
 

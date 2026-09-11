@@ -3,6 +3,7 @@ package player
 import (
   "fmt"
   "log"
+  "math/rand"
   "net"
   "strings"
   "time"
@@ -688,7 +689,19 @@ func (p *Player) WinCombat(loser interfaces.Combatant) {
 func (p *Player) Flee(opp interfaces.Combatant) {
   p.log(fmt.Sprintf("Flee vs %s", opp.GetName()))
   p.LeaveCombat()
-  p.SendMsg(fmt.Sprintf("You escape from the fight with %s!", opp.GetName()))
+
+  exits := p.Room.GetExits()
+  if len(exits) == 0 {
+    p.SendMsg(fmt.Sprintf("You escape from the fight with %s!", opp.GetName()))
+    return
+  }
+
+  destination := exits[rand.Intn(len(exits))].GetRoom()
+
+  p.SendMsg(fmt.Sprintf("You escape from the fight with %s, fleeing to %s!", opp.GetName(), destination.GetName()))
+  p.LeaveRoom(fmt.Sprintf("%s flees toward %s!", p.GetName(), destination.GetName()))
+  p.EnterRoom(destination)
+  p.Look()
 }
 
 func (p *Player) GainExp(exp int) {
