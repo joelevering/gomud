@@ -341,9 +341,6 @@ const setSpawnMsg = `***************Set Spawn***************
 Use 'set spawn' while standing in certain locations to make that room the
 place you return to if you're defeated in combat.
 
-Not every room supports this -- look for a hint in the room's description,
-like 'This looks like a good place to rest.'
-
 Shortcut: 'rest'`
 
 const skillMsg = `**************Skills**************
