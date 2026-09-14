@@ -80,7 +80,7 @@ func initGameState(config *Configuration) *GameState {
     Players: make(map[string]*player.Player),
   }
 
-  err := room.LoadRooms("data/rooms.json", config.DefaultRoomID)
+  err := room.LoadRooms("data/rooms.json", config.DefaultRoomID, config.DefaultSpawnRoomID)
   if err != nil {
     panic(fmt.Sprintf("Error loading rooms: %v", err))
   }

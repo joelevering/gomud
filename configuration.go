@@ -12,8 +12,9 @@ import (
 const Config string = "config.json"
 
 type Configuration struct {
-  DefaultRoomID int        `json:"default_room_id"`
-  Idle          IdleConfig `json:"idle"`
+  DefaultRoomID      int        `json:"default_room_id"`
+  DefaultSpawnRoomID int        `json:"default_spawn_room_id"`
+  Idle               IdleConfig `json:"idle"`
 }
 
 type IdleConfig struct {
@@ -41,7 +42,8 @@ func (c IdleConfig) Durations() IdleDurations {
 
 func DefaultConfiguration() *Configuration {
   return &Configuration{
-    DefaultRoomID: 15,
+    DefaultRoomID:      15,
+    DefaultSpawnRoomID: 11,
     Idle: IdleConfig{
       WarnAfterMinutes:     5,
       WarnIntervalMinutes:  5,
@@ -85,6 +87,10 @@ func LoadConfiguration(filename string) (*Configuration, error) {
 
   if cfg.DefaultRoomID <= 0 {
     return nil, fmt.Errorf("invalid default_room_id in %s: %d", filename, cfg.DefaultRoomID)
+  }
+
+  if cfg.DefaultSpawnRoomID <= 0 {
+    return nil, fmt.Errorf("invalid default_spawn_room_id in %s: %d", filename, cfg.DefaultSpawnRoomID)
   }
 
   return cfg, nil

@@ -25,6 +25,7 @@ type RoomI interface {
 	GetName() string
 	GetDesc() string
 	GetID() int
+	GetSpawnPoint() bool
 }
 
 type ExitI interface {

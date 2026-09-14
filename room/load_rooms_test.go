@@ -3,7 +3,7 @@ package room
 import "testing"
 
 func Test_LoadingRooms(t *testing.T) {
-  var err = LoadRooms("../data/rooms.json", 15)
+  var err = LoadRooms("../data/rooms.json", 15, 11)
   if err != nil {
     t.Errorf("Error loading rooms: %s", err)
   }
@@ -49,9 +49,27 @@ func Test_LoadingRooms(t *testing.T) {
 }
 
 func Test_LoadingRoomsErrorsWhenDefaultRoomDoesNotExist(t *testing.T) {
-  var err = LoadRooms("../data/rooms.json", 999999)
+  var err = LoadRooms("../data/rooms.json", 999999, 11)
 
   if err == nil {
     t.Error("Expected an error when the default room ID doesn't exist, but got nil")
+  }
+}
+
+func Test_LoadingRoomsErrorsWhenDefaultSpawnRoomDoesNotExist(t *testing.T) {
+  var err = LoadRooms("../data/rooms.json", 15, 999999)
+
+  if err == nil {
+    t.Error("Expected an error when the default spawn room ID doesn't exist, but got nil")
+  }
+}
+
+func Test_LoadingRoomsSetsDefaultSpawn(t *testing.T) {
+  if err := LoadRooms("../data/rooms.json", 15, 11); err != nil {
+    t.Fatalf("Error loading rooms: %s", err)
+  }
+
+  if RoomStore.DefaultSpawn == nil || RoomStore.DefaultSpawn.GetID() != 11 {
+    t.Errorf("Expected DefaultSpawn to be room 11, got %v", RoomStore.DefaultSpawn)
   }
 }

@@ -10,6 +10,7 @@ type MockRoom struct {
   RemovedPlayer interfaces.PlI
   NPs       []interfaces.NPI
   Name       string
+  SpawnPoint bool
 }
 
 func (m *MockRoom) Message(msg string) {
@@ -52,4 +53,8 @@ func (m *MockRoom) GetDesc() string {
 
 func (m *MockRoom) GetID() int {
   return 0
+}
+
+func (m *MockRoom) GetSpawnPoint() bool {
+  return m.SpawnPoint
 }

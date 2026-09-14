@@ -22,6 +22,10 @@ func Test_NewPlayerHasDefaultAliases(t *testing.T) {
   if p.Aliases["a"] != "attack" {
     t.Errorf("Expected default alias 'a' to expand to 'attack', but got '%s'", p.Aliases["a"])
   }
+
+  if p.Aliases["rest"] != "set spawn" {
+    t.Errorf("Expected default alias 'rest' to expand to 'set spawn', but got '%s'", p.Aliases["rest"])
+  }
 }
 
 func Test_SetAlias(t *testing.T) {
@@ -59,6 +63,19 @@ func Test_SetAliasReservedCollision(t *testing.T) {
 
   if _, ok := p.Aliases["look"]; ok {
     t.Error("Expected 'look' to not be added as an alias, but it was")
+  }
+}
+
+func Test_SetAliasReservedCollisionWithSet(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  p.Store.InitPlayerData(p.GetID())
+
+  go p.SetAlias("set", "say hi")
+  res := <-ch
+
+  if !strings.Contains(res, "'set' is a reserved command and can't be used as an alias name.") {
+    t.Errorf("Expected reserved command rejection, but got '%s'", res)
   }
 }
 
