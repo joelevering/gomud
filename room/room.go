@@ -8,14 +8,15 @@ import (
 )
 
 type Room struct {
-  Id      int                    `json:"id"`
-  Name    string                 `json:"name"`
-  Desc    string                 `json:"description"`
-  Exits   []*Exit                `json:"exits"`
-  ExitIs  []interfaces.ExitI
-  NPs     []*nonplayer.NonPlayer `json:"npcs"`
-  NPIs    []interfaces.NPI
-  Players []interfaces.PlI
+  Id         int                    `json:"id"`
+  Name       string                 `json:"name"`
+  Desc       string                 `json:"description"`
+  Exits      []*Exit                `json:"exits"`
+  ExitIs     []interfaces.ExitI
+  NPs        []*nonplayer.NonPlayer `json:"npcs"`
+  NPIs       []interfaces.NPI
+  Players    []interfaces.PlI
+  SpawnPoint bool                   `json:"spawn_point"`
 
   mu sync.Mutex
 }
@@ -95,4 +96,8 @@ func (room *Room) GetDesc() string {
 
 func (room *Room) GetID() int {
   return room.Id
+}
+
+func (room *Room) GetSpawnPoint() bool {
+  return room.SpawnPoint
 }

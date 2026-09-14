@@ -77,6 +77,10 @@ func Test_LoadConfiguration_PartialOverrideKeepsDefaultsForOmittedFields(t *test
   if cfg.DefaultRoomID != 15 {
     t.Errorf("Expected DefaultRoomID to still default to 15 but got %d", cfg.DefaultRoomID)
   }
+
+  if cfg.DefaultSpawnRoomID != 11 {
+    t.Errorf("Expected DefaultSpawnRoomID to still default to 11 but got %d", cfg.DefaultSpawnRoomID)
+  }
 }
 
 func Test_LoadConfiguration_MalformedJSONErrors(t *testing.T) {
@@ -114,6 +118,33 @@ func Test_LoadConfiguration_InvalidDefaultRoomIDErrors(t *testing.T) {
 
   if _, err := LoadConfiguration(path); err == nil {
     t.Error("Expected an error for an invalid default_room_id but got nil")
+  }
+}
+
+func Test_LoadConfiguration_DefaultSpawnRoomIDOverrideIsRespected(t *testing.T) {
+  path := filepath.Join(t.TempDir(), "config.json")
+  if err := os.WriteFile(path, []byte(`{"default_spawn_room_id":61}`), 0644); err != nil {
+    t.Fatal(err)
+  }
+
+  cfg, err := LoadConfiguration(path)
+  if err != nil {
+    t.Fatalf("Expected no error but got %v", err)
+  }
+
+  if cfg.DefaultSpawnRoomID != 61 {
+    t.Errorf("Expected DefaultSpawnRoomID to be 61 but got %d", cfg.DefaultSpawnRoomID)
+  }
+}
+
+func Test_LoadConfiguration_InvalidDefaultSpawnRoomIDErrors(t *testing.T) {
+  path := filepath.Join(t.TempDir(), "config.json")
+  if err := os.WriteFile(path, []byte(`{"default_spawn_room_id":-1}`), 0644); err != nil {
+    t.Fatal(err)
+  }
+
+  if _, err := LoadConfiguration(path); err == nil {
+    t.Error("Expected an error for an invalid default_spawn_room_id but got nil")
   }
 }
 

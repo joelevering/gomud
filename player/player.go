@@ -70,7 +70,7 @@ func (p *Player) Init() {
   }
 
   if p.GetSpawn() == nil {
-    p.SetSpawn(room.RoomStore.Default)
+    p.SetSpawn(room.RoomStore.DefaultSpawn)
   }
 
   if p.Room == nil {
@@ -211,6 +211,12 @@ func (p *Player) Cmd(cmd string) {
     } else {
       p.RemoveAlias(words[1])
     }
+  case "set":
+    if len(words) == 2 && strings.ToLower(words[1]) == "spawn" {
+      p.SetSpawnPoint()
+    } else {
+      p.SendMsg("I'm not sure what you're trying to set. Use 'set spawn' while standing in a valid location.")
+    }
   case "flee":
     p.SendMsg("You're not in combat!")
   default:
@@ -247,6 +253,11 @@ func (p Player) List() {
 func (p Player) Look() {
   p.SendMsg(color.RoomTitle(fmt.Sprintf("~~%s~~", p.Room.GetName())))
   p.SendMsg(strings.Split(p.Room.GetDesc(), "\n")...)
+
+  if p.Room.GetSpawnPoint() {
+    p.SendMsg("This looks like a good place to rest.")
+  }
+
   p.SendMsg("", "Exits:")
 
   for _, exit := range p.Room.GetExits() {
@@ -728,6 +739,17 @@ func (p *Player) GainExp(exp int) {
 
 func (p *Player) Spawn() {
   p.EnterRoom(p.GetSpawn())
+}
+
+func (p *Player) SetSpawnPoint() {
+  if !p.Room.GetSpawnPoint() {
+    p.SendMsg("This doesn't feel like a place you could rest easy.")
+    return
+  }
+
+  p.Character.SetSpawn(p.Room)
+  p.Save()
+  p.SendMsg("You settle in and fix this place in your mind as home.")
 }
 
 // Getters and Setters

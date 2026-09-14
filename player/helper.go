@@ -58,6 +58,8 @@ func Help(words []string) string {
     return exitMsg
   case "alias", "unalias":
     return aliasMsg
+  case "set", "spawn":
+    return setSpawnMsg
   }
 
   return "Sorry, I'm not sure what you need help with."
@@ -114,6 +116,7 @@ Available commands:
 'attack <npc name>' to start combat
 'attack <npc name> <skill name>' to start combat by using a skill
 'flee' to attempt to disengage from combat
+'set spawn' to make your current location the place you return to if you're defeated, if the room allows it
 'classes' for information on your character's available classes
 'change <class name>' to change your class
 'alias <name> <command>' to create your own shortcut for a command
@@ -332,6 +335,13 @@ where you'll end up until you get there.
 Using 'flee' outside of combat does nothing, since there's nothing to flee from.
 
 Shortcut: 'fl'`
+
+const setSpawnMsg = `***************Set Spawn***************
+
+Use 'set spawn' while standing in certain locations to make that room the
+place you return to if you're defeated in combat.
+
+Shortcut: 'rest'`
 
 const skillMsg = `**************Skills**************
 

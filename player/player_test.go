@@ -19,7 +19,7 @@ import (
 func TestMain(m *testing.M) {
   os.RemoveAll("../test/")
   os.Mkdir("../test", 0755)
-  room.LoadRooms("../data/rooms.json", 15)
+  room.LoadRooms("../data/rooms.json", 15, 11)
   r := m.Run()
   os.RemoveAll("../test/")
   os.Exit(r)
@@ -160,6 +160,69 @@ func Test_CmdFleeOutOfCombat(t *testing.T) {
 
   if !strings.Contains(res, "You're not in combat!") {
     t.Errorf("Expected \"You're not in combat!\", but got '%s'", res)
+  }
+}
+
+func Test_CmdSetSpawnSucceedsInSpawnPointRoom(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  p.Store.InitPlayerData(p.GetID())
+  p.Room = &room.Room{Id: 1, SpawnPoint: true}
+
+  go p.Cmd("set spawn")
+  res := <-ch
+
+  if !strings.Contains(res, "You settle in and fix this place in your mind as home.") {
+    t.Errorf("Expected the set spawn success message, but got '%s'", res)
+  }
+
+  if p.GetSpawn() != p.Room {
+    t.Error("Expected player's spawn to be set to their current room")
+  }
+}
+
+func Test_CmdSetSpawnFailsOutsideSpawnPointRoom(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  originalSpawn := &room.Room{Id: 2}
+  p.SetSpawn(originalSpawn)
+  p.Room = &room.Room{Id: 1, SpawnPoint: false}
+
+  go p.Cmd("set spawn")
+  res := <-ch
+
+  if !strings.Contains(res, "This doesn't feel like a place you could rest easy.") {
+    t.Errorf("Expected the set spawn failure message, but got '%s'", res)
+  }
+
+  if p.GetSpawn() != originalSpawn {
+    t.Error("Expected player's spawn to remain unchanged")
+  }
+}
+
+func Test_CmdSetSpawnWithoutSpawnArgSendsUsage(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+
+  go p.Cmd("set")
+  res := <-ch
+
+  if !strings.Contains(res, "I'm not sure what you're trying to set.") {
+    t.Errorf("Expected a usage message, but got '%s'", res)
+  }
+}
+
+func Test_CmdRestAliasExpandsToSetSpawn(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  p.Store.InitPlayerData(p.GetID())
+  p.Room = &room.Room{Id: 1, SpawnPoint: true}
+
+  go p.Cmd("rest")
+  res := <-ch
+
+  if !strings.Contains(res, "You settle in and fix this place in your mind as home.") {
+    t.Errorf("Expected 'rest' to alias to 'set spawn', but got '%s'", res)
   }
 }
 
@@ -334,6 +397,27 @@ func Test_Look(t *testing.T) {
   if !strings.Contains(res, "You look around and see") {
     t.Errorf("Expected Look to send list, but got %s", res)
   }
+}
+
+func Test_LookShowsSpawnPointLineWhenRoomAllowsIt(t *testing.T) {
+  p, ch, _ := NewTestPlayer()
+  defer close(ch)
+  p.Room = &mocks.MockRoom{Name: "Name", SpawnPoint: true}
+
+  go p.Look()
+
+  <-ch // room title
+  <-ch // desc
+
+  res := <-ch
+  if !strings.Contains(res, "This looks like a good place to rest.") {
+    t.Errorf("Expected Look to mention resting in a spawn point room, but got %s", res)
+  }
+
+  <-ch // blank line
+  <-ch // "Exits:"
+  <-ch // blank line
+  <-ch // List() output
 }
 
 func Test_LookTargetWithNPName(t *testing.T) {

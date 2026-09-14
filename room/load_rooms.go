@@ -9,9 +9,10 @@ import(
 var RoomStore *RoomFinder
 
 type RoomFinder struct {
-  RoomMap map[int]int // Room ID to index in []Room
-  Rooms   []*Room
-  Default *Room
+  RoomMap      map[int]int // Room ID to index in []Room
+  Rooms        []*Room
+  Default      *Room
+  DefaultSpawn *Room
 }
 
 func newRoomFinder(rooms []*Room) *RoomFinder {
@@ -45,7 +46,16 @@ func (r *RoomFinder) SetDefault(roomID int) error {
   return nil
 }
 
-func LoadRooms(path string, defaultRoomID int) (error) {
+func (r *RoomFinder) SetDefaultSpawn(roomID int) error {
+  if _, ok := r.RoomMap[roomID]; !ok {
+    return fmt.Errorf("default spawn room %d does not exist", roomID)
+  }
+
+  r.DefaultSpawn = r.Find(roomID)
+  return nil
+}
+
+func LoadRooms(path string, defaultRoomID int, defaultSpawnRoomID int) (error) {
   var rooms []*Room
 
   f, err := ioutil.ReadFile(path)
@@ -60,6 +70,9 @@ func LoadRooms(path string, defaultRoomID int) (error) {
 
   RoomStore = newRoomFinder(rooms)
   if err := RoomStore.SetDefault(defaultRoomID); err != nil {
+    return err
+  }
+  if err := RoomStore.SetDefaultSpawn(defaultSpawnRoomID); err != nil {
     return err
   }
   attachRoomsToExits(rooms)

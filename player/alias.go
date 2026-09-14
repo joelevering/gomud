@@ -11,20 +11,21 @@ import (
 // (e.g. 'l' for 'look'), now expressed as ordinary, player-removable
 // aliases instead of hardcoded switch cases.
 var DefaultAliases = map[string]string{
-  "ls": "list",
-  "l":  "look",
-  "m":  "move",
-  "h":  "help",
-  "s":  "say",
-  "y":  "yell",
-  "em": "emote",
-  "a":  "attack",
-  "fl": "flee",
-  "st": "status",
-  "cl": "classes",
-  "c":  "change",
-  "al": "alias",
-  "ua": "unalias",
+  "ls":   "list",
+  "l":    "look",
+  "m":    "move",
+  "h":    "help",
+  "s":    "say",
+  "y":    "yell",
+  "em":   "emote",
+  "a":    "attack",
+  "fl":   "flee",
+  "st":   "status",
+  "cl":   "classes",
+  "c":    "change",
+  "al":   "alias",
+  "ua":   "unalias",
+  "rest": "set spawn",
 }
 
 // reservedCmds are the long-form command words the switch in Cmd() actually
@@ -33,7 +34,7 @@ var DefaultAliases = map[string]string{
 // purpose -- they're just data and can be freely reassigned or removed.
 var reservedCmds = []string{
   "list", "look", "move", "help", "say", "yell", "emote", "attack", "flee",
-  "status", "classes", "change", "alias", "unalias", "exit", "quit",
+  "status", "classes", "change", "alias", "unalias", "exit", "quit", "set",
 }
 
 func isReservedCmd(cmd string) bool {
