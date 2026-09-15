@@ -58,7 +58,7 @@ Turn one row of the world-planning spreadsheet into a fully-built cluster of roo
     go test ./...
     ```
     Then do a live boot smoke test: copy the draft to `data/rooms.json` (or a temp copy pointed at by a throwaway config), start the server, and confirm it logs `Hosting on:` with no panic. The JSON validator only catches duplicate/dangling ids — it has no way to know if an NPC's `class` field is actually registered, which is exactly the kind of bug that only surfaces at runtime.
-11. **Report.** Summarize: room-id range added, room/NPC counts, the computed size target(s) from step 3, which attachment points were wired and which were left as stubs for future areas, and any new classes added to `classes.go`. Remind the user they can open `tools/room-editor.html` (Load JSON → `data/rooms.draft.json`) to review and edit the result.
+11. **Report.** Summarize: room-id range added, room/NPC counts, the computed size target(s) from step 3, which attachment points were wired and which were left as stubs for future areas, and any new classes added to `classes.go`. Remind the user they can review/edit the result with gomudbud's room editor.
 
 ## Conventions this skill must follow
 
