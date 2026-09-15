@@ -9,6 +9,11 @@ _test
 data/store.json
 config.json
 
+# Scratch/working files for the develop-area skill — never promoted to a
+# commit directly; see .claude/skills/develop-area/SKILL.md.
+data/rooms.draft.json
+data/backup_rooms.json
+
 # Architecture specific extensions/prefixes
 *.[568vq]
 [568vq].out
